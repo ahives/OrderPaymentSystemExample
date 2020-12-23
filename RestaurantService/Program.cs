@@ -1,4 +1,4 @@
-﻿namespace OrderReceiptService
+﻿namespace RestaurantService
 {
     using MassTransit;
     using MassTransit.EntityFrameworkCoreIntegration;

@@ -1,4 +1,4 @@
-namespace OrderReceiptService.Consumers
+namespace RestaurantService.Consumers
 {
     using System;
     using System.Threading.Tasks;

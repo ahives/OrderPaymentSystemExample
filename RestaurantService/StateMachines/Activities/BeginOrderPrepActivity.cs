@@ -1,4 +1,4 @@
-namespace OrderReceiptService.StateMachines.Activities
+namespace RestaurantService.StateMachines.Activities
 {
     using System;
     using System.Threading.Tasks;

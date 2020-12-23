@@ -1,4 +1,4 @@
-namespace OrderReceiptService.StateMachines.Sagas
+namespace RestaurantService.StateMachines.Sagas
 {
     using System;
     using Automatonymous;
