@@ -1,4 +1,4 @@
-namespace DatabaseDeploy.Model
+namespace Data.Core.Model
 {
     using System;
     using System.ComponentModel.DataAnnotations;
@@ -12,6 +12,9 @@ namespace DatabaseDeploy.Model
         
         [Column("Name"), Required]
         public string Name { get; init; }
+        
+        [Column("Price"), Required]
+        public decimal Price { get; init; }
         
         [Column("IsValid"), Required]
         public bool IsValid { get; init; }

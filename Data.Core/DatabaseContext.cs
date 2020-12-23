@@ -1,4 +1,4 @@
-namespace DatabaseDeploy
+namespace Data.Core
 {
     using System;
     using System.Collections.Generic;
@@ -18,6 +18,10 @@ namespace DatabaseDeploy
         public DbSet<Customer> Customers { get; set; }
         
         public DbSet<Courier> Couriers { get; set; }
+        
+        public DbSet<Order> Orders { get; set; }
+        
+        public DbSet<OrderItem> OrderItems { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -41,18 +45,107 @@ namespace DatabaseDeploy
                 NewId.NextGuid(),
                 NewId.NextGuid()
             };
+            var menuItemIds = new List<Guid>
+            {
+                NewId.NextGuid(),
+                NewId.NextGuid(),
+                NewId.NextGuid(),
+                NewId.NextGuid(),
+                NewId.NextGuid(),
+                NewId.NextGuid(),
+                NewId.NextGuid(),
+                NewId.NextGuid(),
+                NewId.NextGuid(),
+                NewId.NextGuid(),
+                NewId.NextGuid(),
+                NewId.NextGuid()
+            };
+            var orderIds = new List<Guid>
+            {
+                NewId.NextGuid(),
+                NewId.NextGuid(),
+                NewId.NextGuid()
+            };
+            var customerIds = new List<Guid>
+            {
+                NewId.NextGuid(),
+                NewId.NextGuid(),
+                NewId.NextGuid()
+            };
             
             var regions = GetRegions();
             var storageTemperatures = GetStorageTemperatures();
-            var menuItems = GetMenuItems(menuIds);
+            var menuItems = GetMenuItems(menuItemIds, menuIds);
             var menus = GetMenus(restaurantIds, menuIds);
             var restaurants = GetRestaurants(restaurantIds);
+            var orders = GetOrders(orderIds, customerIds);
+            var orderItems = GetOrderItems(orderIds, menuItemIds);
+            var customers = GetCustomers(customerIds);
             
             modelBuilder.Entity<Region>().HasData(regions);
             modelBuilder.Entity<StorageTemperature>().HasData(storageTemperatures);
             modelBuilder.Entity<Restaurant>().HasData(restaurants);
             modelBuilder.Entity<Menu>().HasData(menus);
             modelBuilder.Entity<MenuItem>().HasData(menuItems);
+            modelBuilder.Entity<Customer>().HasData(customers);
+            modelBuilder.Entity<Order>().HasData(orders);
+            modelBuilder.Entity<OrderItem>().HasData(orderItems);
+        }
+
+        IEnumerable<Customer> GetCustomers(List<Guid> customerIds)
+        {
+            yield return new Customer
+            {
+                CustomerId = customerIds[0],
+                FirstName = "Iron",
+                LastName = "Man",
+                Street = "123 E. 12th Street",
+                City = "Oakland",
+                RegionId = 1,
+                ZipCode = "94123",
+                CreationTimestamp = DateTime.Now
+            };
+        }
+
+        IEnumerable<Order> GetOrders(List<Guid> orderIds, List<Guid> customerIds)
+        {
+            yield return new Order
+            {
+                OrderId = orderIds[0],
+                CourierId = null,
+                CustomerId = customerIds[0],
+                Street = "93rd Olive Street",
+                City = "Oakland",
+                RegionId = 1,
+                ZipCode = "94543",
+                Status = 1,
+                StatusTimestamp = DateTime.Now
+            };
+        }
+
+        IEnumerable<OrderItem> GetOrderItems(List<Guid> orderIds, List<Guid> menuItemIds)
+        {
+            yield return new OrderItem
+            {
+                OrderItemId = NewId.NextGuid(),
+                OrderId = orderIds[0],
+                MenuItemId = menuItemIds[0],
+                CreationTimestamp = DateTime.Now
+            };
+            yield return new OrderItem
+            {
+                OrderItemId = NewId.NextGuid(),
+                OrderId = orderIds[0],
+                MenuItemId = menuItemIds[1],
+                CreationTimestamp = DateTime.Now
+            };
+            yield return new OrderItem
+            {
+                OrderItemId = NewId.NextGuid(),
+                OrderId = orderIds[0],
+                MenuItemId = menuItemIds[2],
+                CreationTimestamp = DateTime.Now
+            };
         }
 
         IEnumerable<StorageTemperature> GetStorageTemperatures()
@@ -175,11 +268,11 @@ namespace DatabaseDeploy
             };
         }
 
-        IEnumerable<MenuItem> GetMenuItems(List<Guid> menuIds)
+        IEnumerable<MenuItem> GetMenuItems(List<Guid> menuItemIds, List<Guid> menuIds)
         {
             yield return new MenuItem
             {
-                MenuItemId = NewId.NextGuid(),
+                MenuItemId = menuItemIds[0],
                 Name = "Bacon, Egg, and Cheese Burrito",
                 MenuId = menuIds[0],
                 StorageTemperatureId = 1,
@@ -187,7 +280,7 @@ namespace DatabaseDeploy
             };
             yield return new MenuItem
             {
-                MenuItemId = NewId.NextGuid(),
+                MenuItemId = menuItemIds[1],
                 Name = "Blueberry Pancakes",
                 MenuId = menuIds[0],
                 StorageTemperatureId = 1,
@@ -195,7 +288,7 @@ namespace DatabaseDeploy
             };
             yield return new MenuItem
             {
-                MenuItemId = NewId.NextGuid(),
+                MenuItemId = menuItemIds[2],
                 Name = "Hot Chocolate",
                 MenuId = menuIds[0],
                 StorageTemperatureId = 1,
@@ -203,7 +296,7 @@ namespace DatabaseDeploy
             };
             yield return new MenuItem
             {
-                MenuItemId = NewId.NextGuid(),
+                MenuItemId = menuItemIds[3],
                 Name = "Milk",
                 MenuId = menuIds[0],
                 StorageTemperatureId = 2,
@@ -211,7 +304,7 @@ namespace DatabaseDeploy
             };
             yield return new MenuItem
             {
-                MenuItemId = NewId.NextGuid(),
+                MenuItemId = menuItemIds[4],
                 Name = "Orange Juice",
                 MenuId = menuIds[0],
                 StorageTemperatureId = 2,
@@ -219,7 +312,7 @@ namespace DatabaseDeploy
             };
             yield return new MenuItem
             {
-                MenuItemId = NewId.NextGuid(),
+                MenuItemId = menuItemIds[5],
                 Name = "Steak",
                 MenuId = menuIds[1],
                 StorageTemperatureId = 1,
@@ -227,7 +320,7 @@ namespace DatabaseDeploy
             };
             yield return new MenuItem
             {
-                MenuItemId = NewId.NextGuid(),
+                MenuItemId = menuItemIds[6],
                 Name = "Rice and Gravy",
                 MenuId = menuIds[1],
                 StorageTemperatureId = 1,
@@ -235,7 +328,7 @@ namespace DatabaseDeploy
             };
             yield return new MenuItem
             {
-                MenuItemId = NewId.NextGuid(),
+                MenuItemId = menuItemIds[7],
                 Name = "Cheese Pizza",
                 MenuId = menuIds[2],
                 StorageTemperatureId = 1,
@@ -243,7 +336,7 @@ namespace DatabaseDeploy
             };
             yield return new MenuItem
             {
-                MenuItemId = NewId.NextGuid(),
+                MenuItemId = menuItemIds[8],
                 Name = "Pepperoni Pizza",
                 MenuId = menuIds[2],
                 StorageTemperatureId = 1,
@@ -251,7 +344,7 @@ namespace DatabaseDeploy
             };
             yield return new MenuItem
             {
-                MenuItemId = NewId.NextGuid(),
+                MenuItemId = menuItemIds[9],
                 Name = "Lemonade Smoothie",
                 MenuId = menuIds[3],
                 StorageTemperatureId = 3,
@@ -259,7 +352,7 @@ namespace DatabaseDeploy
             };
             yield return new MenuItem
             {
-                MenuItemId = NewId.NextGuid(),
+                MenuItemId = menuItemIds[10],
                 Name = "Pineapple Smoothie",
                 MenuId = menuIds[3],
                 StorageTemperatureId = 3,
@@ -267,7 +360,7 @@ namespace DatabaseDeploy
             };
             yield return new MenuItem
             {
-                MenuItemId = NewId.NextGuid(),
+                MenuItemId = menuItemIds[11],
                 Name = "Chocolate Ice Cream",
                 MenuId = menuIds[3],
                 StorageTemperatureId = 3,

@@ -9,7 +9,7 @@ namespace Restaurant.Core.StateMachines
     {
         public KitchenStateMachine()
         {
-            InstanceState(x => x.CurrentState, Received, PreparingOrder, OrderPrepared, OrderDiscarded);
+            InstanceState(x => x.CurrentState, Received, Preparing, Prepared, Discarded);
 
             Initially(
                 When(OrderReceived)
@@ -17,17 +17,21 @@ namespace Restaurant.Core.StateMachines
                     .TransitionTo(Received),
                 When(OrderValidated)
                     .Activity(x => x.OfType<BeginOrderPrepActivity>())
-                    .TransitionTo(PreparingOrder));
+                    .TransitionTo(Preparing));
             
             During(Received,
                 When(OrderValidated)
                     .Activity(x => x.OfType<BeginOrderPrepActivity>())
-                    .TransitionTo(PreparingOrder));
+                    .TransitionTo(Preparing));
             
-            During(PreparingOrder,
+            During(Preparing,
                 When(OrderValidated)
                     .Activity(x => x.OfType<BeginOrderPrepActivity>())
-                    .TransitionTo(OrderPrepared));
+                    .TransitionTo(Prepared));
+
+            During(Discarded,
+                When(OrderValidated)
+                    .Activity(x => x.OfType<BeginOrderPrepActivity>()));
             
             Event(() => OrderReceived,
                 x => x.CorrelateById(cxt => cxt.Message.OrderId));
@@ -36,9 +40,9 @@ namespace Restaurant.Core.StateMachines
         }
         
         public State Received { get; }
-        public State PreparingOrder { get; }
-        public State OrderPrepared { get; }
-        public State OrderDiscarded { get; }
+        public State Preparing { get; }
+        public State Prepared { get; }
+        public State Discarded { get; }
         
         public Event<OrderReceived> OrderReceived { get; private set; }
         public Event<OrderValidated> OrderValidated { get; private set; }

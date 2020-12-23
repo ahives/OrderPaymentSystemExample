@@ -1,4 +1,4 @@
-namespace DatabaseDeploy.Model
+namespace Data.Core.Model
 {
     using System;
     using System.ComponentModel.DataAnnotations;
@@ -28,6 +28,9 @@ namespace DatabaseDeploy.Model
         
         [Column("ZipCode")]
         public string ZipCode { get; init; }
+        
+        [Column("IsAvailable"), Required]
+        public bool IsAvailable { get; set; }
         
         [Column("CreationTimestamp"), Required]
         public DateTime CreationTimestamp { get; set; }

@@ -1,4 +1,4 @@
-namespace DatabaseDeploy.Model
+namespace Data.Core.Model
 {
     using System;
     using System.ComponentModel.DataAnnotations;

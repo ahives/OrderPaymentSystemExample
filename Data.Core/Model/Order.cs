@@ -1,4 +1,4 @@
-namespace DatabaseDeploy.Model
+namespace Data.Core.Model
 {
     using System;
     using System.ComponentModel.DataAnnotations;
@@ -8,34 +8,36 @@ namespace DatabaseDeploy.Model
     public class Order
     {
         [Column("OrderId"), Key, Required]
-        public Guid OrderId { get; set; }
+        public Guid OrderId { get; init; }
         
         [Column("Status"), Required]
-        public string Status { get; init; }
+        public int Status { get; set; }
         
         [Column("StatusTimestamp"), Required]
-        public DateTime StatusTimestamp { get; init; }
+        public DateTime? StatusTimestamp { get; set; }
         
         [ForeignKey("CustomerId"), Required]
         public Guid CustomerId { get; init; }
         public Customer Customer { get; init; }
         
-        [ForeignKey("MenuItemId"), Required]
-        public long MenuItemId { get; init; }
-        public MenuItem MenuItem { get; init; }
-        
         [ForeignKey("CourierId")]
-        public Guid CourierId { get; init; }
-        public Courier Courier { get; init; }
+        public Guid? CourierId { get; set; }
+        public Courier Courier { get; set; }
         
-        [Column("SpecialInstructions"), Required]
-        public string SpecialInstructions { get; init; }
+        [Column("Street"), Required]
+        public string Street { get; init; }
+        
+        [Column("City"), Required]
+        public string City { get; init; }
         
         [ForeignKey("RegionId"), Required]
-        public long RegionId { get; set; }
-        public Region Region { get; set; }
+        public long RegionId { get; init; }
+        public Region Region { get; init; }
+        
+        [Column("ZipCode"), Required]
+        public string ZipCode { get; init; }
         
         [Column("CreationTimestamp"), Required]
-        public DateTime CreationTimestamp { get; set; }
+        public DateTime CreationTimestamp { get; init; }
     }
 }

@@ -5,10 +5,10 @@ namespace Restaurant.Core.StateMachines.Sagas
     using MassTransit.EntityFrameworkCoreIntegration.Mappings;
     using Microsoft.EntityFrameworkCore;
 
-    public class OrderStateDbContext :
+    public class CourierStateDbContext :
         SagaDbContext
     {
-        public OrderStateDbContext(DbContextOptions options)
+        public CourierStateDbContext(DbContextOptions options)
             : base(options)
         {
         }
@@ -17,7 +17,7 @@ namespace Restaurant.Core.StateMachines.Sagas
         {
             get
             {
-                yield return new OrderStateMap();
+                yield return new CourierStateMap();
             }
         }
     }
