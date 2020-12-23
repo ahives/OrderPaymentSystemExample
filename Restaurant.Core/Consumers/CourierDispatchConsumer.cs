@@ -14,7 +14,7 @@ namespace Restaurant.Core
         {
             try
             {
-                context.Publish<CourierDispatched>(new
+                await context.Publish<CourierDispatched>(new
                 {
                     context.Message.OrderId,
                     context.Message.CustomerId,

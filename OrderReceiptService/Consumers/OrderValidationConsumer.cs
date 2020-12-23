@@ -21,7 +21,7 @@ namespace OrderReceiptService.Consumers
 
             if (isValid)
             {
-                context.Publish<OrderValidated>(new
+                await context.Publish<OrderValidated>(new
                 {
                     context.Message.OrderId,
                     context.Message.CustomerId,
@@ -32,7 +32,7 @@ namespace OrderReceiptService.Consumers
             }
             else
             {
-                context.Publish<OrderNotValidated>(new
+                await context.Publish<OrderNotValidated>(new
                 {
                     context.Message.OrderId,
                     context.Message.CustomerId,

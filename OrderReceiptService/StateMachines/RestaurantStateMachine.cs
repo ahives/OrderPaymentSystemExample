@@ -42,14 +42,13 @@ namespace OrderReceiptService.StateMachines
                 When(OrderCanceled)
                     .Activity(x => x.OfType<OrderCanceledActivity>())
                     .TransitionTo(Prepared),
+                When(OrderDiscarded)
+                    .Activity(x => x.OfType<OrderDiscardedActivity>())
+                    .TransitionTo(Discarded),
                 When(OrderNotValidated)
                     .TransitionTo(Error),
                 When(KitchenMalfunction)
                     .TransitionTo(Error));
-
-            During(Discarded,
-                When(OrderValidated)
-                    .Activity(x => x.OfType<BeginOrderPrepActivity>()));
             
             Event(() => OrderReceived,
                 x => x.CorrelateById(cxt => cxt.Message.OrderId));

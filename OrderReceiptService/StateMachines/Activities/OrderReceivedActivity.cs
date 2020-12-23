@@ -35,7 +35,7 @@ namespace OrderReceiptService.StateMachines.Activities
         {
             try
             {
-                _context.Send<ValidateOrder>(new
+                await _context.Send<ValidateOrder>(new
                 {
                     context.Data.OrderId,
                     context.Data.CustomerId,
@@ -57,7 +57,7 @@ namespace OrderReceiptService.StateMachines.Activities
 
         public async Task Faulted<TException>(BehaviorExceptionContext<RestaurantState, OrderReceived, TException> context,
             Behavior<RestaurantState, OrderReceived> next)
-            where TException : Exception => next.Faulted(context);
+            where TException : Exception => await next.Faulted(context);
 
         async Task SaveOrder(OrderReceived data)
         {

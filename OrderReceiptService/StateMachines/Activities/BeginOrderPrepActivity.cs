@@ -37,7 +37,7 @@ namespace OrderReceiptService.StateMachines.Activities
             {
                 context.Instance.Timestamp = DateTime.Now;
 
-                _context.Publish<PrepareOrder>(new
+                await _context.Publish<PrepareOrder>(new
                 {
                     context.Data.OrderId,
                     context.Data.CustomerId,
@@ -71,7 +71,7 @@ namespace OrderReceiptService.StateMachines.Activities
                 
                 var delay = GetRandomDelay();
 
-                _context.ScheduleSend<DispatchCourier>(delay, new
+                await _context.ScheduleSend<DispatchCourier>(delay, new
                 {
                     data.OrderId,
                     data.CustomerId,
