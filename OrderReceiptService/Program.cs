@@ -1,13 +1,11 @@
 ﻿namespace OrderReceiptService
 {
-    using System;
     using MassTransit;
     using MassTransit.EntityFrameworkCoreIntegration;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
-    using Restaurant.Core;
-    using Restaurant.Core.StateMachines;
-    using Restaurant.Core.StateMachines.Sagas;
+    using StateMachines;
+    using StateMachines.Sagas;
 
     class Program
     {
@@ -17,12 +15,12 @@
 
             services.AddMassTransit(cfg =>
             {
-                cfg.AddSagaStateMachine<OrderStateMachine, OrderState>()
+                cfg.AddSagaStateMachine<RestaurantStateMachine, RestaurantState>()
                     .EntityFrameworkRepository(r =>
                     {
                         r.ConcurrencyMode = ConcurrencyMode.Pessimistic;
                         
-                        r.AddDbContext<DbContext, OrderStateDbContext>((provider, builder) =>
+                        r.AddDbContext<DbContext, RestaurantStateDbContext>((provider, builder) =>
                         {
                             // builder
                         });

@@ -1,4 +1,4 @@
-namespace Restaurant.Core.StateMachines.Activities
+namespace OrderReceiptService.StateMachines.Activities
 {
     using System;
     using System.Threading.Tasks;
@@ -7,6 +7,7 @@ namespace Restaurant.Core.StateMachines.Activities
     using Data.Core.Model;
     using GreenPipes;
     using MassTransit;
+    using Restaurant.Core;
     using Sagas;
 
     public class BeginOrderPrepActivity :

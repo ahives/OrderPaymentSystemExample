@@ -1,8 +1,9 @@
-namespace Restaurant.Core
+namespace OrderReceiptService.Consumers
 {
     using System;
     using System.Threading.Tasks;
     using MassTransit;
+    using Restaurant.Core;
 
     public class OrderValidationConsumer :
         IConsumer<ValidateOrder>

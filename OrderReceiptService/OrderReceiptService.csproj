@@ -11,6 +11,7 @@
       <PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.0.7" />
       <PackageReference Include="MassTransit.RabbitMQ" Version="7.0.7" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
+      <PackageReference Include="NewId" Version="3.0.2" />
     </ItemGroup>
 
     <ItemGroup>
