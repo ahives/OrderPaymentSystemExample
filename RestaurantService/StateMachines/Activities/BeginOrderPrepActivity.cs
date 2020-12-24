@@ -14,10 +14,12 @@ namespace RestaurantService.StateMachines.Activities
         Activity<RestaurantState, OrderValidated>
     {
         readonly ConsumeContext _context;
+        readonly DatabaseContext _db;
 
-        public BeginOrderPrepActivity(ConsumeContext context)
+        public BeginOrderPrepActivity(ConsumeContext context, DatabaseContext db)
         {
             _context = context;
+            _db = db;
         }
 
         public void Probe(ProbeContext context)
@@ -58,16 +60,14 @@ namespace RestaurantService.StateMachines.Activities
 
         async Task UpdateOrder(OrderValidated data)
         {
-            await using DatabaseContext db = new DatabaseContext();
-
-            Order order = await db.Orders.FindAsync(data.OrderId);
+            Order order = await _db.Orders.FindAsync(data.OrderId);
 
             if (order != null)
             {
                 order.Status = OrderStatus.BeingPrepared;
                 order.StatusTimestamp = DateTime.Now;
 
-                await db.SaveChangesAsync();
+                await _db.SaveChangesAsync();
                 
                 var delay = GetRandomDelay();
 

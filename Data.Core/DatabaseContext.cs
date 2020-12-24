@@ -10,18 +10,18 @@ namespace Data.Core
         DbContext
     {
         public DbSet<Menu> Menus { get; set; }
-        
         public DbSet<MenuItem> MenuItems { get; set; }
-        
         public DbSet<Restaurant> Restaurants { get; set; }
-        
         public DbSet<Customer> Customers { get; set; }
-        
         public DbSet<Courier> Couriers { get; set; }
-        
         public DbSet<Order> Orders { get; set; }
-        
         public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<Shelf> Shelves { get; set; }
+
+        public DatabaseContext(DbContextOptions options)
+            : base(options)
+        {
+        }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -81,6 +81,7 @@ namespace Data.Core
             var orders = GetOrders(orderIds, customerIds);
             var orderItems = GetOrderItems(orderIds, menuItemIds);
             var customers = GetCustomers(customerIds);
+            var shelves = GetShelves();
             
             modelBuilder.Entity<Region>().HasData(regions);
             modelBuilder.Entity<StorageTemperature>().HasData(storageTemperatures);
@@ -90,6 +91,43 @@ namespace Data.Core
             modelBuilder.Entity<Customer>().HasData(customers);
             modelBuilder.Entity<Order>().HasData(orders);
             modelBuilder.Entity<OrderItem>().HasData(orderItems);
+            modelBuilder.Entity<Shelf>().HasData(shelves);
+        }
+
+        IEnumerable<Shelf> GetShelves()
+        {
+            yield return new Shelf
+            {
+                ShelfId = 1,
+                Name = "Hot",
+                StorageTemperatureId = 1,
+                Capacity = 10,
+                CreationTimestamp = DateTime.Now
+            };
+            yield return new Shelf
+            {
+                ShelfId = 2,
+                Name = "Cold",
+                StorageTemperatureId = 2,
+                Capacity = 10,
+                CreationTimestamp = DateTime.Now
+            };
+            yield return new Shelf
+            {
+                ShelfId = 3,
+                Name = "Frozen",
+                StorageTemperatureId = 3,
+                Capacity = 10,
+                CreationTimestamp = DateTime.Now
+            };
+            yield return new Shelf
+            {
+                ShelfId = 4,
+                Name = "Overflow",
+                StorageTemperatureId = 4,
+                Capacity = 15,
+                CreationTimestamp = DateTime.Now
+            };
         }
 
         IEnumerable<Customer> GetCustomers(List<Guid> customerIds)
@@ -121,6 +159,30 @@ namespace Data.Core
                 Status = 1,
                 StatusTimestamp = DateTime.Now
             };
+            yield return new Order
+            {
+                OrderId = orderIds[1],
+                CourierId = null,
+                CustomerId = customerIds[0],
+                Street = "93rd Olive Street",
+                City = "Oakland",
+                RegionId = 1,
+                ZipCode = "94543",
+                Status = 1,
+                StatusTimestamp = DateTime.Now
+            };
+            yield return new Order
+            {
+                OrderId = orderIds[2],
+                CourierId = null,
+                CustomerId = customerIds[0],
+                Street = "93rd Olive Street",
+                City = "Oakland",
+                RegionId = 1,
+                ZipCode = "94543",
+                Status = 1,
+                StatusTimestamp = DateTime.Now
+            };
         }
 
         IEnumerable<OrderItem> GetOrderItems(List<Guid> orderIds, List<Guid> menuItemIds)
@@ -130,6 +192,8 @@ namespace Data.Core
                 OrderItemId = NewId.NextGuid(),
                 OrderId = orderIds[0],
                 MenuItemId = menuItemIds[0],
+                IsExpired = true,
+                ShelfId = 1,
                 CreationTimestamp = DateTime.Now
             };
             yield return new OrderItem
@@ -137,13 +201,17 @@ namespace Data.Core
                 OrderItemId = NewId.NextGuid(),
                 OrderId = orderIds[0],
                 MenuItemId = menuItemIds[1],
+                IsExpired = false,
+                ShelfId = 1,
                 CreationTimestamp = DateTime.Now
             };
             yield return new OrderItem
             {
                 OrderItemId = NewId.NextGuid(),
-                OrderId = orderIds[0],
+                OrderId = orderIds[1],
                 MenuItemId = menuItemIds[2],
+                IsExpired = true,
+                ShelfId = 1,
                 CreationTimestamp = DateTime.Now
             };
         }

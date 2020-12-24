@@ -64,6 +64,8 @@ namespace RestaurantService.StateMachines
                 x => x.CorrelateById(cxt => cxt.Message.OrderId));
             Event(() => KitchenMalfunction,
                 x => x.CorrelateById(cxt => cxt.Message.OrderId));
+            Event(() => StorageCapacityExceeded,
+                x => x.CorrelateById(cxt => cxt.Message.OrderId));
         }
         
         public State Received { get; }
@@ -80,5 +82,6 @@ namespace RestaurantService.StateMachines
         public Event<OrderCanceled> OrderCanceled { get; private set; }
         public Event<OrderNotValidated> OrderNotValidated { get; private set; }
         public Event<KitchenMalfunction> KitchenMalfunction { get; private set; }
+        public Event<StorageCapacityExceeded> StorageCapacityExceeded { get; private set; }
     }
 }

@@ -4,28 +4,21 @@ namespace Data.Core.Model
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
-    [Table("MenuItems")]
-    public class MenuItem
+    [Table("Shelves")]
+    public class Shelf
     {
-        [Column("MenuItemId"), Key, Required]
-        public Guid MenuItemId { get; init; }
+        [Column("ShelfId"), Key, DatabaseGenerated(DatabaseGeneratedOption.Identity), Required]
+        public int ShelfId { get; init; }
         
         [Column("Name"), Required]
         public string Name { get; init; }
         
-        [Column("Price"), Required]
-        public decimal Price { get; init; }
-        
-        [Column("IsValid"), Required]
-        public bool IsValid { get; init; }
-        
-        [ForeignKey("MenuId"), Required]
-        public Guid MenuId { get; init; }
-        public Menu Menu { get; init; }
-        
         [ForeignKey("StorageTemperatureId"), Required]
         public int StorageTemperatureId { get; init; }
         public StorageTemperature StorageTemperature { get; init; }
+        
+        [Column("Capacity"), Required]
+        public int Capacity { get; init; }
         
         [Column("CreationTimestamp"), Required]
         public DateTime CreationTimestamp { get; init; }

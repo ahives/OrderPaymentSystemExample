@@ -10,6 +10,13 @@ namespace Restaurant.Core
     public class CourierDispatchConsumer :
         IConsumer<DispatchCourier>
     {
+        readonly DatabaseContext _db;
+
+        public CourierDispatchConsumer(DatabaseContext db)
+        {
+            _db = db;
+        }
+
         public async Task Consume(ConsumeContext<DispatchCourier> context)
         {
             try
@@ -34,13 +41,11 @@ namespace Restaurant.Core
 
         async Task UpdateOrder(DispatchCourier data)
         {
-            await using DatabaseContext db = new DatabaseContext();
-
-            Order order = await db.Orders.FindAsync(data.OrderId);
+            Order order = await _db.Orders.FindAsync(data.OrderId);
 
             if (order != null)
             {
-                Courier courier = await db.Couriers
+                Courier courier = await _db.Couriers
                     .FirstOrDefaultAsync(x => x.RegionId == order.RegionId && x.IsAvailable);;
 
                 if (courier == null)
@@ -52,7 +57,7 @@ namespace Restaurant.Core
 
                 courier.IsAvailable = false;
                 
-                await db.SaveChangesAsync();
+                await _db.SaveChangesAsync();
             }
         }
     }

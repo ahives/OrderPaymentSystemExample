@@ -8,7 +8,7 @@ namespace Data.Core.Model
     public class Region
     {
         [Column("RegionId"), Key, DatabaseGenerated(DatabaseGeneratedOption.Identity), Required]
-        public long RegionId { get; init; }
+        public int RegionId { get; init; }
         
         [Column("Name"), Required]
         public string Name { get; init; }

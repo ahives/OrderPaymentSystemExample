@@ -8,7 +8,7 @@ namespace Data.Core.Model
     public class StorageTemperature
     {
         [Column("StorageTemperatureId"), Key, DatabaseGenerated(DatabaseGeneratedOption.Identity), Required]
-        public long StorageTemperatureId { get; init; }
+        public int StorageTemperatureId { get; init; }
         
         [Column("Name"), Required]
         public string Name { get; init; }

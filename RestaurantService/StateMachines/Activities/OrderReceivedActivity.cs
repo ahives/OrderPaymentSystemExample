@@ -14,10 +14,12 @@ namespace RestaurantService.StateMachines.Activities
         Activity<RestaurantState, OrderReceived>
     {
         readonly ConsumeContext _context;
+        readonly DatabaseContext _db;
 
-        public OrderReceivedActivity(ConsumeContext context)
+        public OrderReceivedActivity(ConsumeContext context, DatabaseContext db)
         {
             _context = context;
+            _db = db;
         }
 
         public void Probe(ProbeContext context)
@@ -61,9 +63,7 @@ namespace RestaurantService.StateMachines.Activities
 
         async Task SaveOrder(OrderReceived data)
         {
-            await using DatabaseContext db = new DatabaseContext();
-
-            await db.Orders.AddAsync(new Order
+            await _db.Orders.AddAsync(new Order
             {
                 OrderId = data.OrderId,
                 CustomerId = data.CustomerId,
@@ -74,7 +74,7 @@ namespace RestaurantService.StateMachines.Activities
 
             for (int i = 0; i < data.Items.Length; i++)
             {
-                await db.OrderItems.AddAsync(new OrderItem
+                await _db.OrderItems.AddAsync(new OrderItem
                 {
                     OrderItemId = NewId.NextGuid(),
                     OrderId = data.OrderId,
@@ -83,7 +83,7 @@ namespace RestaurantService.StateMachines.Activities
                 });
             }
 
-            await db.SaveChangesAsync();
+            await _db.SaveChangesAsync();
         }
     }
 }

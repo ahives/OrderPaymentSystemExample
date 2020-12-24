@@ -4,6 +4,7 @@ namespace Data.Core.Model
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
+    [Table("OrderItems")]
     public class OrderItem
     {
         [Column("OrderItemId"), Key, Required]
@@ -16,6 +17,13 @@ namespace Data.Core.Model
         [ForeignKey("MenuItemId"), Required]
         public Guid MenuItemId { get; init; }
         public MenuItem MenuItem { get; init; }
+        
+        [Column("IsExpired"), Required]
+        public bool IsExpired { get; set; }
+        
+        [ForeignKey("ShelfId"), Required]
+        public int ShelfId { get; set; }
+        public Shelf Shelf { get; set; }
         
         [Column("SpecialInstructions")]
         public string SpecialInstructions { get; set; }
