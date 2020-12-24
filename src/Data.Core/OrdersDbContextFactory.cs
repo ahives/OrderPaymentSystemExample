@@ -4,19 +4,19 @@ namespace Data.Core
     using Microsoft.EntityFrameworkCore.Design;
     using Microsoft.Extensions.Configuration;
 
-    public class DatabaseContextFactory :
-        IDesignTimeDbContextFactory<DatabaseContext>
+    public class OrdersDbContextFactory :
+        IDesignTimeDbContextFactory<OrdersDbContext>
     {
-        public DatabaseContext CreateDbContext(string[] args)
+        public OrdersDbContext CreateDbContext(string[] args)
         {
             IConfiguration configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
                 .Build();
 
-            var optionsBuilder = new DbContextOptionsBuilder<DatabaseContext>()
+            var optionsBuilder = new DbContextOptionsBuilder<OrdersDbContext>()
                 .UseNpgsql(configuration.GetConnectionString("OrdersConnection"));
 
-            return new DatabaseContext(optionsBuilder.Options);
+            return new OrdersDbContext(optionsBuilder.Options);
         }
     }
 }

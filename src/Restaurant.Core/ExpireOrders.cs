@@ -8,10 +8,10 @@ namespace Restaurant.Core
     public class ExpireOrders :
         IExpireOrders
     {
-        readonly DatabaseContext _db;
+        readonly OrdersDbContext _db;
         readonly IOrderExpiryCalculator _orderExpiryCalculator;
 
-        public ExpireOrders(DatabaseContext db, IOrderExpiryCalculator orderExpiryCalculator)
+        public ExpireOrders(OrdersDbContext db, IOrderExpiryCalculator orderExpiryCalculator)
         {
             _db = db;
             _orderExpiryCalculator = orderExpiryCalculator;

@@ -15,9 +15,9 @@ namespace RestaurantService.StateMachines.Activities
         Activity<RestaurantState, OrderReceived>
     {
         readonly ConsumeContext _context;
-        readonly DatabaseContext _db;
+        readonly OrdersDbContext _db;
 
-        public OrderReceivedActivity(ConsumeContext context, DatabaseContext db)
+        public OrderReceivedActivity(ConsumeContext context, OrdersDbContext db)
         {
             _context = context;
             _db = db;

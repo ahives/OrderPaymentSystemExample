@@ -10,9 +10,9 @@ namespace CurationService.Consumers
     public class OrderCurationConsumer :
         IConsumer<CurateOrders>
     {
-        readonly DatabaseContext _db;
+        readonly OrdersDbContext _db;
 
-        public OrderCurationConsumer(DatabaseContext db)
+        public OrderCurationConsumer(OrdersDbContext db)
         {
             _db = db;
         }

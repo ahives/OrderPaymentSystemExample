@@ -6,7 +6,7 @@ namespace Data.Core
     using Microsoft.EntityFrameworkCore;
     using Model;
 
-    public class DatabaseContext :
+    public class OrdersDbContext :
         DbContext
     {
         public DbSet<Menu> Menus { get; set; }
@@ -18,16 +18,9 @@ namespace Data.Core
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Shelf> Shelves { get; set; }
 
-        public DatabaseContext(DbContextOptions options)
+        public OrdersDbContext(DbContextOptions options)
             : base(options)
         {
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseNpgsql("Host=localhost;Database=Orders;Username=admin;Password=");
-
-            optionsBuilder.EnableSensitiveDataLogging();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

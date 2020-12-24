@@ -43,7 +43,7 @@
                     services.AddSingleton<IExpireOrders, ExpireOrders>();
                     services.AddSingleton<IOrderExpiryCalculator, OrderExpiryCalculator>();
                     
-                    services.AddDbContext<DatabaseContext>(x =>
+                    services.AddDbContext<OrdersDbContext>(x =>
                         x.UseNpgsql(host.Configuration.GetConnectionString("OrdersConnection")));
                     
                     services.AddMassTransit(x =>

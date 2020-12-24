@@ -44,10 +44,12 @@
                         
                         x.UsingRabbitMq((context, cfg) =>
                         {
-                            cfg.ReceiveEndpoint("order-validator", e =>
-                            {
-                                e.ConfigureConsumer<OrderValidationConsumer>(context);
-                            });
+                            cfg.ConfigureEndpoints(context);
+                            // cfg.UseMessageRetry(x => x.SetRetryPolicy(new RetryPolicyFactory()));
+                            // cfg.ReceiveEndpoint("order-validator", e =>
+                            // {
+                            //     e.ConfigureConsumer<OrderValidationConsumer>(context);
+                            // });
                         });
 
                         x.AddSagaStateMachine<RestaurantStateMachine, RestaurantState>()

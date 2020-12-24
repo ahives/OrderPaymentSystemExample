@@ -10,9 +10,9 @@ namespace Restaurant.Core
     public class CourierDispatchConsumer :
         IConsumer<DispatchCourier>
     {
-        readonly DatabaseContext _db;
+        readonly OrdersDbContext _db;
 
-        public CourierDispatchConsumer(DatabaseContext db)
+        public CourierDispatchConsumer(OrdersDbContext db)
         {
             _db = db;
         }
