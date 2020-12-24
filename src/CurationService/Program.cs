@@ -1,6 +1,8 @@
 ﻿namespace CurationService
 {
     using System;
+    using System.IO;
+    using System.Reflection;
     using System.Threading.Tasks;
     using Consumers;
     using Data.Core;
@@ -26,8 +28,10 @@
             Host.CreateDefaultBuilder(args)
                 .UseSerilog((host, log) =>
                 {
+                    string? appBin = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                    
                     log.MinimumLevel.Information();
-                    log.WriteTo.File($"log/log-{DateTime.Now:yyMMdd_HHmmss}.txt");
+                    log.WriteTo.File($"{appBin}/log/log-{DateTime.Now:yyMMdd_HHmmss}.txt");
                     log.WriteTo.Console(LogEventLevel.Information);
                 })
                 .ConfigureAppConfiguration((host, builder) =>

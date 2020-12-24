@@ -1,12 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Restaurant.Core", "Restaurant.Core\Restaurant.Core.csproj", "{15B9B1DB-D533-42C2-9D30-9B3510C4AC90}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Restaurant.Core", "src\Restaurant.Core\Restaurant.Core.csproj", "{15B9B1DB-D533-42C2-9D30-9B3510C4AC90}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestaurantService", "RestaurantService\RestaurantService.csproj", "{CEE49915-04B9-4810-910B-40D0A35DB630}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestaurantService", "src\RestaurantService\RestaurantService.csproj", "{CEE49915-04B9-4810-910B-40D0A35DB630}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data.Core", "Data.Core\Data.Core.csproj", "{4DD244BD-E70E-4F22-87B3-A74C966678D7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data.Core", "src\Data.Core\Data.Core.csproj", "{4DD244BD-E70E-4F22-87B3-A74C966678D7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CurationService", "CurationService\CurationService.csproj", "{9A2DDE0A-80A9-4DC1-B9CF-01C4F6C7EF06}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CurationService", "src\CurationService\CurationService.csproj", "{9A2DDE0A-80A9-4DC1-B9CF-01C4F6C7EF06}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -5,7 +5,7 @@ namespace RestaurantService.StateMachines.Activities
     using Automatonymous;
     using Data.Core;
     using Data.Core.Model;
-    using DatabaseDeploy;
+    using Data.Core;
     using GreenPipes;
     using MassTransit;
     using Restaurant.Core;
