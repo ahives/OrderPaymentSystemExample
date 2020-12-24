@@ -10,6 +10,8 @@ namespace RestaurantService.StateMachines.Sagas
         protected override void Configure(EntityTypeBuilder<RestaurantState> entity, ModelBuilder model)
         {
             entity.Property(x => x.CurrentState);
+            entity.Property(x => x.OrderId);
+            entity.Property(x => x.RestaurantId);
             entity.Property(x => x.Timestamp);
         }
     }
