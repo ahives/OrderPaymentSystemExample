@@ -1,4 +1,4 @@
-namespace Restaurant.Core
+namespace Data.Core
 {
     public static class OrderStatus
     {

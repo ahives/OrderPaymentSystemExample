@@ -14,7 +14,7 @@ namespace Data.Core.Model
         public int Status { get; set; }
         
         [Column("StatusTimestamp"), Required]
-        public DateTime? StatusTimestamp { get; set; }
+        public DateTime StatusTimestamp { get; set; }
         
         [ForeignKey("CustomerId"), Required]
         public Guid CustomerId { get; init; }

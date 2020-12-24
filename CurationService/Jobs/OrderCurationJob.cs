@@ -1,18 +1,17 @@
-namespace CurationService
+namespace CurationService.Jobs
 {
     using System;
     using System.Threading.Tasks;
     using MassTransit;
     using Quartz;
-    using Restaurant.Core;
     using Restaurant.Core.Events;
 
-    public class ShelfMonitorJob :
+    public class OrderCurationJob :
         IJob
     {
         readonly IPublishEndpoint _endpoint;
 
-        public ShelfMonitorJob(IPublishEndpoint endpoint)
+        public OrderCurationJob(IPublishEndpoint endpoint)
         {
             _endpoint = endpoint;
         }

@@ -194,6 +194,9 @@ namespace Data.Core
                 MenuItemId = menuItemIds[0],
                 IsExpired = true,
                 ShelfId = 1,
+                Status = OrderItemStatus.New,
+                StatusTimestamp = DateTime.Now,
+                TimePrepared = DateTime.Now,
                 CreationTimestamp = DateTime.Now
             };
             yield return new OrderItem
@@ -203,6 +206,9 @@ namespace Data.Core
                 MenuItemId = menuItemIds[1],
                 IsExpired = false,
                 ShelfId = 1,
+                Status = OrderItemStatus.Prepared,
+                StatusTimestamp = DateTime.Now,
+                TimePrepared = DateTime.Now,
                 CreationTimestamp = DateTime.Now
             };
             yield return new OrderItem
@@ -212,6 +218,9 @@ namespace Data.Core
                 MenuItemId = menuItemIds[2],
                 IsExpired = true,
                 ShelfId = 1,
+                Status = OrderItemStatus.Prepared,
+                StatusTimestamp = DateTime.Now,
+                TimePrepared = DateTime.Now,
                 CreationTimestamp = DateTime.Now
             };
         }

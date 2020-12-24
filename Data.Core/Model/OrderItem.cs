@@ -25,6 +25,15 @@ namespace Data.Core.Model
         public int ShelfId { get; set; }
         public Shelf Shelf { get; set; }
         
+        [Column("Status"), Required]
+        public int Status { get; set; }
+        
+        [Column("StatusTimestamp"), Required]
+        public DateTime StatusTimestamp { get; set; }
+        
+        [Column("TimePrepared"), Required]
+        public DateTime TimePrepared { get; set; }
+        
         [Column("SpecialInstructions")]
         public string SpecialInstructions { get; set; }
         
