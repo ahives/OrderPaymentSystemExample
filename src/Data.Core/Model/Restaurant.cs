@@ -13,17 +13,17 @@ namespace Data.Core.Model
         [Column("Name"), Required]
         public string Name { get; init; }
         
-        [Column("Street")]
+        [Column("Street"), Required]
         public string Street { get; init; }
         
-        [Column("City")]
+        [Column("City"), Required]
         public string City { get; init; }
         
-        [Column("RegionId")]
-        public long RegionId { get; init; }
+        [ForeignKey("RegionId"), Required]
+        public int RegionId { get; init; }
         public Region Region { get; init; }
         
-        [Column("ZipCode")]
+        [Column("ZipCode"), Required]
         public string ZipCode { get; init; }
         
         [Column("CreationTimestamp")]

@@ -1,7 +1,6 @@
 ﻿namespace Data.Core.Model
 {
     using System;
-    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
@@ -13,8 +12,6 @@
         
         [Column("Name"), Required]
         public string Name { get; init; }
-        
-        public List<MenuItem> Items { get; init; }
         
         [ForeignKey("RestaurantId"), Required]
         public Guid RestaurantId { get; init; }

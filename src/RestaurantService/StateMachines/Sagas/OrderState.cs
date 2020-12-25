@@ -1,4 +1,4 @@
-namespace Restaurant.Core.StateMachines.Sagas
+namespace RestaurantService.StateMachines.Sagas
 {
     using System;
     using Automatonymous;
@@ -15,5 +15,7 @@ namespace Restaurant.Core.StateMachines.Sagas
         public Guid? CourierId { get; set; }
         
         public DateTime Timestamp { get; set; }
+        
+        public byte[] RowVersion { get; set; }
     }
 }

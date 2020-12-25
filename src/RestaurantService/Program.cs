@@ -9,7 +9,9 @@
     using MassTransit.EntityFrameworkCoreIntegration;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
+    using Restaurant.Core;
     using Serilog;
     using Serilog.Events;
     using StateMachines;
@@ -19,7 +21,7 @@
     {
         static async Task Main(string[] args)
         {
-            await CreateHostBuilder(args).Build().RunAsync();
+            await CreateHostBuilder(args).RunConsoleAsync();
         }
 
         static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -38,6 +40,15 @@
                 })
                 .ConfigureServices((host, services) =>
                 {
+                    services.AddSingleton<IOrderValidator, OrderValidator>();
+                    
+                    services.AddDbContext<RestaurantServiceDbContext>(builder =>
+                        builder.UseNpgsql(host.Configuration.GetConnectionString("OrdersConnection"), m =>
+                        {
+                            m.MigrationsAssembly(Assembly.GetExecutingAssembly().GetName().Name);
+                            m.MigrationsHistoryTable($"__{nameof(RestaurantServiceDbContext)}");
+                        }));
+                    
                     services.AddMassTransit(x =>
                     {
                         x.AddConsumer<OrderValidationConsumer>();
@@ -64,15 +75,16 @@
                             .EntityFrameworkRepository(r =>
                             {
                                 r.ConcurrencyMode = ConcurrencyMode.Optimistic;
-                                
-                                r.AddDbContext<DbContext, RestaurantStateDbContext>((provider, builder) =>
-                                {
-                                    builder.UseNpgsql(host.Configuration.GetConnectionString("OrdersConnection"), m =>
-                                    {
-                                        m.MigrationsAssembly(Assembly.GetExecutingAssembly().GetName().Name);
-                                        m.MigrationsHistoryTable($"__{nameof(RestaurantStateDbContext)}");
-                                    });
-                                });
+                                r.LockStatementProvider = new PostgresLockStatementProvider();
+                                r.ExistingDbContext<RestaurantServiceDbContext>();
+                            });
+
+                        x.AddSagaStateMachine<OrderStateMachine, OrderState>()
+                            .EntityFrameworkRepository(r =>
+                            {
+                                r.ConcurrencyMode = ConcurrencyMode.Optimistic;
+                                r.LockStatementProvider = new PostgresLockStatementProvider();
+                                r.ExistingDbContext<RestaurantServiceDbContext>();
                             });
                     });
 

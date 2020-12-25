@@ -21,7 +21,7 @@
     {
         static async Task Main(string[] args)
         {
-            await CreateHostBuilder(args).Build().RunAsync();
+            await CreateHostBuilder(args).RunConsoleAsync();
         }
 
         static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -70,12 +70,12 @@
                             {
                                 r.ConcurrencyMode = ConcurrencyMode.Optimistic;
                                 
-                                r.AddDbContext<DbContext, CourierStateDbContext>((provider, builder) =>
+                                r.AddDbContext<DbContext, CourierServiceDbContext>((provider, builder) =>
                                 {
                                     builder.UseNpgsql(host.Configuration.GetConnectionString("OrdersConnection"), m =>
                                     {
                                         m.MigrationsAssembly(Assembly.GetExecutingAssembly().GetName().Name);
-                                        m.MigrationsHistoryTable($"__{nameof(CourierStateDbContext)}");
+                                        m.MigrationsHistoryTable($"__{nameof(CourierServiceDbContext)}");
                                     });
                                 });
                             });

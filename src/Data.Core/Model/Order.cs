@@ -31,7 +31,7 @@ namespace Data.Core.Model
         public string City { get; init; }
         
         [ForeignKey("RegionId"), Required]
-        public long RegionId { get; init; }
+        public int RegionId { get; init; }
         public Region Region { get; init; }
         
         [Column("ZipCode"), Required]

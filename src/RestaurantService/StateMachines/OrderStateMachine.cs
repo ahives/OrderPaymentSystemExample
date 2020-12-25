@@ -1,6 +1,7 @@
-namespace Restaurant.Core.StateMachines
+namespace RestaurantService.StateMachines
 {
     using Automatonymous;
+    using Restaurant.Core;
     using Sagas;
 
     public class OrderStateMachine :

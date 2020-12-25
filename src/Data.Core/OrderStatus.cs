@@ -6,6 +6,6 @@ namespace Data.Core
         
         public static int BeingPrepared = 1;
         
-        public static int Delivered = 5;
+        public static int Delivered = 2;
     }
 }

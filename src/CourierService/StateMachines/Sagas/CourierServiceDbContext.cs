@@ -5,10 +5,10 @@ namespace CourierService.StateMachines.Sagas
     using MassTransit.EntityFrameworkCoreIntegration.Mappings;
     using Microsoft.EntityFrameworkCore;
 
-    public class CourierStateDbContext :
+    public class CourierServiceDbContext :
         SagaDbContext
     {
-        public CourierStateDbContext(DbContextOptions options)
+        public CourierServiceDbContext(DbContextOptions options)
             : base(options)
         {
         }

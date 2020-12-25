@@ -1,11 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <RootNamespace>Data.Core</RootNamespace>
         <TargetFramework>net5.0</TargetFramework>
-        <RootNamespace>DatabaseDeploy</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="Bogus" Version="32.0.2" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.1">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
