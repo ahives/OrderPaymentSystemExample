@@ -5,10 +5,12 @@
     using System.Reflection;
     using System.Threading.Tasks;
     using Consumers;
+    using Data.Core;
     using MassTransit;
     using MassTransit.EntityFrameworkCoreIntegration;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Serilog;
     using Serilog.Events;
@@ -38,6 +40,9 @@
                 })
                 .ConfigureServices((host, services) =>
                 {
+                    services.AddDbContext<OrdersDbContext>(x =>
+                        x.UseNpgsql(host.Configuration.GetConnectionString("OrdersConnection")));
+                    
                     services.AddMassTransit(x =>
                     {
                         x.AddConsumer<CourierDispatchConsumer>();
@@ -63,7 +68,7 @@
                         x.AddSagaStateMachine<CourierStateMachine, CourierState>()
                             .EntityFrameworkRepository(r =>
                             {
-                                r.ConcurrencyMode = ConcurrencyMode.Pessimistic;
+                                r.ConcurrencyMode = ConcurrencyMode.Optimistic;
                                 
                                 r.AddDbContext<DbContext, CourierStateDbContext>((provider, builder) =>
                                 {

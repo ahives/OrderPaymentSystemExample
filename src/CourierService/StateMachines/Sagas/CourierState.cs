@@ -17,5 +17,7 @@ namespace CourierService.StateMachines.Sagas
         public Guid OrderId { get; set; }
         
         public DateTime Timestamp { get; set; }
+        
+        public byte[] RowVersion { get; set; }
     }
 }

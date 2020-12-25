@@ -14,6 +14,7 @@ namespace CourierService.StateMachines.Sagas
             entity.Property(x => x.OrderId);
             entity.Property(x => x.RestaurantId);
             entity.Property(x => x.Timestamp);
+            entity.Property(x => x.RowVersion).IsRowVersion();
         }
     }
 }
