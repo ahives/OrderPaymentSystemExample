@@ -42,14 +42,22 @@
                     {
                         x.AddConsumer<OrderValidationConsumer>();
                         
+                        x.SetKebabCaseEndpointNameFormatter();
+                        
                         x.UsingRabbitMq((context, cfg) =>
                         {
+                            string vhost = host.Configuration
+                                .GetSection("Application")
+                                .GetValue<string>("VirtualHost");
+                            
+                            cfg.Host("localhost", vhost, h =>
+                            {
+                                h.Username("guest");
+                                h.Password("guest");
+                            });
+                            
                             cfg.ConfigureEndpoints(context);
                             // cfg.UseMessageRetry(x => x.SetRetryPolicy(new RetryPolicyFactory()));
-                            // cfg.ReceiveEndpoint("order-validator", e =>
-                            // {
-                            //     e.ConfigureConsumer<OrderValidationConsumer>(context);
-                            // });
                         });
 
                         x.AddSagaStateMachine<RestaurantStateMachine, RestaurantState>()
