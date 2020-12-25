@@ -1,4 +1,4 @@
-namespace Restaurant.Core
+namespace CourierService.Consumers
 {
     using System;
     using System.Threading.Tasks;
@@ -6,6 +6,7 @@ namespace Restaurant.Core
     using Data.Core.Model;
     using MassTransit;
     using Microsoft.EntityFrameworkCore;
+    using Restaurant.Core;
 
     public class CourierDispatchConsumer :
         IConsumer<DispatchCourier>

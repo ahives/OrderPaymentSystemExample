@@ -63,7 +63,7 @@
                     
                     services.AddQuartz(q =>
                     {
-                        q.UseJobFactory<KitchenMonitorJobFactory>(x =>
+                        q.UseJobFactory<KitchenJobFactory>(x =>
                         {
                             x.CreateScope = true;
                             x.AllowDefaultConstructor = true;

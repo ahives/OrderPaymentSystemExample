@@ -1,4 +1,4 @@
-namespace Restaurant.Core.StateMachines.Sagas
+namespace CourierService.StateMachines.Sagas
 {
     using System;
     using Automatonymous;

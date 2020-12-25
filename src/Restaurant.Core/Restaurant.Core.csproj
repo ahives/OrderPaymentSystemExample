@@ -14,7 +14,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="StateMachines\Activities" />
+      <Folder Include="Consumers" />
     </ItemGroup>
 
 </Project>

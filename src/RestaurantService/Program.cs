@@ -78,6 +78,5 @@
 
                     services.AddMassTransitHostedService();
                 });
-
     }
 }

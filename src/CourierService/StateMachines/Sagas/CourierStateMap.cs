@@ -1,4 +1,4 @@
-namespace Restaurant.Core.StateMachines.Sagas
+namespace CourierService.StateMachines.Sagas
 {
     using MassTransit.EntityFrameworkCoreIntegration.Mappings;
     using Microsoft.EntityFrameworkCore;
@@ -11,6 +11,8 @@ namespace Restaurant.Core.StateMachines.Sagas
         {
             entity.Property(x => x.CurrentState);
             entity.Property(x => x.CustomerId);
+            entity.Property(x => x.OrderId);
+            entity.Property(x => x.RestaurantId);
             entity.Property(x => x.Timestamp);
         }
     }

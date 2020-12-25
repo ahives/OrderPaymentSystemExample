@@ -6,13 +6,13 @@ namespace CurationService.Jobs
     using Quartz.Spi;
     using Restaurant.Core;
 
-    public class KitchenMonitorJobFactory :
+    public class KitchenJobFactory :
         IJobFactory
     {
         readonly IPublishEndpoint _endpoint;
         readonly IExpireOrders _expireOrders;
 
-        public KitchenMonitorJobFactory(IPublishEndpoint endpoint, IExpireOrders expireOrders)
+        public KitchenJobFactory(IPublishEndpoint endpoint, IExpireOrders expireOrders)
         {
             _endpoint = endpoint;
             _expireOrders = expireOrders;
