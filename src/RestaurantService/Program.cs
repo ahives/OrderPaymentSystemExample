@@ -63,7 +63,7 @@
                         x.AddSagaStateMachine<RestaurantStateMachine, RestaurantState>()
                             .EntityFrameworkRepository(r =>
                             {
-                                r.ConcurrencyMode = ConcurrencyMode.Pessimistic;
+                                r.ConcurrencyMode = ConcurrencyMode.Optimistic;
                                 
                                 r.AddDbContext<DbContext, RestaurantStateDbContext>((provider, builder) =>
                                 {

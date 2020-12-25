@@ -15,5 +15,7 @@ namespace RestaurantService.StateMachines.Sagas
         public Guid RestaurantId { get; set; }
         
         public DateTime Timestamp { get; set; }
+        
+        public byte[] RowVersion { get; set; }
     }
 }
