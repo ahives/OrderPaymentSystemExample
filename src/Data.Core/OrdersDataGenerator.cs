@@ -85,8 +85,8 @@ namespace Data.Core
             _firstNames = new []{"Albert", "Christy", "Jose", "Stephen", "Michael", "Sarah", "Mia"};
             _lastNames = new []{"Jones", "Lacey", "Jordan", "Curry", "Wiseman", "Chavez", "Williams"};
             _restaurants = new []{"Breakfast & Stuff", "All Day", "Dinner & Things", "Groovy Smoothie", "Big Al's", "Lunch R Us"};
-            _menuNames = new []{ "Breakfast", "Lunch", "Dinner", "Brunch", "Desert" };
-            _temperatures = new []{ "Hot", "Cold", "Frozen", "Warm", "Overflow" };
+            _menuNames = new []{"Breakfast", "Lunch", "Dinner", "Brunch", "Desert"};
+            _temperatures = new []{"Hot", "Cold", "Frozen", "Warm", "Overflow"};
             _regionNames = new []{"California", "New York", "Georgia", "Washington", "Oregon", "Texas"};
             
             Regions = GetRegionFaker().Generate(3);
@@ -212,8 +212,6 @@ namespace Data.Core
         
         Faker<MenuItem> GetMenuItemFaker()
         {
-            int menuItemId = 1;
-
             var faker = new Faker<MenuItem>()
                 .StrictMode(true)
                 .Ignore(x => x.Menu)
@@ -231,8 +229,6 @@ namespace Data.Core
         
         Faker<Menu> GetMenuFaker()
         {
-            int menuItemId = 1;
-
             var faker = new Faker<Menu>()
                 .StrictMode(true)
                 .Ignore(x => x.Restaurant)

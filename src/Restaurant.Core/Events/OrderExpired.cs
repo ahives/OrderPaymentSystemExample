@@ -2,7 +2,7 @@ namespace Restaurant.Core
 {
     using System;
 
-    public record OrderCanceled
+    public record OrderExpired
     {
         public Guid OrderId { get; init; }
         

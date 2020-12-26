@@ -12,7 +12,8 @@ namespace CourierService.StateMachines
             InstanceState(x => x.CurrentState, Dispatched, Confirmed, PickedUp, Delivered);
             
             Initially(When(CourierDispatched)
-                .TransitionTo(Dispatched));
+                .TransitionTo(Dispatched),
+                Ignore(OrderCanceled));
             
             During(Dispatched,
                 When(CourierConfirmed)
@@ -24,7 +25,13 @@ namespace CourierService.StateMachines
             
             During(PickedUp,
                 When(CourierDeliveredOrder)
-                .TransitionTo(Delivered));
+                .TransitionTo(Delivered),
+                Ignore(OrderCanceled),
+                Ignore(OrderExpired));
+            
+            During(Delivered,
+                Ignore(OrderExpired),
+                Ignore(OrderCanceled));
             
             Event(() => CourierDispatched,
                 x => x.CorrelateById(cxt => cxt.Message.OrderId));
@@ -33,6 +40,10 @@ namespace CourierService.StateMachines
             Event(() => CourierDeliveredOrder,
                 x => x.CorrelateById(cxt => cxt.Message.OrderId));
             Event(() => CourierConfirmed,
+                x => x.CorrelateById(cxt => cxt.Message.OrderId));
+            Event(() => OrderCanceled,
+                x => x.CorrelateById(cxt => cxt.Message.OrderId));
+            Event(() => OrderExpired,
                 x => x.CorrelateById(cxt => cxt.Message.OrderId));
         }
         
@@ -45,5 +56,7 @@ namespace CourierService.StateMachines
         public Event<OrderPickedUpByCourier> OrderPickedUpByCourier { get; }
         public Event<CourierDeliveredOrder> CourierDeliveredOrder { get; }
         public Event<CourierConfirmed> CourierConfirmed { get; }
+        public Event<OrderCanceled> OrderCanceled { get; }
+        public Event<OrderExpired> OrderExpired { get; }
     }
 }
