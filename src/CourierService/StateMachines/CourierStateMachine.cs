@@ -11,9 +11,9 @@ namespace CourierService.StateMachines
         public CourierStateMachine()
         {
             InstanceState(x => x.CurrentState, Dispatched, ConfirmedDispatch, OrderPickedUp, Delivered, Recalled);
-            
+
             Initially(When(CourierDispatched)
-                .TransitionTo(Dispatched),
+                    .TransitionTo(Dispatched),
                 Ignore(OrderCanceled));
 
             During(Dispatched,
@@ -34,14 +34,14 @@ namespace CourierService.StateMachines
                     .Activity(x => x.OfType<OrderCanceledActivity>())
                     .TransitionTo(Recalled),
                 Ignore(CourierDispatched));
-            
+
             During(OrderPickedUp,
                 When(CourierDeliveredOrder)
-                .TransitionTo(Delivered),
+                    .TransitionTo(Delivered),
                 Ignore(OrderCanceled),
                 Ignore(OrderExpired),
                 Ignore(CourierDispatched));
-            
+
             During(Delivered,
                 Ignore(OrderExpired),
                 Ignore(OrderCanceled),
