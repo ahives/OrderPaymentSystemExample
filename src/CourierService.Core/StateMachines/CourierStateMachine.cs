@@ -1,4 +1,4 @@
-namespace CourierService.StateMachines
+namespace CourierService.Core.StateMachines
 {
     using Activities;
     using Automatonymous;

@@ -1,4 +1,4 @@
-namespace CourierService.StateMachines.Sagas
+namespace CourierService.Core.StateMachines.Sagas
 {
     using System.Collections.Generic;
     using MassTransit.EntityFrameworkCoreIntegration;

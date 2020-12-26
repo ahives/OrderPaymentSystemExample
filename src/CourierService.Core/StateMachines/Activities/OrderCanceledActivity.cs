@@ -1,4 +1,4 @@
-namespace CourierService.StateMachines.Activities
+namespace CourierService.Core.StateMachines.Activities
 {
     using System;
     using System.Threading.Tasks;
@@ -8,12 +8,12 @@ namespace CourierService.StateMachines.Activities
     using Restaurant.Core;
     using Sagas;
 
-    public class OrderExpiredActivity :
-        Activity<CourierState, OrderExpired>
+    public class OrderCanceledActivity :
+        Activity<CourierState, OrderCanceled>
     {
         readonly ConsumeContext _context;
 
-        public OrderExpiredActivity(ConsumeContext context)
+        public OrderCanceledActivity(ConsumeContext context)
         {
             _context = context;
         }
@@ -28,8 +28,8 @@ namespace CourierService.StateMachines.Activities
             throw new NotImplementedException();
         }
 
-        public async Task Execute(BehaviorContext<CourierState, OrderExpired> context,
-            Behavior<CourierState, OrderExpired> next)
+        public async Task Execute(BehaviorContext<CourierState, OrderCanceled> context,
+            Behavior<CourierState, OrderCanceled> next)
         {
             await _context.Publish<CourierRecalled>(new
             {
@@ -41,6 +41,6 @@ namespace CourierService.StateMachines.Activities
             });
         }
 
-        public async Task Faulted<TException>(BehaviorExceptionContext<CourierState, OrderExpired, TException> context, Behavior<CourierState, OrderExpired> next) where TException : Exception => throw new NotImplementedException();
+        public async Task Faulted<TException>(BehaviorExceptionContext<CourierState, OrderCanceled, TException> context, Behavior<CourierState, OrderCanceled> next) where TException : Exception => throw new NotImplementedException();
     }
 }

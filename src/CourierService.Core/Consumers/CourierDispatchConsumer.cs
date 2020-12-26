@@ -1,4 +1,4 @@
-namespace CourierService.Consumers
+namespace CourierService.Core.Consumers
 {
     using System;
     using System.Threading.Tasks;

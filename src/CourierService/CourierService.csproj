@@ -32,6 +32,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\CourierService.Core\CourierService.Core.csproj" />
       <ProjectReference Include="..\Restaurant.Core\Restaurant.Core.csproj" />
     </ItemGroup>
 

@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CurationService", "src\Cura
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourierService", "src\CourierService\CourierService.csproj", "{BE9D9E57-FB18-4BBD-949B-1AAC9F949738}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourierService.Core", "src\CourierService.Core\CourierService.Core.csproj", "{96116C04-6D7C-47DE-AA2D-6F8B53B836FF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{BE9D9E57-FB18-4BBD-949B-1AAC9F949738}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BE9D9E57-FB18-4BBD-949B-1AAC9F949738}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BE9D9E57-FB18-4BBD-949B-1AAC9F949738}.Release|Any CPU.Build.0 = Release|Any CPU
+		{96116C04-6D7C-47DE-AA2D-6F8B53B836FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96116C04-6D7C-47DE-AA2D-6F8B53B836FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96116C04-6D7C-47DE-AA2D-6F8B53B836FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96116C04-6D7C-47DE-AA2D-6F8B53B836FF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

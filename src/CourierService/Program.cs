@@ -4,7 +4,9 @@
     using System.IO;
     using System.Reflection;
     using System.Threading.Tasks;
-    using Consumers;
+    using Core.Consumers;
+    using Core.StateMachines;
+    using Core.StateMachines.Sagas;
     using Data.Core;
     using MassTransit;
     using MassTransit.EntityFrameworkCoreIntegration;
@@ -14,8 +16,6 @@
     using Microsoft.Extensions.Hosting;
     using Serilog;
     using Serilog.Events;
-    using StateMachines;
-    using StateMachines.Sagas;
 
     class Program
     {
