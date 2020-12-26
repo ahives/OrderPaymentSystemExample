@@ -1,8 +1,8 @@
-namespace Restaurant.Core
+namespace Services.Core.Events
 {
     using System;
 
-    public record PreparedOrder
+    public record CourierConfirmed
     {
         public Guid CourierId { get; init; }
         

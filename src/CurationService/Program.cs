@@ -13,9 +13,9 @@
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Configuration;
     using Quartz;
-    using Restaurant.Core;
     using Serilog;
     using Serilog.Events;
+    using Services.Core;
 
     class Program
     {

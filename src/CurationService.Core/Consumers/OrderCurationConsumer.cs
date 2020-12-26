@@ -4,8 +4,8 @@ namespace CurationService.Core.Consumers
     using System.Threading.Tasks;
     using Data.Core;
     using MassTransit;
-    using Restaurant.Core.Events;
     using Serilog;
+    using Services.Core.Events;
 
     public class OrderCurationConsumer :
         IConsumer<CurateOrders>

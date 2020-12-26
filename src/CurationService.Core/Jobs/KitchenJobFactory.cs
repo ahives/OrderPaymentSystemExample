@@ -4,7 +4,7 @@ namespace CurationService.Core.Jobs
     using MassTransit;
     using Quartz;
     using Quartz.Spi;
-    using Restaurant.Core;
+    using Services.Core;
 
     public class KitchenJobFactory :
         IJobFactory

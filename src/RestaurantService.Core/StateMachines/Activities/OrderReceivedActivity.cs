@@ -7,8 +7,8 @@ namespace RestaurantService.Core.StateMachines.Activities
     using Data.Core.Model;
     using GreenPipes;
     using MassTransit;
-    using Restaurant.Core;
     using Sagas;
+    using Services.Core.Events;
 
     public class OrderReceivedActivity :
         Activity<RestaurantState, OrderReceived>

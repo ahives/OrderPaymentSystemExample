@@ -1,8 +1,8 @@
 namespace RestaurantService.Core.StateMachines
 {
     using Automatonymous;
-    using Restaurant.Core;
     using Sagas;
+    using Services.Core.Events;
 
     public class OrderStateMachine :
         MassTransitStateMachine<OrderState>

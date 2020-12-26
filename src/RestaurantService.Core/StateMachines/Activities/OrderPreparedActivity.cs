@@ -4,8 +4,8 @@ namespace RestaurantService.Core.StateMachines.Activities
     using System.Threading.Tasks;
     using Automatonymous;
     using GreenPipes;
-    using Restaurant.Core;
     using Sagas;
+    using Services.Core.Events;
 
     public class OrderPreparedActivity :
         Activity<RestaurantState, OrderPrepared>

@@ -1,5 +1,7 @@
-namespace Restaurant.Core
+namespace Services.Core
 {
+    using Events;
+
     public class OrderValidator :
         IOrderValidator
     {

@@ -5,8 +5,8 @@ namespace CourierService.Core.StateMachines.Activities
     using Automatonymous;
     using GreenPipes;
     using MassTransit;
-    using Restaurant.Core;
     using Sagas;
+    using Services.Core.Events;
 
     public class OrderExpiredActivity :
         Activity<CourierState, OrderExpired>

@@ -1,9 +1,11 @@
-namespace Restaurant.Core
+namespace Services.Core.Events
 {
     using System;
 
-    public record OrderExpired
+    public record OrderDiscarded
     {
+        public Guid CourierId { get; init; }
+        
         public Guid OrderId { get; init; }
         
         public Guid CustomerId { get; init; }

@@ -6,7 +6,7 @@ namespace CourierService.Core.Consumers
     using Data.Core.Model;
     using MassTransit;
     using Microsoft.EntityFrameworkCore;
-    using Restaurant.Core;
+    using Services.Core.Events;
 
     public class CourierDispatchConsumer :
         IConsumer<DispatchCourier>

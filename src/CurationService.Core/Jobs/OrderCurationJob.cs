@@ -4,7 +4,7 @@ namespace CurationService.Core.Jobs
     using System.Threading.Tasks;
     using MassTransit;
     using Quartz;
-    using Restaurant.Core.Events;
+    using Services.Core.Events;
 
     public class OrderCurationJob :
         IJob

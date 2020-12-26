@@ -13,4 +13,8 @@
       <ProjectReference Include="..\Data.Core\Data.Core.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Events" />
+    </ItemGroup>
+
 </Project>

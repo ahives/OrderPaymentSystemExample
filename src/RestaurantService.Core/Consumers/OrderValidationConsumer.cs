@@ -3,7 +3,8 @@ namespace RestaurantService.Core.Consumers
     using System;
     using System.Threading.Tasks;
     using MassTransit;
-    using Restaurant.Core;
+    using Services.Core;
+    using Services.Core.Events;
 
     public class OrderValidationConsumer :
         IConsumer<ValidateOrder>

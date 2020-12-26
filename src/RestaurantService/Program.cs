@@ -13,9 +13,9 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
-    using Restaurant.Core;
     using Serilog;
     using Serilog.Events;
+    using Services.Core;
 
     class Program
     {

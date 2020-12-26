@@ -1,4 +1,4 @@
-namespace Restaurant.Core
+namespace Services.Core
 {
     public interface IOrderExpiryCalculator
     {

@@ -1,7 +1,5 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Restaurant.Core", "src\Restaurant.Core\Restaurant.Core.csproj", "{15B9B1DB-D533-42C2-9D30-9B3510C4AC90}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestaurantService", "src\RestaurantService\RestaurantService.csproj", "{CEE49915-04B9-4810-910B-40D0A35DB630}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data.Core", "src\Data.Core\Data.Core.csproj", "{4DD244BD-E70E-4F22-87B3-A74C966678D7}"
@@ -16,16 +14,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CurationService.Core", "src
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestaurantService.Core", "src\RestaurantService.Core\RestaurantService.Core.csproj", "{9421FAF5-03E3-40F2-BCB2-2C1272DA2319}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services.Core", "src\Services.Core\Services.Core.csproj", "{910C5877-983D-4639-8D54-37D8F75C182C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{15B9B1DB-D533-42C2-9D30-9B3510C4AC90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{15B9B1DB-D533-42C2-9D30-9B3510C4AC90}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{15B9B1DB-D533-42C2-9D30-9B3510C4AC90}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{15B9B1DB-D533-42C2-9D30-9B3510C4AC90}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CEE49915-04B9-4810-910B-40D0A35DB630}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CEE49915-04B9-4810-910B-40D0A35DB630}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CEE49915-04B9-4810-910B-40D0A35DB630}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -54,5 +50,9 @@ Global
 		{9421FAF5-03E3-40F2-BCB2-2C1272DA2319}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9421FAF5-03E3-40F2-BCB2-2C1272DA2319}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9421FAF5-03E3-40F2-BCB2-2C1272DA2319}.Release|Any CPU.Build.0 = Release|Any CPU
+		{910C5877-983D-4639-8D54-37D8F75C182C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{910C5877-983D-4639-8D54-37D8F75C182C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{910C5877-983D-4639-8D54-37D8F75C182C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{910C5877-983D-4639-8D54-37D8F75C182C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

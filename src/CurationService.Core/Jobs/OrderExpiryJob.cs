@@ -3,8 +3,8 @@ namespace CurationService.Core.Jobs
     using System.Threading.Tasks;
     using MassTransit;
     using Quartz;
-    using Restaurant.Core;
     using Serilog;
+    using Services.Core;
 
     public class OrderExpiryJob :
         IJob

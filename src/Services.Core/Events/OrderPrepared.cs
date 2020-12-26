@@ -1,8 +1,8 @@
-namespace Restaurant.Core
+namespace Services.Core.Events
 {
     using System;
 
-    public record KitchenMalfunction
+    public record OrderPrepared
     {
         public Guid OrderId { get; init; }
         

@@ -1,8 +1,8 @@
-namespace Restaurant.Core
+namespace Services.Core.Events
 {
     using System;
 
-    public record CourierRecalled
+    public record CourierDispatched
     {
         public Guid CourierId { get; init; }
         
@@ -11,6 +11,10 @@ namespace Restaurant.Core
         public Guid CustomerId { get; init; }
         
         public Guid RestaurantId { get; init; }
+        
+        public int ShelfId { get; init; }
+        
+        public Guid[] Items { get; init; }
         
         public DateTime Timestamp { get; init; }
     }

@@ -1,8 +1,8 @@
-namespace Restaurant.Core
+namespace Services.Core.Events
 {
     using System;
 
-    public record ValidateOrder
+    public record OrderValidated
     {
         public Guid OrderId { get; init; }
         

@@ -2,8 +2,8 @@ namespace CourierService.Core.StateMachines
 {
     using Activities;
     using Automatonymous;
-    using Restaurant.Core;
     using Sagas;
+    using Services.Core.Events;
 
     public class CourierStateMachine :
         MassTransitStateMachine<CourierState>

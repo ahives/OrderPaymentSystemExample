@@ -1,16 +1,14 @@
-namespace Restaurant.Core
+﻿namespace Services.Core.Events
 {
     using System;
 
-    public record OrderValidated
+    public record SubmitOrder
     {
         public Guid OrderId { get; init; }
         
         public Guid CustomerId { get; init; }
         
-        public Guid RestaurantId { get; init; }
-        
-        public Guid[] Items { get; init; }
+        public Guid MenuItemId { get; init; }
         
         public DateTime Timestamp { get; init; }
     }

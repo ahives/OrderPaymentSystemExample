@@ -1,4 +1,4 @@
-namespace Restaurant.Core
+namespace Services.Core
 {
     using System;
     using System.Collections.Generic;
