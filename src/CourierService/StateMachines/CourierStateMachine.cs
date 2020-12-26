@@ -1,5 +1,6 @@
 namespace CourierService.StateMachines
 {
+    using Activities;
     using Automatonymous;
     using Restaurant.Core;
     using Sagas;
@@ -9,21 +10,30 @@ namespace CourierService.StateMachines
     {
         public CourierStateMachine()
         {
-            InstanceState(x => x.CurrentState, Dispatched, Confirmed, PickedUp, Delivered);
+            InstanceState(x => x.CurrentState, Dispatched, ConfirmedDispatch, OrderPickedUp, Delivered, Recalled);
             
             Initially(When(CourierDispatched)
                 .TransitionTo(Dispatched),
                 Ignore(OrderCanceled));
-            
+
             During(Dispatched,
                 When(CourierConfirmed)
-                .TransitionTo(Confirmed));
-            
-            During(Confirmed,
+                    .TransitionTo(ConfirmedDispatch),
+                When(OrderExpired)
+                    .Activity(x => x.OfType<OrderExpiredActivity>())
+                    .TransitionTo(Recalled),
+                When(OrderCanceled)
+                    .Activity(x => x.OfType<OrderCanceledActivity>())
+                    .TransitionTo(Recalled));
+
+            During(ConfirmedDispatch,
                 When(OrderPickedUpByCourier)
-                .TransitionTo(PickedUp));
+                    .TransitionTo(OrderPickedUp),
+                When(OrderCanceled)
+                    .Activity(x => x.OfType<OrderCanceledActivity>())
+                    .TransitionTo(Recalled));
             
-            During(PickedUp,
+            During(OrderPickedUp,
                 When(CourierDeliveredOrder)
                 .TransitionTo(Delivered),
                 Ignore(OrderCanceled),
@@ -48,9 +58,10 @@ namespace CourierService.StateMachines
         }
         
         public State Dispatched { get; }
-        public State Confirmed { get; }
-        public State PickedUp { get; }
+        public State ConfirmedDispatch { get; }
+        public State OrderPickedUp { get; }
         public State Delivered { get; }
+        public State Recalled { get; }
         
         public Event<CourierDispatched> CourierDispatched { get; }
         public Event<OrderPickedUpByCourier> OrderPickedUpByCourier { get; }

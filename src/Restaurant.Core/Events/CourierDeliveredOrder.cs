@@ -10,7 +10,7 @@ namespace Restaurant.Core
         
         public Guid CustomerId { get; init; }
         
-        public int RestaurantId { get; init; }
+        public Guid RestaurantId { get; init; }
         
         public Guid[] Items { get; init; }
         

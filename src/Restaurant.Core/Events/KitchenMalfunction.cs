@@ -2,7 +2,7 @@ namespace Restaurant.Core
 {
     using System;
 
-    public class KitchenMalfunction
+    public record KitchenMalfunction
     {
         public Guid OrderId { get; init; }
         

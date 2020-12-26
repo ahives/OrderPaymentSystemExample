@@ -2,7 +2,7 @@ namespace Restaurant.Core
 {
     using System;
 
-    public class StorageCapacityExceeded
+    public record StorageCapacityExceeded
     {
         public Guid OrderId { get; init; }
         

@@ -8,7 +8,7 @@
         
         public Guid CustomerId { get; init; }
         
-        public long MenuItemId { get; init; }
+        public Guid MenuItemId { get; init; }
         
         public DateTime Timestamp { get; init; }
     }

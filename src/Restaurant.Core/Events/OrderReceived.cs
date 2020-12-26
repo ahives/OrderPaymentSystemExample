@@ -2,7 +2,7 @@ namespace Restaurant.Core
 {
     using System;
 
-    public class OrderReceived
+    public record OrderReceived
     {
         public Guid OrderId { get; init; }
         
