@@ -24,24 +24,28 @@ namespace CourierService.StateMachines
                     .TransitionTo(Recalled),
                 When(OrderCanceled)
                     .Activity(x => x.OfType<OrderCanceledActivity>())
-                    .TransitionTo(Recalled));
+                    .TransitionTo(Recalled),
+                Ignore(CourierDispatched));
 
             During(ConfirmedDispatch,
                 When(OrderPickedUpByCourier)
                     .TransitionTo(OrderPickedUp),
                 When(OrderCanceled)
                     .Activity(x => x.OfType<OrderCanceledActivity>())
-                    .TransitionTo(Recalled));
+                    .TransitionTo(Recalled),
+                Ignore(CourierDispatched));
             
             During(OrderPickedUp,
                 When(CourierDeliveredOrder)
                 .TransitionTo(Delivered),
                 Ignore(OrderCanceled),
-                Ignore(OrderExpired));
+                Ignore(OrderExpired),
+                Ignore(CourierDispatched));
             
             During(Delivered,
                 Ignore(OrderExpired),
-                Ignore(OrderCanceled));
+                Ignore(OrderCanceled),
+                Ignore(CourierDispatched));
             
             Event(() => CourierDispatched,
                 x => x.CorrelateById(cxt => cxt.Message.OrderId));
