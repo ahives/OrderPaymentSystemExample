@@ -1,4 +1,4 @@
-namespace CurationService.Consumers
+namespace CurationService.Core.Consumers
 {
     using System.Linq;
     using System.Threading.Tasks;

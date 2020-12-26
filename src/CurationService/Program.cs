@@ -4,9 +4,9 @@
     using System.IO;
     using System.Reflection;
     using System.Threading.Tasks;
-    using Consumers;
+    using Core.Consumers;
+    using Core.Jobs;
     using Data.Core;
-    using Jobs;
     using MassTransit;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;

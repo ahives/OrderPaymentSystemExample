@@ -1,4 +1,4 @@
-namespace CurationService.Jobs
+namespace CurationService.Core.Jobs
 {
     using System.Threading.Tasks;
     using MassTransit;
