@@ -1,4 +1,4 @@
-namespace RestaurantService.StateMachines.Sagas
+namespace RestaurantService.Core.StateMachines.Sagas
 {
     using System.Collections.Generic;
     using MassTransit.EntityFrameworkCoreIntegration;

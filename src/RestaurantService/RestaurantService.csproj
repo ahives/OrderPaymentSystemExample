@@ -29,6 +29,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Restaurant.Core\Restaurant.Core.csproj" />
+      <ProjectReference Include="..\RestaurantService.Core\RestaurantService.Core.csproj" />
     </ItemGroup>
 
     <ItemGroup>

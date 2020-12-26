@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="MassTransit" Version="7.0.7" />
+      <PackageReference Include="MassTransit.EntityFrameworkCore" Version="7.0.7" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.1" />
+      <PackageReference Include="NewId" Version="3.0.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Data.Core\Data.Core.csproj" />
+      <ProjectReference Include="..\Restaurant.Core\Restaurant.Core.csproj" />
+    </ItemGroup>
+
+</Project>

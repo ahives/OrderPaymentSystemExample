@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourierService.Core", "src\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CurationService.Core", "src\CurationService.Core\CurationService.Core.csproj", "{75DEC277-1D98-45C6-8129-FF6B06D82384}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestaurantService.Core", "src\RestaurantService.Core\RestaurantService.Core.csproj", "{9421FAF5-03E3-40F2-BCB2-2C1272DA2319}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,5 +50,9 @@ Global
 		{75DEC277-1D98-45C6-8129-FF6B06D82384}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75DEC277-1D98-45C6-8129-FF6B06D82384}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75DEC277-1D98-45C6-8129-FF6B06D82384}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9421FAF5-03E3-40F2-BCB2-2C1272DA2319}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9421FAF5-03E3-40F2-BCB2-2C1272DA2319}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9421FAF5-03E3-40F2-BCB2-2C1272DA2319}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9421FAF5-03E3-40F2-BCB2-2C1272DA2319}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

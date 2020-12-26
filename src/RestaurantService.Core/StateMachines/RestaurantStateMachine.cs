@@ -1,4 +1,4 @@
-namespace RestaurantService.StateMachines
+namespace RestaurantService.Core.StateMachines
 {
     using Activities;
     using Automatonymous;

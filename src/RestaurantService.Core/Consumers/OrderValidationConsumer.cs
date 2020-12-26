@@ -1,4 +1,4 @@
-namespace RestaurantService.Consumers
+namespace RestaurantService.Core.Consumers
 {
     using System;
     using System.Threading.Tasks;

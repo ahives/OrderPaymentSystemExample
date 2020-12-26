@@ -1,4 +1,4 @@
-namespace RestaurantService.StateMachines.Activities
+namespace RestaurantService.Core.StateMachines.Activities
 {
     using System;
     using System.Threading.Tasks;

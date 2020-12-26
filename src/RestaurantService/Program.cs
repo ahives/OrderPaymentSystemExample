@@ -4,7 +4,9 @@
     using System.IO;
     using System.Reflection;
     using System.Threading.Tasks;
-    using Consumers;
+    using Core.Consumers;
+    using Core.StateMachines;
+    using Core.StateMachines.Sagas;
     using MassTransit;
     using MassTransit.EntityFrameworkCoreIntegration;
     using Microsoft.EntityFrameworkCore;
@@ -14,8 +16,6 @@
     using Restaurant.Core;
     using Serilog;
     using Serilog.Events;
-    using StateMachines;
-    using StateMachines.Sagas;
 
     class Program
     {
