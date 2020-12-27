@@ -14,7 +14,7 @@ namespace Data.Core
                 .Build();
 
             var optionsBuilder = new DbContextOptionsBuilder<OrdersDbContext>()
-                .UseNpgsql(configuration.GetConnectionString("OrdersConnection"));
+                .UseNpgsql(configuration.GetConnectionString("OrdersConnection"), options => options.EnableRetryOnFailure());
 
             return new OrdersDbContext(optionsBuilder.Options);
         }

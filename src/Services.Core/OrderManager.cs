@@ -1,6 +1,7 @@
 namespace Services.Core
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using Data.Core;
@@ -19,7 +20,14 @@ namespace Services.Core
             _db = db;
         }
 
-        public async Task<OperationResult> Receive(OrderReceived data)
+        // public IAsyncEnumerable<OperationResult> Expire()
+        // {
+        //     var orderItems = _db.OrderItems.Where(x => x.Status == OrderItemStatus.Prepared);
+        // }
+
+        public IAsyncEnumerable<OperationResult> Expire() => throw new NotImplementedException();
+
+        public async Task<OperationResult> Receive(OrderReceiptConfirmed data)
         {
             await _db.Orders.AddAsync(new OrderEntity
             {
@@ -27,6 +35,7 @@ namespace Services.Core
                 CustomerId = data.CustomerId,
                 RestaurantId = data.RestaurantId,
                 CourierId = null,
+                // TODO: may need to change this to data.Status
                 Status = OrderStatus.Receipt,
                 StatusTimestamp = DateTime.Now,
                 Street = data.Street,
@@ -44,7 +53,7 @@ namespace Services.Core
                     OrderId = data.OrderId,
                     MenuItemId = data.Items[i].Id,
                     SpecialInstructions = data.Items[i].SpecialInstructions,
-                    Status = OrderItemStatus.Receipt,
+                    Status = data.Items[i].Status,
                     StatusTimestamp = DateTime.Now,
                     CreationTimestamp = DateTime.Now
                 });
@@ -72,7 +81,7 @@ namespace Services.Core
                     OrderId = data.OrderId,
                     MenuItemId = data.MenuItemId,
                     SpecialInstructions = data.SpecialInstructions,
-                    Status = OrderItemStatus.Receipt,
+                    Status = data.Status,
                     StatusTimestamp = DateTime.Now,
                     CreationTimestamp = DateTime.Now
                 });

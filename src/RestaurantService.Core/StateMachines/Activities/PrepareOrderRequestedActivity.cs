@@ -1,8 +1,11 @@
 namespace RestaurantService.Core.StateMachines.Activities
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using Automatonymous;
+    using Extensions;
     using GreenPipes;
     using MassTransit;
     using Sagas;
@@ -32,6 +35,7 @@ namespace RestaurantService.Core.StateMachines.Activities
             Behavior<OrderState, PrepareOrder> next)
         {
             context.Instance.ExpectedItemCount = context.Data.Items.Length;
+            context.Instance.Items = context.Data.Items.GetExpectedOrderItems().ToList();
             
             for (int i = 0; i < context.Data.Items.Length; i++)
             {

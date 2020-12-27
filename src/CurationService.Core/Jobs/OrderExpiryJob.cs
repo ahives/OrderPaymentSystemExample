@@ -2,6 +2,7 @@ namespace CurationService.Core.Jobs
 {
     using System.Threading.Tasks;
     using MassTransit;
+    using Microsoft.Extensions.Configuration;
     using Quartz;
     using Serilog;
     using Services.Core;
@@ -10,12 +11,15 @@ namespace CurationService.Core.Jobs
         IJob
     {
         readonly IPublishEndpoint _endpoint;
-        readonly IExpireOrders _expireOrders;
 
-        public OrderExpiryJob(IPublishEndpoint endpoint, IExpireOrders expireOrders)
+        public OrderExpiryJob(IPublishEndpoint endpoint)
         {
             _endpoint = endpoint;
-            _expireOrders = expireOrders;
+            // IConfiguration configuration = new ConfigurationBuilder()
+            //     .AddJsonFile("appsettings.json")
+            //     .Build();
+            //
+            // configuration.GetSection("")
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -30,7 +34,7 @@ namespace CurationService.Core.Jobs
 
             Log.Information("Order expiry executing");
             
-            var results = _expireOrders.Expire();
+            // var results = _expireOrders.Expire();
 
             Log.Information("Order expiry executed");
         }

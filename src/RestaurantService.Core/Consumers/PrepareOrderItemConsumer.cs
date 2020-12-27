@@ -1,7 +1,6 @@
 namespace RestaurantService.Core.Consumers
 {
     using System.Threading.Tasks;
-    using Data.Core;
     using MassTransit;
     using Services.Core;
     using Services.Core.Events;
@@ -25,7 +24,8 @@ namespace RestaurantService.Core.Consumers
                 await context.Publish<OrderItemPrepared>(new
                 {
                     context.Message.OrderId,
-                    ShelfId = result.Shelf.ShelfId
+                    context.Message.OrderItemId,
+                    result.Shelf.ShelfId
                 });
             }
             else

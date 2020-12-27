@@ -5,8 +5,7 @@ namespace Services.Core
     using System.Linq;
     using Data.Core;
 
-    public class ExpireOrders :
-        IExpireOrders
+    public class ExpireOrders
     {
         readonly OrdersDbContext _db;
         readonly IOrderExpiryCalculator _orderExpiryCalculator;
@@ -41,6 +40,5 @@ namespace Services.Core
         //
         //     await _db.SaveChangesAsync();
         // }
-        public IAsyncEnumerable<Result> Expire() => throw new NotImplementedException();
     }
 }

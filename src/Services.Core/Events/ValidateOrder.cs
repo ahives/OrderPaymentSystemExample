@@ -2,6 +2,7 @@ namespace Services.Core.Events
 {
     using System;
     using MassTransit;
+    using Model;
 
     public record ValidateOrder
     {
@@ -19,7 +20,7 @@ namespace Services.Core.Events
         
         public Guid RestaurantId { get; init; }
         
-        public Guid[] Items { get; init; }
+        public Item[] Items { get; init; }
         
         public DateTime Timestamp { get; }
     }

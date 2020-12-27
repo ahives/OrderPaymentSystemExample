@@ -1,6 +1,7 @@
 namespace RestaurantService.Core.StateMachines.Sagas
 {
     using System;
+    using System.Collections.Generic;
     using Automatonymous;
 
     public class OrderState :
@@ -17,6 +18,8 @@ namespace RestaurantService.Core.StateMachines.Sagas
         public int ExpectedItemCount { get; set; }
         
         public int ItemCount { get; set; }
+        
+        public List<ExpectedOrderItem> Items { get; set; }
         
         public DateTime Timestamp { get; set; }
         

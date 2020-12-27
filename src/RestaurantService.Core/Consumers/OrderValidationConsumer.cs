@@ -1,6 +1,5 @@
 namespace RestaurantService.Core.Consumers
 {
-    using System;
     using System.Threading.Tasks;
     using MassTransit;
     using Services.Core;
@@ -27,8 +26,7 @@ namespace RestaurantService.Core.Consumers
                     context.Message.OrderId,
                     context.Message.CustomerId,
                     context.Message.RestaurantId,
-                    context.Message.Items,
-                    Timestamp = DateTime.Now
+                    context.Message.Items
                 });
             }
             else
@@ -38,8 +36,7 @@ namespace RestaurantService.Core.Consumers
                     context.Message.OrderId,
                     context.Message.CustomerId,
                     context.Message.RestaurantId,
-                    context.Message.Items,
-                    Timestamp = DateTime.Now
+                    context.Message.Items
                 });
             }
         }

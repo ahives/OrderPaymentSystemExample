@@ -7,6 +7,7 @@
     using Core.Consumers;
     using Core.StateMachines;
     using Core.StateMachines.Sagas;
+    using Data.Core;
     using MassTransit;
     using MassTransit.EntityFrameworkCoreIntegration;
     using Microsoft.EntityFrameworkCore;
@@ -34,15 +35,19 @@
                     log.WriteTo.File($"{appBin}/log/log-{DateTime.Now:yyMMdd_HHmmss}.txt");
                     log.WriteTo.Console(LogEventLevel.Information);
                 })
-                .ConfigureAppConfiguration((host, builder) =>
+                .ConfigureAppConfiguration((host, config) =>
                 {
-                    builder.AddJsonFile("appsettings.json", false);
+                    config.Sources.Clear();
+                    config.AddJsonFile("appsettings.json", false);
                 })
                 .ConfigureServices((host, services) =>
                 {
                     services.AddSingleton<IOrderValidator, OrderValidator>();
                     services.AddSingleton<IOrderManager, OrderManager>();
                     
+                    services.AddDbContext<OrdersDbContext>(x =>
+                        x.UseNpgsql(host.Configuration.GetConnectionString("OrdersConnection")));
+
                     services.AddDbContext<RestaurantServiceDbContext>(builder =>
                         builder.UseNpgsql(host.Configuration.GetConnectionString("OrdersConnection"), m =>
                         {
@@ -53,7 +58,8 @@
                     services.AddMassTransit(x =>
                     {
                         x.AddConsumer<OrderValidationConsumer>();
-                        
+                        x.AddConsumer<PrepareOrderItemConsumer>();
+                        x.AddConsumer<ReceiptConfirmationConsumer>();
                         x.SetKebabCaseEndpointNameFormatter();
                         
                         x.UsingRabbitMq((context, cfg) =>

@@ -6,6 +6,8 @@ namespace Services.Core.Model
     {
         public Guid Id { get; init; }
         
+        public int Status { get; init; }
+        
         public string SpecialInstructions { get; init; }
     }
 }

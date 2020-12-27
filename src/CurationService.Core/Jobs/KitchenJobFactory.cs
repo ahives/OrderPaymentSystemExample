@@ -10,12 +10,10 @@ namespace CurationService.Core.Jobs
         IJobFactory
     {
         readonly IPublishEndpoint _endpoint;
-        readonly IExpireOrders _expireOrders;
 
-        public KitchenJobFactory(IPublishEndpoint endpoint, IExpireOrders expireOrders)
+        public KitchenJobFactory(IPublishEndpoint endpoint)
         {
             _endpoint = endpoint;
-            _expireOrders = expireOrders;
         }
 
         public IJob NewJob(TriggerFiredBundle bundle, IScheduler scheduler)
@@ -24,7 +22,7 @@ namespace CurationService.Core.Jobs
                 return new OrderCurationJob(_endpoint);
             
             if (bundle.JobDetail.JobType == typeof(OrderExpiryJob))
-                return new OrderExpiryJob(_endpoint, _expireOrders);
+                return new OrderExpiryJob(_endpoint);
 
             throw new Exception();
         }

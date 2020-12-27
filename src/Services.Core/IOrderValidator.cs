@@ -4,6 +4,6 @@ namespace Services.Core
 
     public interface IOrderValidator
     {
-        bool Validate(ValidateOrder message);
+        bool Validate(ValidateOrder data);
     }
 }

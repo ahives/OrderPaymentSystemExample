@@ -33,7 +33,8 @@ namespace RestaurantService.Core.StateMachines.Activities
         {
             await _context.Send<PrepareOrderItem>(new
             {
-                context.Data.OrderId
+                context.Data.OrderId,
+                context.Data
             });
         }
 

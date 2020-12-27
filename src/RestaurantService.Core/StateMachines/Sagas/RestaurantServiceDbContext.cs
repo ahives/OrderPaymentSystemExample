@@ -19,6 +19,7 @@ namespace RestaurantService.Core.StateMachines.Sagas
             {
                 yield return new RestaurantStateMap();
                 yield return new OrderStateMap();
+                yield return new ExpectedOrderItemMap();
                 yield return new OrderItemStateMap();
             }
         }

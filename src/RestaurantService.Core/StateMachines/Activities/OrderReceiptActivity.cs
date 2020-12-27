@@ -13,12 +13,10 @@ namespace RestaurantService.Core.StateMachines.Activities
         Activity<RestaurantState, OrderReceived>
     {
         readonly ConsumeContext _context;
-        readonly IOrderManager _manager;
 
-        public OrderReceiptActivity(ConsumeContext context, IOrderManager manager)
+        public OrderReceiptActivity(ConsumeContext context)
         {
             _context = context;
-            _manager = manager;
         }
 
         public void Probe(ProbeContext context)
@@ -34,25 +32,23 @@ namespace RestaurantService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<RestaurantState, OrderReceived> context,
             Behavior<RestaurantState, OrderReceived> next)
         {
-            OperationResult result = await _manager.Receive(context.Data);
-            
-            if (result.OperationPerformed == OperationType.Receipt)
+            await _context.Publish<OrderReceiptConfirmed>(new
             {
-                await _context.Send<ValidateOrder>(new
-                {
-                    context.Data.OrderId,
-                    context.Data.CustomerId,
-                    context.Data.Items,
-                    context.Data.RestaurantId,
-                    Timestamp = DateTimeOffset.Now
-                });
-            }
-
+                context.Data.OrderId,
+                context.Data.CustomerId,
+                context.Data.RestaurantId,
+                context.Data.Items
+            });
+            
             await next.Execute(context).ConfigureAwait(false);
         }
 
-        public async Task Faulted<TException>(BehaviorExceptionContext<RestaurantState, OrderReceived, TException> context,
+        public async Task Faulted<TException>(
+            BehaviorExceptionContext<RestaurantState, OrderReceived, TException> context,
             Behavior<RestaurantState, OrderReceived> next)
-            where TException : Exception => await next.Faulted(context);
+            where TException : Exception
+        {
+            await next.Faulted(context);
+        }
     }
 }

@@ -34,9 +34,10 @@
                     log.WriteTo.File($"{appBin}/log/log-{DateTime.Now:yyMMdd_HHmmss}.txt");
                     log.WriteTo.Console(LogEventLevel.Debug);
                 })
-                .ConfigureAppConfiguration((host, builder) =>
+                .ConfigureAppConfiguration((host, config) =>
                 {
-                    builder.AddJsonFile("appsettings.json", false);
+                    config.Sources.Clear();
+                    config.AddJsonFile("appsettings.json", false);
                 })
                 .ConfigureServices((host, services) =>
                 {
