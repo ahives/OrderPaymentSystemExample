@@ -21,15 +21,15 @@ namespace Data.Core
         readonly string[] _temperatures;
         readonly string[] _regionNames;
         
-        public List<Region> Regions { get; }
-        public List<StorageTemperature> Temperatures { get; }
-        public List<Restaurant> Restaurants { get; }
-        public List<Menu> Menus { get; }
-        public List<MenuItem> MenuItems { get; }
-        public List<Customer> Customers { get; }
-        public List<Shelf> Shelves { get; }
-        public List<Courier> Couriers { get; }
-        public List<Order> Orders { get; }
+        public List<RegionEntity> Regions { get; }
+        public List<StorageTemperatureEntity> Temperatures { get; }
+        public List<RestaurantEntity> Restaurants { get; }
+        public List<MenuEntity> Menus { get; }
+        public List<MenuItemEntity> MenuItems { get; }
+        public List<CustomerEntity> Customers { get; }
+        public List<ShelfEntity> Shelves { get; }
+        public List<CourierEntity> Couriers { get; }
+        public List<OrderEntity> Orders { get; }
         public List<OrderItem> OrderItems { get; }
 
         public OrdersDataGenerator()
@@ -101,9 +101,9 @@ namespace Data.Core
             OrderItems = GetOrderItemFaker().Generate(20);
         }
         
-        Faker<Courier> GetCourierFaker()
+        Faker<CourierEntity> GetCourierFaker()
         {
-            var faker = new Faker<Courier>()
+            var faker = new Faker<CourierEntity>()
                 .StrictMode(true)
                 .Ignore(x => x.Region)
                 .RuleFor(x => x.CourierId, s => NewId.NextGuid())
@@ -119,9 +119,9 @@ namespace Data.Core
             return faker;
         }
 
-        Faker<Order> GetOrderFaker()
+        Faker<OrderEntity> GetOrderFaker()
         {
-            var faker = new Faker<Order>()
+            var faker = new Faker<OrderEntity>()
                 .StrictMode(true)
                 .Ignore(x => x.Region)
                 .Ignore(x => x.Customer)
@@ -142,9 +142,9 @@ namespace Data.Core
             return faker;
         }
 
-        Faker<Customer> GetCustomers()
+        Faker<CustomerEntity> GetCustomers()
         {
-            var faker = new Faker<Customer>()
+            var faker = new Faker<CustomerEntity>()
                 .StrictMode(true)
                 .Ignore(x => x.Region)
                 .RuleFor(x => x.CustomerId, s => NewId.NextGuid())
@@ -159,9 +159,9 @@ namespace Data.Core
             return faker;
         }
 
-        Faker<Restaurant> GetRestaurantFaker()
+        Faker<RestaurantEntity> GetRestaurantFaker()
         {
-            var faker = new Faker<Restaurant>()
+            var faker = new Faker<RestaurantEntity>()
                 .StrictMode(true)
                 .Ignore(x => x.Region)
                 .RuleFor(x => x.RestaurantId, s => NewId.NextGuid())
@@ -195,11 +195,11 @@ namespace Data.Core
             return faker;
         }
 
-        Faker<Shelf> GetShelfFaker()
+        Faker<ShelfEntity> GetShelfFaker()
         {
             int shelfId = 1;
             
-            var faker = new Faker<Shelf>()
+            var faker = new Faker<ShelfEntity>()
                 .StrictMode(true)
                 .Ignore(x => x.StorageTemperature)
                 .RuleFor(x => x.ShelfId, s => shelfId++)
@@ -211,9 +211,9 @@ namespace Data.Core
             return faker;
         }
         
-        Faker<MenuItem> GetMenuItemFaker()
+        Faker<MenuItemEntity> GetMenuItemFaker()
         {
-            var faker = new Faker<MenuItem>()
+            var faker = new Faker<MenuItemEntity>()
                 .StrictMode(true)
                 .Ignore(x => x.Menu)
                 .Ignore(x => x.StorageTemperature)
@@ -228,9 +228,9 @@ namespace Data.Core
             return faker;
         }
         
-        Faker<Menu> GetMenuFaker()
+        Faker<MenuEntity> GetMenuFaker()
         {
-            var faker = new Faker<Menu>()
+            var faker = new Faker<MenuEntity>()
                 .StrictMode(true)
                 .Ignore(x => x.Restaurant)
                 .RuleFor(x => x.MenuId, s => NewId.NextGuid())
@@ -242,12 +242,12 @@ namespace Data.Core
             return faker;
         }
 
-        Faker<StorageTemperature> GetStorageTemperatureFaker()
+        Faker<StorageTemperatureEntity> GetStorageTemperatureFaker()
         {
             int storageTemperatureId = 1;
             int i = 0;
 
-            var faker = new Faker<StorageTemperature>()
+            var faker = new Faker<StorageTemperatureEntity>()
                 .StrictMode(true)
                 .RuleFor(x => x.StorageTemperatureId, s => storageTemperatureId++)
                 .RuleFor(x => x.Name, s =>
@@ -263,12 +263,12 @@ namespace Data.Core
             return faker;
         }
 
-        Faker<Region> GetRegionFaker()
+        Faker<RegionEntity> GetRegionFaker()
         {
             int regionId = 1;
 
             int i = 0;
-            var faker = new Faker<Region>()
+            var faker = new Faker<RegionEntity>()
                 .StrictMode(true)
                 .RuleFor(x => x.RegionId, s => regionId++)
                 .RuleFor(x => x.Name, s =>

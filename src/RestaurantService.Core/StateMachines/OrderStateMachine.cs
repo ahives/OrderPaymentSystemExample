@@ -1,5 +1,6 @@
 namespace RestaurantService.Core.StateMachines
 {
+    using Activities;
     using Automatonymous;
     using Sagas;
     using Services.Core.Events;
@@ -9,32 +10,26 @@ namespace RestaurantService.Core.StateMachines
     {
         public OrderStateMachine()
         {
-            InstanceState(x => x.CurrentState, Received, Pending);
+            InstanceState(x => x.CurrentState, Pending);
 
-            // Initially(
-            //     When(OrderReceived)
-            //         .Activity(x => x.OfType<OrderReceivedActivity>())
-            //         .TransitionTo(Received),
-            //     When(OrderValidated)
-            //         .Activity(x => x.OfType<BeginOrderPrepActivity>())
-            //         .TransitionTo(Pending));
-            //
-            // During(Received,
-            //     When(OrderValidated)
-            //         .Activity(x => x.OfType<BeginOrderPrepActivity>())
-            //         .TransitionTo(Pending));
+            Initially(
+                When(PrepareOrder)
+                    .Activity(x => x.OfType<PrepareOrderRequestedActivity>())
+                    .TransitionTo(Pending));
             
-            Event(() => OrderReceived,
-                x => x.CorrelateById(cxt => cxt.Message.OrderId));
-            Event(() => OrderValidated,
+            During(Pending,
+                When(OrderItemPrepared)
+                    // .Activity(x => x.OfType<PrepareOrderRequestedActivity>())
+                    .TransitionTo(Prepared));
+            
+            Event(() => PrepareOrder,
                 x => x.CorrelateById(cxt => cxt.Message.OrderId));
         }
 
-        public State Received { get; }
-        public State Validated { get; }
         public State Pending { get; }
+        public State Prepared { get; }
 
-        public Event<OrderReceived> OrderReceived { get; private set; }
-        public Event<OrderValidated> OrderValidated { get; private set; }
+        public Event<PrepareOrder> PrepareOrder { get; private set; }
+        public Event<OrderItemPrepared> OrderItemPrepared { get; private set; }
     }
 }

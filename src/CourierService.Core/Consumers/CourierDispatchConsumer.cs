@@ -42,11 +42,11 @@ namespace CourierService.Core.Consumers
 
         async Task UpdateOrder(DispatchCourier data)
         {
-            Order order = await _db.Orders.FindAsync(data.OrderId);
+            OrderEntity order = await _db.Orders.FindAsync(data.OrderId);
 
             if (order != null)
             {
-                Courier courier = await _db.Couriers
+                CourierEntity courier = await _db.Couriers
                     .FirstOrDefaultAsync(x => x.RegionId == order.RegionId && x.IsAvailable);;
 
                 if (courier == null)

@@ -15,6 +15,8 @@ namespace Services.Core.Events
         
         public Guid OrderId { get; init; }
         
+        public int ShelfId { get; init; }
+        
         public DateTime Timestamp { get; }
     }
 }

@@ -4,11 +4,11 @@ namespace Data.Core.Model
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
-    [Table("Regions")]
-    public class Region
+    [Table("StorageTemperatures")]
+    public class StorageTemperatureEntity
     {
-        [Column("RegionId"), Key, DatabaseGenerated(DatabaseGeneratedOption.Identity), Required]
-        public int RegionId { get; init; }
+        [Column("StorageTemperatureId"), Key, DatabaseGenerated(DatabaseGeneratedOption.Identity), Required]
+        public int StorageTemperatureId { get; init; }
         
         [Column("Name"), Required]
         public string Name { get; init; }

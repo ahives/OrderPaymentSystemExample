@@ -5,7 +5,7 @@
     using System.ComponentModel.DataAnnotations.Schema;
 
     [Table("Menus")]
-    public class Menu
+    public class MenuEntity
     {
         [Column("MenuId"), Key, Required]
         public Guid MenuId { get; init; }
@@ -15,7 +15,7 @@
         
         [ForeignKey("RestaurantId"), Required]
         public Guid RestaurantId { get; init; }
-        public Restaurant Restaurant { get; init; }
+        public RestaurantEntity Restaurant { get; init; }
         
         [Column("IsActive"), Required]
         public bool IsActive { get; init; }

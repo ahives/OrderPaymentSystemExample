@@ -5,7 +5,7 @@ namespace Data.Core.Model
     using System.ComponentModel.DataAnnotations.Schema;
 
     [Table("Restaurants")]
-    public class Restaurant
+    public class RestaurantEntity
     {
         [Column("RestaurantId"), Key, Required]
         public Guid RestaurantId { get; init; }
@@ -21,7 +21,7 @@ namespace Data.Core.Model
         
         [ForeignKey("RegionId"), Required]
         public int RegionId { get; init; }
-        public Region Region { get; init; }
+        public RegionEntity Region { get; init; }
         
         [Column("ZipCode"), Required]
         public string ZipCode { get; init; }

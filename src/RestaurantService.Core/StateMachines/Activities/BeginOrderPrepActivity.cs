@@ -60,7 +60,7 @@ namespace RestaurantService.Core.StateMachines.Activities
 
         async Task UpdateOrder(OrderValidated data)
         {
-            Order order = await _db.Orders.FindAsync(data.OrderId);
+            OrderEntity order = await _db.Orders.FindAsync(data.OrderId);
 
             if (order != null)
             {

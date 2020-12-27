@@ -1,6 +1,7 @@
 namespace Services.Core
 {
     using System;
+    using Model;
 
     public record OperationResult
     {
@@ -9,6 +10,10 @@ namespace Services.Core
             Timestamp = DateTime.Now;
         }
 
+        public PreparedOrderItem OrderItem { get; init; }
+        
+        public Shelf Shelf { get; init; }
+        
         public int ChangeCount { get; init; }
         
         public OperationType OperationPerformed { get; init; }

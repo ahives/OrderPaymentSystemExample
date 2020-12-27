@@ -5,14 +5,14 @@ namespace Data.Core.Model
     using System.ComponentModel.DataAnnotations.Schema;
 
     [Table("Orders")]
-    public class Order
+    public class OrderEntity
     {
         [Column("OrderId"), Key, Required]
         public Guid OrderId { get; init; }
         
         [ForeignKey("RestaurantId"), Required]
         public Guid RestaurantId { get; init; }
-        public Restaurant Restaurant { get; init; }
+        public RestaurantEntity Restaurant { get; init; }
         
         [Column("Status"), Required]
         public int Status { get; set; }
@@ -22,11 +22,11 @@ namespace Data.Core.Model
         
         [ForeignKey("CustomerId"), Required]
         public Guid CustomerId { get; init; }
-        public Customer Customer { get; init; }
+        public CustomerEntity Customer { get; init; }
         
         [ForeignKey("CourierId")]
         public Guid? CourierId { get; set; }
-        public Courier Courier { get; set; }
+        public CourierEntity Courier { get; set; }
         
         [Column("Street"), Required]
         public string Street { get; init; }
@@ -36,7 +36,7 @@ namespace Data.Core.Model
         
         [ForeignKey("RegionId"), Required]
         public int RegionId { get; init; }
-        public Region Region { get; init; }
+        public RegionEntity Region { get; init; }
         
         [Column("ZipCode"), Required]
         public string ZipCode { get; init; }

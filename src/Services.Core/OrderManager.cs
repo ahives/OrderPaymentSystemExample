@@ -7,6 +7,7 @@ namespace Services.Core
     using Data.Core.Model;
     using Events;
     using MassTransit;
+    using Model;
 
     public class OrderManager :
         IOrderManager
@@ -20,7 +21,7 @@ namespace Services.Core
 
         public async Task<OperationResult> Receive(OrderReceived data)
         {
-            await _db.Orders.AddAsync(new Order
+            await _db.Orders.AddAsync(new OrderEntity
             {
                 OrderId = data.OrderId,
                 CustomerId = data.CustomerId,
@@ -132,7 +133,13 @@ namespace Services.Core
                     from shelf in _db.Shelves
                     where menuItem.MenuItemId == menuItemId &&
                         menuItem.StorageTemperatureId == shelf.StorageTemperatureId
-                    select shelf)
+                    select new Shelf
+                    {
+                        ShelfId = shelf.ShelfId,
+                        Name = shelf.Name,
+                        StorageTemperatureId = shelf.StorageTemperatureId,
+                        Capacity = shelf.Capacity
+                    })
                 .FirstOrDefault();
 
             return result;

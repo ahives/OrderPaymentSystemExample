@@ -5,7 +5,7 @@ namespace Data.Core.Model
     using System.ComponentModel.DataAnnotations.Schema;
 
     [Table("MenuItems")]
-    public class MenuItem
+    public class MenuItemEntity
     {
         [Column("MenuItemId"), Key, Required]
         public Guid MenuItemId { get; init; }
@@ -21,11 +21,11 @@ namespace Data.Core.Model
         
         [ForeignKey("MenuId"), Required]
         public Guid MenuId { get; init; }
-        public Menu Menu { get; init; }
+        public MenuEntity Menu { get; init; }
         
         [ForeignKey("StorageTemperatureId"), Required]
         public int StorageTemperatureId { get; init; }
-        public StorageTemperature StorageTemperature { get; init; }
+        public StorageTemperatureEntity StorageTemperature { get; init; }
         
         [Column("CreationTimestamp"), Required]
         public DateTime CreationTimestamp { get; init; }

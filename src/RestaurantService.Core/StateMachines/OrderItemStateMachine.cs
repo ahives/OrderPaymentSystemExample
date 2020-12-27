@@ -13,7 +13,7 @@ namespace RestaurantService.Core.StateMachines
             InstanceState(x => x.CurrentState, Preparing, Prepared, Discarded, Canceled, Expired, NotPrepared);
 
             Initially(When(PrepareOrderItemRequested)
-                    .Activity(x => x.OfType<PrepareOrderItemRequestActivity>())
+                .Activity(x => x.OfType<PrepareOrderItemRequestActivity>())
                 .TransitionTo(Preparing));
 
             During(Preparing,

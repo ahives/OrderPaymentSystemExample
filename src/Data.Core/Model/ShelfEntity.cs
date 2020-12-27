@@ -5,7 +5,7 @@ namespace Data.Core.Model
     using System.ComponentModel.DataAnnotations.Schema;
 
     [Table("Shelves")]
-    public class Shelf
+    public class ShelfEntity
     {
         [Column("ShelfId"), Key, DatabaseGenerated(DatabaseGeneratedOption.Identity), Required]
         public int ShelfId { get; init; }
@@ -15,7 +15,7 @@ namespace Data.Core.Model
         
         [ForeignKey("StorageTemperatureId"), Required]
         public int StorageTemperatureId { get; init; }
-        public StorageTemperature StorageTemperature { get; init; }
+        public StorageTemperatureEntity StorageTemperature { get; init; }
         
         [Column("Capacity"), Required]
         public int Capacity { get; init; }

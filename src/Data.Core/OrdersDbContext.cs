@@ -6,15 +6,15 @@ namespace Data.Core
     public class OrdersDbContext :
         DbContext
     {
-        public DbSet<Menu> Menus { get; set; }
-        public DbSet<MenuItem> MenuItems { get; set; }
-        public DbSet<Restaurant> Restaurants { get; set; }
-        public DbSet<Customer> Customers { get; set; }
-        public DbSet<Courier> Couriers { get; set; }
-        public DbSet<Order> Orders { get; set; }
+        public DbSet<MenuEntity> Menus { get; set; }
+        public DbSet<MenuItemEntity> MenuItems { get; set; }
+        public DbSet<RestaurantEntity> Restaurants { get; set; }
+        public DbSet<CustomerEntity> Customers { get; set; }
+        public DbSet<CourierEntity> Couriers { get; set; }
+        public DbSet<OrderEntity> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
-        public DbSet<Shelf> Shelves { get; set; }
-        public DbSet<StorageTemperature> Temperatures { get; set; }
+        public DbSet<ShelfEntity> Shelves { get; set; }
+        public DbSet<StorageTemperatureEntity> Temperatures { get; set; }
 
         public OrdersDbContext(DbContextOptions options)
             : base(options)
@@ -25,16 +25,16 @@ namespace Data.Core
         {
             IOrdersDataGenerator generator = new OrdersDataGenerator();
             
-            modelBuilder.Entity<Region>().HasData(generator.Regions);
-            modelBuilder.Entity<StorageTemperature>().HasData(generator.Temperatures);
-            modelBuilder.Entity<Restaurant>().HasData(generator.Restaurants);
-            modelBuilder.Entity<Menu>().HasData(generator.Menus);
-            modelBuilder.Entity<MenuItem>().HasData(generator.MenuItems);
-            modelBuilder.Entity<Customer>().HasData(generator.Customers);
-            modelBuilder.Entity<Order>().HasData(generator.Orders);
+            modelBuilder.Entity<RegionEntity>().HasData(generator.Regions);
+            modelBuilder.Entity<StorageTemperatureEntity>().HasData(generator.Temperatures);
+            modelBuilder.Entity<RestaurantEntity>().HasData(generator.Restaurants);
+            modelBuilder.Entity<MenuEntity>().HasData(generator.Menus);
+            modelBuilder.Entity<MenuItemEntity>().HasData(generator.MenuItems);
+            modelBuilder.Entity<CustomerEntity>().HasData(generator.Customers);
+            modelBuilder.Entity<OrderEntity>().HasData(generator.Orders);
             modelBuilder.Entity<OrderItem>().HasData(generator.OrderItems);
-            modelBuilder.Entity<Courier>().HasData(generator.Couriers);
-            modelBuilder.Entity<Shelf>().HasData(generator.Shelves);
+            modelBuilder.Entity<CourierEntity>().HasData(generator.Couriers);
+            modelBuilder.Entity<ShelfEntity>().HasData(generator.Shelves);
         }
     }
 }

@@ -5,23 +5,23 @@ namespace Data.Core
 
     public interface IOrdersDataGenerator
     {
-        List<Region> Regions { get; }
+        List<RegionEntity> Regions { get; }
         
-        List<StorageTemperature> Temperatures { get; }
+        List<StorageTemperatureEntity> Temperatures { get; }
         
-        List<Restaurant> Restaurants { get; }
+        List<RestaurantEntity> Restaurants { get; }
         
-        List<Menu> Menus { get; }
+        List<MenuEntity> Menus { get; }
         
-        List<MenuItem> MenuItems { get; }
+        List<MenuItemEntity> MenuItems { get; }
         
-        List<Customer> Customers { get; }
+        List<CustomerEntity> Customers { get; }
         
-        List<Shelf> Shelves { get; }
+        List<ShelfEntity> Shelves { get; }
         
-        List<Courier> Couriers { get; }
+        List<CourierEntity> Couriers { get; }
         
-        List<Order> Orders { get; }
+        List<OrderEntity> Orders { get; }
         
         List<OrderItem> OrderItems { get; }
     }

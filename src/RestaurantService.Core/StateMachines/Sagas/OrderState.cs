@@ -14,6 +14,10 @@ namespace RestaurantService.Core.StateMachines.Sagas
         
         public Guid? CourierId { get; set; }
         
+        public int ExpectedItemCount { get; set; }
+        
+        public int ItemCount { get; set; }
+        
         public DateTime Timestamp { get; set; }
         
         public byte[] RowVersion { get; set; }

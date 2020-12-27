@@ -12,15 +12,15 @@ namespace Data.Core.Model
         
         [ForeignKey("OrderId"), Required]
         public Guid OrderId { get; init; }
-        public Order Order { get; init; }
+        public OrderEntity Order { get; init; }
         
         [ForeignKey("MenuItemId"), Required]
         public Guid MenuItemId { get; init; }
-        public MenuItem MenuItem { get; init; }
+        public MenuItemEntity MenuItem { get; init; }
         
         [ForeignKey("ShelfId")]
         public int? ShelfId { get; set; }
-        public Shelf Shelf { get; set; }
+        public ShelfEntity Shelf { get; set; }
         
         [Column("Status"), Required]
         public int Status { get; set; }

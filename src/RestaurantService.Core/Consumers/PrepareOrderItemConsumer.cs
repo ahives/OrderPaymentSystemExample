@@ -24,7 +24,8 @@ namespace RestaurantService.Core.Consumers
             {
                 await context.Publish<OrderItemPrepared>(new
                 {
-                    context.Message.OrderId
+                    context.Message.OrderId,
+                    ShelfId = result.Shelf.ShelfId
                 });
             }
             else
