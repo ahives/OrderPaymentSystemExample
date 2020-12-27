@@ -34,30 +34,19 @@ namespace RestaurantService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<RestaurantState, OrderReceived> context,
             Behavior<RestaurantState, OrderReceived> next)
         {
-            OperationResult result = await _manager.Save(new OperationContext<OrderPayload>
-            {
-                Payload = new OrderPayload
-                {
-                    OrderId = context.Data.OrderId,
-                    CustomerId = context.Data.CustomerId,
-                    RestaurantId = context.Data.RestaurantId,
-                    CourierId = null,
-                    Street = context.Data.Street,
-                    City = context.Data.City,
-                    RegionId = context.Data.RegionId,
-                    ZipCode = context.Data.ZipCode,
-                    Items = context.Data.Items
-                }
-            });
+            OperationResult result = await _manager.Receive(context.Data);
             
-            await _context.Send<ValidateOrder>(new
+            if (result.OperationPerformed == OperationType.Receipt)
             {
-                context.Data.OrderId,
-                context.Data.CustomerId,
-                context.Data.Items,
-                context.Data.RestaurantId,
-                Timestamp = DateTimeOffset.Now
-            });
+                await _context.Send<ValidateOrder>(new
+                {
+                    context.Data.OrderId,
+                    context.Data.CustomerId,
+                    context.Data.Items,
+                    context.Data.RestaurantId,
+                    Timestamp = DateTimeOffset.Now
+                });
+            }
 
             await next.Execute(context).ConfigureAwait(false);
         }

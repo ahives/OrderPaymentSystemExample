@@ -2,7 +2,7 @@ namespace Data.Core
 {
     public static class OrderStatus
     {
-        public static int New = 0;
+        public static int Receipt = 0;
         
         public static int BeingPrepared = 1;
         

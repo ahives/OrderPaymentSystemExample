@@ -18,20 +18,24 @@ namespace RestaurantService.Core.Consumers
 
         public async Task Consume(ConsumeContext<PrepareOrderItem> context)
         {
-            var result = await _manager.Prepare(new OperationContext<OrderItemStatusPayload>
+            var result = await _manager.Prepare(context.Message);
+            
+            if (result.OperationPerformed == OperationType.MovedToShelf)
             {
-                Payload = new OrderItemStatusPayload
+                await context.Publish<OrderItemPrepared>(new
                 {
-                    OrderId = context.Message.OrderId,
-                    Status = OrderItemStatus.Prepared,
-                    ShelfId = 0
-                }
-            });
-
-            await context.Publish<OrderItemPrepared>(new
+                    context.Message.OrderId
+                });
+            }
+            else
             {
-                context.Message.OrderId
-            });
+                // attempt to move to an overflow shelf
+                
+                // await context.Publish<OrderItemPrepared>(new
+                // {
+                //     context.Message.OrderId
+                // });
+            }
         }
     }
 }

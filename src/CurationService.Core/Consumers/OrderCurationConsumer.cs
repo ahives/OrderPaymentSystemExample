@@ -19,7 +19,7 @@ namespace CurationService.Core.Consumers
 
         public async Task Consume(ConsumeContext<CurateOrders> context)
         {
-            var orderItems = _db.OrderItems.Where(x => x.IsExpired).ToList();
+            var orderItems = _db.OrderItems.Where(x => x.Status == OrderItemStatus.Expired).ToList();
 
             if (orderItems.Any())
             {

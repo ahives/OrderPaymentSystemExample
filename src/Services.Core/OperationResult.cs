@@ -4,19 +4,17 @@ namespace Services.Core
 
     public record OperationResult
     {
+        public OperationResult()
+        {
+            Timestamp = DateTime.Now;
+        }
+
         public int ChangeCount { get; init; }
         
         public OperationType OperationPerformed { get; init; }
         
         public bool IsSuccessful { get; init; }
         
-        public DateTime Timestamp { get; init; }
-    }
-
-    public enum OperationType
-    {
-        Save,
-        Update,
-        Delete
+        public DateTime Timestamp { get; }
     }
 }

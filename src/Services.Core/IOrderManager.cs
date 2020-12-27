@@ -1,13 +1,14 @@
 namespace Services.Core
 {
     using System.Threading.Tasks;
+    using Events;
 
     public interface IOrderManager
     {
         // IAsyncEnumerable<Result> Expire();
 
-        Task<OperationResult> Save(OperationContext<OrderPayload> context);
+        Task<OperationResult> Receive(OrderReceived data);
         
-        Task<OperationResult> Prepare(OperationContext<OrderItemStatusPayload> context);
+        Task<OperationResult> Prepare(PrepareOrderItem data);
     }
 }

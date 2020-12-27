@@ -2,7 +2,7 @@ namespace Data.Core
 {
     public static class OrderItemStatus
     {
-        public static int New = 0;
+        public static int Receipt = 0;
         
         public static int Prepared = 1;
         
@@ -14,6 +14,6 @@ namespace Data.Core
         
         public static int Canceled = 5;
         
-        public static int NptPrepared = 6;
+        public static int NotPrepared = 6;
     }
 }

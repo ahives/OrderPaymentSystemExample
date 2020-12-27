@@ -5,6 +5,7 @@ namespace Services.Core
     using System.Threading.Tasks;
     using Data.Core;
     using Data.Core.Model;
+    using Events;
     using MassTransit;
 
     public class OrderManager :
@@ -17,32 +18,32 @@ namespace Services.Core
             _db = db;
         }
 
-        public async Task<OperationResult> Save(OperationContext<OrderPayload> context)
+        public async Task<OperationResult> Receive(OrderReceived data)
         {
             await _db.Orders.AddAsync(new Order
             {
-                OrderId = context.Payload.OrderId,
-                CustomerId = context.Payload.CustomerId,
-                RestaurantId = context.Payload.RestaurantId,
+                OrderId = data.OrderId,
+                CustomerId = data.CustomerId,
+                RestaurantId = data.RestaurantId,
                 CourierId = null,
-                Status = OrderStatus.New,
+                Status = OrderStatus.Receipt,
                 StatusTimestamp = DateTime.Now,
-                Street = context.Payload.Street,
-                City = context.Payload.City,
-                RegionId = context.Payload.RegionId,
-                ZipCode = context.Payload.ZipCode,
+                Street = data.Street,
+                City = data.City,
+                RegionId = data.RegionId,
+                ZipCode = data.ZipCode,
                 CreationTimestamp = DateTime.Now
             });
 
-            for (int i = 0; i < context.Payload.Items.Length; i++)
+            for (int i = 0; i < data.Items.Length; i++)
             {
-                await _db.OrderItems.AddAsync(new OrderItem
+                var entityEntry = await _db.OrderItems.AddAsync(new OrderItem
                 {
                     OrderItemId = NewId.NextGuid(),
-                    OrderId = context.Payload.OrderId,
-                    MenuItemId = context.Payload.Items[i].Id,
-                    SpecialInstructions = context.Payload.Items[i].SpecialInstructions,
-                    Status = OrderItemStatus.New,
+                    OrderId = data.OrderId,
+                    MenuItemId = data.Items[i].Id,
+                    SpecialInstructions = data.Items[i].SpecialInstructions,
+                    Status = OrderItemStatus.Receipt,
                     StatusTimestamp = DateTime.Now,
                     CreationTimestamp = DateTime.Now
                 });
@@ -54,35 +55,69 @@ namespace Services.Core
             {
                 ChangeCount = changes,
                 IsSuccessful = changes > 0,
-                OperationPerformed = OperationType.Save,
-                Timestamp = DateTime.Now
+                OperationPerformed = OperationType.Receipt
             };
         }
 
-        public async Task<OperationResult> Prepare(OperationContext<OrderItemStatusPayload> context)
+        public async Task<OperationResult> Prepare(PrepareOrderItem data)
         {
-            var order = await _db.OrderItems.FindAsync(context.Payload.OrderId);
+            var order = await _db.OrderItems.FindAsync(data.OrderId);
 
-            if (order != null)
+            if (order == null)
             {
-                // determine if shelf is available
-                Shelf shelf = await GetShelf(order.MenuItemId);
-                bool isReady = IsReady(shelf);
-                
-                if (isReady)
+                var result = await _db.OrderItems.AddAsync(new OrderItem
                 {
-                    order.ShelfId = shelf.ShelfId;
-                    order.Status = context.Payload.Status;
-                    order.StatusTimestamp = DateTime.Now;
+                    OrderItemId = NewId.NextGuid(),
+                    OrderId = data.OrderId,
+                    MenuItemId = data.MenuItemId,
+                    SpecialInstructions = data.SpecialInstructions,
+                    Status = OrderItemStatus.Receipt,
+                    StatusTimestamp = DateTime.Now,
+                    CreationTimestamp = DateTime.Now
+                });
+
+                order = result.Entity;
+
+                if (order == null)
+                {
+                    return new OperationResult
+                    {
+                        OperationPerformed = OperationType.None,
+                        ChangeCount = 0,
+                        IsSuccessful = false
+                    };
                 }
             }
 
+            Shelf shelf = GetShelf(order.MenuItemId);
+
+            if (!IsShelfAvailable(shelf))
+            {
+                return new OperationResult
+                {
+                    OperationPerformed = OperationType.None,
+                    ChangeCount = 0,
+                    IsSuccessful = false
+                };
+            }
+
+            order.ShelfId = shelf.ShelfId;
+            order.Status = OrderItemStatus.Prepared;
+            order.StatusTimestamp = DateTime.Now;
+
+            _db.Update(order);
+
             int changes = await _db.SaveChangesAsync();
 
-            return new OperationResult();
+            return new OperationResult
+            {
+                OperationPerformed = OperationType.MovedToShelf,
+                ChangeCount = changes,
+                IsSuccessful = true
+            };
         }
 
-        bool IsReady(Shelf shelf)
+        bool IsShelfAvailable(Shelf shelf)
         {
             var orderItems = from orderItem in _db.OrderItems
                 where orderItem.Status == OrderItemStatus.Prepared && orderItem.ShelfId == shelf.ShelfId
@@ -91,7 +126,7 @@ namespace Services.Core
             return orderItems.Count() < shelf.Capacity;
         }
 
-        async Task<Shelf> GetShelf(Guid menuItemId)
+        Shelf GetShelf(Guid menuItemId)
         {
             Shelf result = (from menuItem in _db.MenuItems
                     from shelf in _db.Shelves
