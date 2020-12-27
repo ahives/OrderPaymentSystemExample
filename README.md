@@ -14,6 +14,11 @@ for pick up
 
 ### Cook
 
+Cooks are dispatched when the order has been confirmed by the restaurant to have been valid.
+
+![Order Item State Machine Diagram](OrderItemStateMachine.png)
+
+
 ### Kitchen Staff
 
 

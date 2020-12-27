@@ -8,4 +8,8 @@
       <ProjectReference Include="..\Data.Core\Data.Core.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="NewId" Version="3.0.3" />
+    </ItemGroup>
+
 </Project>

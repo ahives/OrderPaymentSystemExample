@@ -87,6 +87,14 @@
                                 r.LockStatementProvider = new PostgresLockStatementProvider();
                                 r.ExistingDbContext<RestaurantServiceDbContext>();
                             });
+
+                        x.AddSagaStateMachine<OrderItemStateMachine, OrderItemState>()
+                            .EntityFrameworkRepository(r =>
+                            {
+                                r.ConcurrencyMode = ConcurrencyMode.Optimistic;
+                                r.LockStatementProvider = new PostgresLockStatementProvider();
+                                r.ExistingDbContext<RestaurantServiceDbContext>();
+                            });
                     });
 
                     services.AddMassTransitHostedService();
