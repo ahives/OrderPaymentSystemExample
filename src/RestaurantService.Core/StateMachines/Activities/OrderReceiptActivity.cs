@@ -34,7 +34,7 @@ namespace RestaurantService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<RestaurantState, OrderReceived> context,
             Behavior<RestaurantState, OrderReceived> next)
         {
-            OperationResult result = await _manager.Save(new SaveContext<OrderPayload>
+            OperationResult result = await _manager.Save(new OperationContext<OrderPayload>
             {
                 Payload = new OrderPayload
                 {

@@ -17,29 +17,30 @@ namespace Services.Core
             _orderExpiryCalculator = orderExpiryCalculator;
         }
 
-        public async IAsyncEnumerable<Result> Expire()
-        {
-            var orders = _db.Orders
-                .Where(x => x.Status == OrderStatus.BeingPrepared);
-
-            foreach (var order in orders)
-            {
-                var orderItems = _db.OrderItems
-                    .Where(x => x.OrderId == order.OrderId && !x.IsExpired);
-
-                foreach (var orderItem in orderItems)
-                {
-                    orderItem.IsExpired = _orderExpiryCalculator.CalcExpiry(new ExpiryCriteria());
-                    
-                    yield return new Result
-                    {
-                        Id = orderItem.OrderItemId,
-                        Timestamp = DateTime.Now
-                    };
-                }
-            }
-
-            await _db.SaveChangesAsync();
-        }
+        // public async IAsyncEnumerable<Result> Expire()
+        // {
+        //     var orders = _db.Orders
+        //         .Where(x => x.Status == OrderStatus.BeingPrepared);
+        //
+        //     foreach (var order in orders)
+        //     {
+        //         var orderItems = _db.OrderItems
+        //             .Where(x => x.OrderId == order.OrderId && !x.IsExpired);
+        //
+        //         foreach (var orderItem in orderItems)
+        //         {
+        //             orderItem.IsExpired = _orderExpiryCalculator.CalcExpiry(new ExpiryCriteria());
+        //             
+        //             yield return new Result
+        //             {
+        //                 Id = orderItem.OrderItemId,
+        //                 Timestamp = DateTime.Now
+        //             };
+        //         }
+        //     }
+        //
+        //     await _db.SaveChangesAsync();
+        // }
+        public IAsyncEnumerable<Result> Expire() => throw new NotImplementedException();
     }
 }

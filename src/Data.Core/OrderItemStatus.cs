@@ -9,5 +9,11 @@ namespace Data.Core
         public static int Discarded = 2;
         
         public static int Delivered = 3;
+        
+        public static int Expired = 4;
+        
+        public static int Canceled = 5;
+        
+        public static int NptPrepared = 6;
     }
 }

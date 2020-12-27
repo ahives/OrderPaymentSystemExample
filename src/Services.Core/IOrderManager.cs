@@ -6,6 +6,8 @@ namespace Services.Core
     {
         // IAsyncEnumerable<Result> Expire();
 
-        Task<OperationResult> Save(SaveContext<OrderPayload> context);
+        Task<OperationResult> Save(OperationContext<OrderPayload> context);
+        
+        Task<OperationResult> Prepare(OperationContext<OrderItemStatusPayload> context);
     }
 }

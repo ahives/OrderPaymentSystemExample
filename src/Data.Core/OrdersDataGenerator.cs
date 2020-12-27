@@ -184,7 +184,6 @@ namespace Data.Core
                 .Ignore(x => x.Shelf)
                 .RuleFor(x => x.OrderItemId, s => NewId.NextGuid())
                 .RuleFor(x => x.Status, s => s.Random.Int(0, 3))
-                .RuleFor(x => x.IsExpired, s => s.PickRandom(true, false))
                 .RuleFor(x => x.MenuItemId, s => s.PickRandom(MenuItems.Select(m => m.MenuItemId)))
                 .RuleFor(x => x.OrderId, s => s.PickRandom(Orders.Select(m => m.OrderId)))
                 .RuleFor(x => x.ShelfId, s => s.PickRandom(Shelves.Select(m => m.ShelfId)))

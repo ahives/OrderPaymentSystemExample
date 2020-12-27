@@ -18,11 +18,8 @@ namespace Data.Core.Model
         public Guid MenuItemId { get; init; }
         public MenuItem MenuItem { get; init; }
         
-        [Column("IsExpired"), Required]
-        public bool IsExpired { get; set; }
-        
-        [ForeignKey("ShelfId"), Required]
-        public int ShelfId { get; set; }
+        [ForeignKey("ShelfId")]
+        public int? ShelfId { get; set; }
         public Shelf Shelf { get; set; }
         
         [Column("Status"), Required]
