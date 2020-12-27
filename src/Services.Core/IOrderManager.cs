@@ -1,11 +1,11 @@
 namespace Services.Core
 {
-    using System.Collections.Generic;
+    using System.Threading.Tasks;
 
     public interface IOrderManager
     {
-        IAsyncEnumerable<Result> Expire();
-        
-        
+        // IAsyncEnumerable<Result> Expire();
+
+        Task<OperationResult> Save(SaveContext<OrderPayload> context);
     }
 }

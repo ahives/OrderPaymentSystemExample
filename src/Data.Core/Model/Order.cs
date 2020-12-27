@@ -10,6 +10,10 @@ namespace Data.Core.Model
         [Column("OrderId"), Key, Required]
         public Guid OrderId { get; init; }
         
+        [ForeignKey("RestaurantId"), Required]
+        public Guid RestaurantId { get; init; }
+        public Restaurant Restaurant { get; init; }
+        
         [Column("Status"), Required]
         public int Status { get; set; }
         

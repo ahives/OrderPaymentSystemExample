@@ -14,13 +14,10 @@ namespace RestaurantService.Core.StateMachines
 
             Initially(
                 When(OrderReceived)
-                    .Activity(x => x.OfType<OrderReceivedActivity>())
+                    .Activity(x => x.OfType<OrderReceiptActivity>())
                     .TransitionTo(Received),
-                When(OrderValidated)
-                    .Activity(x => x.OfType<BeginOrderPrepActivity>())
-                    .TransitionTo(Preparing),
-                When(OrderNotValidated)
-                    .TransitionTo(Error));
+                Ignore(OrderValidated),
+                Ignore(OrderNotValidated));
             
             During(Received,
                 When(OrderValidated)

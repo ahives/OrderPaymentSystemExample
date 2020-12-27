@@ -1,15 +1,18 @@
-namespace Services.Core.Events
+namespace Services.Core
 {
     using System;
     using Model;
 
-    public record OrderReceived
+    public record OrderPayload :
+        OperationPayload
     {
         public Guid OrderId { get; init; }
         
         public Guid CustomerId { get; init; }
         
         public Guid RestaurantId { get; init; }
+        
+        public Guid? CourierId { get; init; }
         
         public string Street { get; init; }
         
@@ -20,7 +23,5 @@ namespace Services.Core.Events
         public string ZipCode { get; init; }
         
         public Item[] Items { get; init; }
-        
-        public DateTime Timestamp { get; init; }
     }
 }

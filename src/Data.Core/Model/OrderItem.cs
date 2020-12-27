@@ -32,7 +32,7 @@ namespace Data.Core.Model
         public DateTime StatusTimestamp { get; set; }
         
         [Column("TimePrepared"), Required]
-        public DateTime TimePrepared { get; set; }
+        public DateTime? TimePrepared { get; set; }
         
         [Column("SpecialInstructions")]
         public string SpecialInstructions { get; set; }
