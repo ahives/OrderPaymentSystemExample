@@ -12,11 +12,9 @@ for pick up
 
 #### What is an Order?
 
-An order has several meanings. To better understand you need to understand the different perspectives.
-- **Customer/Courier** - from the customer/courier perspective, an order is a single, atomic transaction between the client application (customer and courier) and
-- the restaurant.
-- **Restaurant** - from the restaurant perspective, an order is a single, atomic transaction between it and a courier. To most efficiently prepare the order,
-- however, the restaurant may require that multiple cooks prepare each item within the order.
+An order has several meanings. To better understand, lets look at the different perspectives.
+- **Customer/Courier** - from the customer/courier perspective, an order is a single, atomic transaction between the client application (customer and courier) and the restaurant.
+- **Restaurant** - from the restaurant perspective, an order is a single, atomic transaction between it and a courier. To most efficiently prepare the order, however, the restaurant may require that multiple cooks prepare each item within the order.
 - **Chef/Cook** - from the chef/cook perspective, an order is a single food item he/she must prepare to fulfill the order.
 
 Essentially, an order may consist of one or more items that must be prepared individually. That said, each item being prepared impacts the final state of the
