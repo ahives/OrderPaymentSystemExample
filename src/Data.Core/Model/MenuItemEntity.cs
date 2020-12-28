@@ -23,6 +23,9 @@ namespace Data.Core.Model
         public Guid MenuId { get; init; }
         public MenuEntity Menu { get; init; }
         
+        [Column("ShelfLife")]
+        public decimal ShelfLife { get; set; }
+        
         [ForeignKey("StorageTemperatureId"), Required]
         public int StorageTemperatureId { get; init; }
         public StorageTemperatureEntity StorageTemperature { get; init; }

@@ -13,6 +13,9 @@ namespace Data.Core.Model
         [Column("Name"), Required]
         public string Name { get; init; }
         
+        [Column("DecayRate"), Required]
+        public decimal DecayRate { get; init; }
+        
         [ForeignKey("StorageTemperatureId"), Required]
         public int StorageTemperatureId { get; init; }
         public StorageTemperatureEntity StorageTemperature { get; init; }

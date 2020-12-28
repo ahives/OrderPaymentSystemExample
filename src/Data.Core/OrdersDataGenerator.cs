@@ -184,6 +184,7 @@ namespace Data.Core
                 .Ignore(x => x.Shelf)
                 .RuleFor(x => x.OrderItemId, s => NewId.NextGuid())
                 .RuleFor(x => x.Status, s => s.Random.Int(0, 3))
+                .RuleFor(x => x.ShelfLife, s => s.Random.Decimal(50M, 100M))
                 .RuleFor(x => x.MenuItemId, s => s.PickRandom(MenuItems.Select(m => m.MenuItemId)))
                 .RuleFor(x => x.OrderId, s => s.PickRandom(Orders.Select(m => m.OrderId)))
                 .RuleFor(x => x.ShelfId, s => s.PickRandom(Shelves.Select(m => m.ShelfId)))
@@ -205,6 +206,7 @@ namespace Data.Core
                 .RuleFor(x => x.ShelfId, s => shelfId++)
                 .RuleFor(x => x.Capacity, s => s.PickRandom(5, 10, 15, 20))
                 .RuleFor(x => x.Name, s => s.Random.Replace("##-????"))
+                .RuleFor(x => x.DecayRate, s => s.Random.Decimal(10M, 20M))
                 .RuleFor(x => x.StorageTemperatureId, s => s.PickRandom(Temperatures.Select(t => t.StorageTemperatureId)))
                 .RuleFor(x => x.CreationTimestamp, s => DateTime.Now);
 
@@ -220,6 +222,7 @@ namespace Data.Core
                 .RuleFor(x => x.MenuItemId, s => NewId.NextGuid())
                 .RuleFor(x => x.Name, s => s.PickRandom(_menuItems))
                 .RuleFor(x => x.Price, s => s.Random.Decimal(1, 25))
+                .RuleFor(x => x.ShelfLife, s => s.Random.Decimal(50M, 100M))
                 .RuleFor(x => x.IsValid, s => s.PickRandom(true, false))
                 .RuleFor(x => x.StorageTemperatureId, s => s.PickRandom(Temperatures.Select(m => m.StorageTemperatureId)))
                 .RuleFor(x => x.MenuId, s => s.PickRandom(Menus.Select(m => m.MenuId)))

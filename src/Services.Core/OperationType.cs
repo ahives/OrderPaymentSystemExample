@@ -4,6 +4,7 @@ namespace Services.Core
     {
         MovedToShelf,
         Receipt,
+        ExpiredOrder,
         None
     }
 }

@@ -20,14 +20,52 @@ namespace Services.Core
             _db = db;
         }
 
-        // public IAsyncEnumerable<OperationResult> Expire()
-        // {
-        //     var orderItems = _db.OrderItems.Where(x => x.Status == OrderItemStatus.Prepared);
-        // }
+        public async IAsyncEnumerable<Result> Expire()
+        {
+            var orderItems = _db.OrderItems
+                .Where(x => x.Status == OrderItemStatus.Prepared)
+                .ToList();
+            
+            for (int i = 0; i < orderItems.Count; i++)
+            {
+                ShelfEntity shelf = await _db.Shelves.FindAsync(orderItems[i].ShelfId);
 
-        public IAsyncEnumerable<OperationResult> Expire() => throw new NotImplementedException();
+                if (shelf != null)
+                {
+                    TimeSpan age = orderItems[i].ExpiryTimestamp != null
+                        ? (DateTime.Now - orderItems[i].ExpiryTimestamp).Value
+                        : (DateTime.Now - orderItems[i].TimePrepared).Value;
+                    
+                    orderItems[i].ShelfLife -= shelf.DecayRate * age.Seconds;
+                    orderItems[i].ExpiryTimestamp = DateTime.Now;
 
-        public async Task<OperationResult> Receive(OrderReceiptConfirmed data)
+                    _db.Update(orderItems[i]);
+
+                    if (orderItems[i].ShelfLife <= 0)
+                    {
+                        yield return new Result
+                        {
+                            OrderItem = null,
+                            Shelf = null,
+                            OperationPerformed = OperationType.ExpiredOrder
+                        };
+                    }
+                    else
+                    {
+                        yield return new Result
+                        {
+                            OrderItem = null,
+                            Shelf = null,
+                            OperationPerformed = OperationType.ExpiredOrder
+                        };
+                    }
+                }
+            }
+
+            await _db.SaveChangesAsync();
+        }
+
+        public async Task<Result> Receive(OrderReceiptConfirmed data)
         {
             await _db.Orders.AddAsync(new OrderEntity
             {
@@ -61,7 +99,7 @@ namespace Services.Core
 
             int changes = await _db.SaveChangesAsync();
             
-            return new OperationResult
+            return new Result
             {
                 ChangeCount = changes,
                 IsSuccessful = changes > 0,
@@ -69,7 +107,7 @@ namespace Services.Core
             };
         }
 
-        public async Task<OperationResult> Prepare(PrepareOrderItem data)
+        public async Task<Result> Prepare(PrepareOrderItem data)
         {
             var order = await _db.OrderItems.FindAsync(data.OrderId);
 
@@ -90,7 +128,7 @@ namespace Services.Core
 
                 if (order == null)
                 {
-                    return new OperationResult
+                    return new Result
                     {
                         OperationPerformed = OperationType.None,
                         ChangeCount = 0,
@@ -103,7 +141,7 @@ namespace Services.Core
 
             if (!IsShelfAvailable(shelf))
             {
-                return new OperationResult
+                return new Result
                 {
                     OperationPerformed = OperationType.None,
                     ChangeCount = 0,
@@ -119,7 +157,7 @@ namespace Services.Core
 
             int changes = await _db.SaveChangesAsync();
 
-            return new OperationResult
+            return new Result
             {
                 OperationPerformed = OperationType.MovedToShelf,
                 ChangeCount = changes,

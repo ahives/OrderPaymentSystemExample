@@ -17,7 +17,7 @@ namespace RestaurantService.Core.Consumers
 
         public async Task Consume(ConsumeContext<OrderReceiptConfirmed> context)
         {
-            OperationResult result = await _manager.Receive(context.Message);
+            Result result = await _manager.Receive(context.Message);
             
             if (result.OperationPerformed == OperationType.Receipt)
             {

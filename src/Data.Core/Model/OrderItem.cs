@@ -28,8 +28,14 @@ namespace Data.Core.Model
         [Column("StatusTimestamp"), Required]
         public DateTime StatusTimestamp { get; set; }
         
-        [Column("TimePrepared"), Required]
+        [Column("TimePrepared")]
         public DateTime? TimePrepared { get; set; }
+        
+        [Column("ExpiryTimestamp")]
+        public DateTime? ExpiryTimestamp { get; set; }
+        
+        [Column("ShelfLife")]
+        public decimal ShelfLife { get; set; }
         
         [Column("SpecialInstructions")]
         public string SpecialInstructions { get; set; }

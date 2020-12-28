@@ -3,9 +3,9 @@ namespace Services.Core
     using System;
     using Model;
 
-    public record OperationResult
+    public record Result
     {
-        public OperationResult()
+        public Result()
         {
             Timestamp = DateTime.Now;
         }
