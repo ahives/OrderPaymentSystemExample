@@ -1,10 +1,17 @@
 namespace Services.Core.Events
 {
     using System;
+    using MassTransit;
 
     public record CourierDispatched
     {
-        public Guid CourierId { get; init; }
+        public CourierDispatched()
+        {
+            EventId = NewId.NextGuid();
+            Timestamp = DateTime.Now;
+        }
+
+        public Guid EventId { get; }
         
         public Guid OrderId { get; init; }
         
@@ -12,10 +19,6 @@ namespace Services.Core.Events
         
         public Guid RestaurantId { get; init; }
         
-        public int ShelfId { get; init; }
-        
-        public Guid[] Items { get; init; }
-        
-        public DateTime Timestamp { get; init; }
+        public DateTime Timestamp { get; }
     }
 }

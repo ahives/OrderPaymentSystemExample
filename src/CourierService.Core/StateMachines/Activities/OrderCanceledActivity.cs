@@ -31,13 +31,12 @@ namespace CourierService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<CourierState, OrderCanceled> context,
             Behavior<CourierState, OrderCanceled> next)
         {
-            await _context.Publish<CourierRecalled>(new
+            await _context.Publish<CourierCanceled>(new
             {
-                CourierId = context.Instance.OrderId,
+                context.Instance.CourierId,
                 context.Instance.OrderId,
                 context.Instance.CustomerId,
-                context.Instance.RestaurantId,
-                Timestamp = DateTime.Now
+                context.Instance.RestaurantId
             });
         }
 

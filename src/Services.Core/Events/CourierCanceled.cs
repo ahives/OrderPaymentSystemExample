@@ -1,9 +1,18 @@
 namespace Services.Core.Events
 {
     using System;
+    using MassTransit;
 
-    public record CourierRecalled
+    public record CourierCanceled
     {
+        public CourierCanceled()
+        {
+            EventId = NewId.NextGuid();
+            Timestamp = DateTime.Now;
+        }
+
+        public Guid EventId { get; }
+        
         public Guid CourierId { get; init; }
         
         public Guid OrderId { get; init; }
@@ -12,6 +21,6 @@ namespace Services.Core.Events
         
         public Guid RestaurantId { get; init; }
         
-        public DateTime Timestamp { get; init; }
+        public DateTime Timestamp { get; }
     }
 }

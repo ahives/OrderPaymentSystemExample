@@ -26,16 +26,13 @@ namespace CourierService.Core.Consumers
                 {
                     context.Message.OrderId,
                     context.Message.CustomerId,
-                    context.Message.RestaurantId,
-                    context.Message.Items,
-                    Timestamp = DateTime.Now
+                    context.Message.RestaurantId
                 });
 
-                await UpdateOrder(context.Message);
+                // await UpdateOrder(context.Message);
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
                 throw;
             }
         }

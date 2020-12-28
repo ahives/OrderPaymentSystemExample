@@ -50,15 +50,6 @@ namespace Services.Core
                             OperationPerformed = OperationType.ExpiredOrder
                         };
                     }
-                    else
-                    {
-                        yield return new Result
-                        {
-                            OrderItem = null,
-                            Shelf = null,
-                            OperationPerformed = OperationType.ExpiredOrder
-                        };
-                    }
                 }
             }
 

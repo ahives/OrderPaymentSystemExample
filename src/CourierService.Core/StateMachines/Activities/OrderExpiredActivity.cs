@@ -31,7 +31,7 @@ namespace CourierService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<CourierState, OrderExpired> context,
             Behavior<CourierState, OrderExpired> next)
         {
-            await _context.Publish<CourierRecalled>(new
+            await _context.Publish<CourierCanceled>(new
             {
                 CourierId = context.Instance.OrderId,
                 context.Instance.OrderId,

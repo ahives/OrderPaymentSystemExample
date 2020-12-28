@@ -10,6 +10,8 @@ namespace CourierService.Core.StateMachines.Sagas
         
         public int CurrentState { get; set; }
         
+        public Guid? CourierId { get; set; }
+        
         public Guid CustomerId { get; set; }
         
         public Guid RestaurantId { get; set; }

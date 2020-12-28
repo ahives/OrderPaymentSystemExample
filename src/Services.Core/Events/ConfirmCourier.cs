@@ -3,17 +3,15 @@ namespace Services.Core.Events
     using System;
     using MassTransit;
 
-    public record CourierConfirmed
+    public record ConfirmCourier
     {
-        public CourierConfirmed()
+        public ConfirmCourier()
         {
             EventId = NewId.NextGuid();
             Timestamp = DateTime.Now;
         }
 
         public Guid EventId { get; }
-        
-        public Guid CourierId { get; init; }
         
         public Guid OrderId { get; init; }
         

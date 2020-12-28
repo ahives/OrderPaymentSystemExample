@@ -3,9 +3,9 @@ namespace Services.Core.Events
     using System;
     using MassTransit;
 
-    public record CourierConfirmed
+    public record PickUpOrder
     {
-        public CourierConfirmed()
+        public PickUpOrder()
         {
             EventId = NewId.NextGuid();
             Timestamp = DateTime.Now;
