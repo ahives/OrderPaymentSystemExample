@@ -18,6 +18,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services.Core", "src\Servic
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseSeederConsole", "DatabaseSeederConsole\DatabaseSeederConsole.csproj", "{A694BA50-6C6D-407B-B061-452414532BD9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services.Core.Tests", "src\Services.Core.Tests\Services.Core.Tests.csproj", "{4E4F2CB3-2BA5-4362-A2D4-3108AB89C870}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -60,5 +62,9 @@ Global
 		{A694BA50-6C6D-407B-B061-452414532BD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A694BA50-6C6D-407B-B061-452414532BD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A694BA50-6C6D-407B-B061-452414532BD9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E4F2CB3-2BA5-4362-A2D4-3108AB89C870}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E4F2CB3-2BA5-4362-A2D4-3108AB89C870}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E4F2CB3-2BA5-4362-A2D4-3108AB89C870}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E4F2CB3-2BA5-4362-A2D4-3108AB89C870}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

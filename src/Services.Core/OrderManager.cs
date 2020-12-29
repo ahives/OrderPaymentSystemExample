@@ -45,8 +45,6 @@ namespace Services.Core
                     {
                         yield return new Result
                         {
-                            OrderItem = null,
-                            Shelf = null,
                             OperationPerformed = OperationType.ExpiredOrder
                         };
                     }
@@ -76,7 +74,7 @@ namespace Services.Core
 
             for (int i = 0; i < data.Items.Length; i++)
             {
-                var entityEntry = await _db.OrderItems.AddAsync(new OrderItem
+                var entityEntry = await _db.OrderItems.AddAsync(new OrderItemEntity
                 {
                     OrderItemId = NewId.NextGuid(),
                     OrderId = data.OrderId,
@@ -104,7 +102,7 @@ namespace Services.Core
 
             if (order == null)
             {
-                var result = await _db.OrderItems.AddAsync(new OrderItem
+                var result = await _db.OrderItems.AddAsync(new OrderItemEntity
                 {
                     OrderItemId = NewId.NextGuid(),
                     OrderId = data.OrderId,

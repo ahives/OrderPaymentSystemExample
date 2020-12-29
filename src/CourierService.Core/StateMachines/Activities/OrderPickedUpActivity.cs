@@ -8,24 +8,24 @@ namespace CourierService.Core.StateMachines.Activities
     using Sagas;
     using Services.Core.Events;
 
-    public class OrderPickedUpByActivity :
+    public class OrderPickedUpActivity :
         Activity<CourierState, OrderPickedUp>
     {
         readonly ConsumeContext _context;
 
-        public OrderPickedUpByActivity(ConsumeContext context)
+        public OrderPickedUpActivity(ConsumeContext context)
         {
             _context = context;
         }
 
         public void Probe(ProbeContext context)
         {
-            throw new NotImplementedException();
+            context.CreateScope("");
         }
 
         public void Accept(StateMachineVisitor visitor)
         {
-            throw new NotImplementedException();
+            visitor.Visit(this);
         }
 
         public async Task Execute(BehaviorContext<CourierState, OrderPickedUp> context,
@@ -41,6 +41,11 @@ namespace CourierService.Core.StateMachines.Activities
             });
         }
 
-        public async Task Faulted<TException>(BehaviorExceptionContext<CourierState, OrderPickedUp, TException> context, Behavior<CourierState, OrderPickedUp> next) where TException : Exception => throw new NotImplementedException();
+        public async Task Faulted<TException>(BehaviorExceptionContext<CourierState, OrderPickedUp, TException> context,
+            Behavior<CourierState, OrderPickedUp> next)
+            where TException : Exception
+        {
+            await next.Faulted(context);
+        }
     }
 }

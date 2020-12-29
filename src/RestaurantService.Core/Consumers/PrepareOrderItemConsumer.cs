@@ -25,7 +25,7 @@ namespace RestaurantService.Core.Consumers
                 {
                     context.Message.OrderId,
                     context.Message.OrderItemId,
-                    result.Shelf.ShelfId
+                    // result.Shelf.ShelfId
                 });
             }
             else

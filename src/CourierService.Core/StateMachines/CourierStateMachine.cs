@@ -31,7 +31,7 @@ namespace CourierService.Core.StateMachines
 
             During(Confirmed,
                 When(OrderPickedUp)
-                    .Activity(x => x.OfType<OrderPickedUpByActivity>())
+                    .Activity(x => x.OfType<OrderPickedUpActivity>())
                     .TransitionTo(PickedUp),
                 When(OrderCanceled)
                     .Activity(x => x.OfType<OrderCanceledActivity>())

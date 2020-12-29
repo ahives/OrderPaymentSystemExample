@@ -20,17 +20,19 @@ namespace CourierService.Core.StateMachines.Activities
 
         public void Probe(ProbeContext context)
         {
-            throw new NotImplementedException();
+            context.CreateScope("");
         }
 
         public void Accept(StateMachineVisitor visitor)
         {
-            throw new NotImplementedException();
+            visitor.Visit(this);
         }
 
         public async Task Execute(BehaviorContext<CourierState, OrderCanceled> context,
             Behavior<CourierState, OrderCanceled> next)
         {
+            context.Instance.Timestamp = DateTime.Now;
+
             await _context.Publish<CourierCanceled>(new
             {
                 context.Instance.CourierId,
@@ -40,6 +42,11 @@ namespace CourierService.Core.StateMachines.Activities
             });
         }
 
-        public async Task Faulted<TException>(BehaviorExceptionContext<CourierState, OrderCanceled, TException> context, Behavior<CourierState, OrderCanceled> next) where TException : Exception => throw new NotImplementedException();
+        public async Task Faulted<TException>(BehaviorExceptionContext<CourierState, OrderCanceled, TException> context,
+            Behavior<CourierState, OrderCanceled> next)
+            where TException : Exception
+        {
+            await next.Faulted(context);
+        }
     }
 }

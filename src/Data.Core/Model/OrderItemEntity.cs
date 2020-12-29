@@ -5,7 +5,7 @@ namespace Data.Core.Model
     using System.ComponentModel.DataAnnotations.Schema;
 
     [Table("OrderItems")]
-    public class OrderItem
+    public class OrderItemEntity
     {
         [Column("OrderItemId"), Key, Required]
         public Guid OrderItemId { get; init; }
