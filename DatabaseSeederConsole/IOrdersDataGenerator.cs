@@ -1,7 +1,7 @@
-namespace Data.Core
+namespace DatabaseSeederConsole
 {
     using System.Collections.Generic;
-    using Model;
+    using Data.Core.Model;
 
     public interface IOrdersDataGenerator
     {
@@ -23,6 +23,6 @@ namespace Data.Core
         
         List<OrderEntity> Orders { get; }
         
-        List<OrderItem> OrderItems { get; }
+        List<OrderItemEntity> OrderItems { get; }
     }
 }

@@ -1,11 +1,11 @@
-namespace Data.Core
+namespace DatabaseSeederConsole
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using Bogus;
+    using Data.Core.Model;
     using MassTransit;
-    using Model;
 
     public class OrdersDataGenerator :
         IOrdersDataGenerator
@@ -30,7 +30,7 @@ namespace Data.Core
         public List<ShelfEntity> Shelves { get; }
         public List<CourierEntity> Couriers { get; }
         public List<OrderEntity> Orders { get; }
-        public List<OrderItem> OrderItems { get; }
+        public List<OrderItemEntity> OrderItems { get; }
 
         public OrdersDataGenerator()
         {
@@ -175,9 +175,9 @@ namespace Data.Core
             return faker;
         }
 
-        Faker<OrderItem> GetOrderItemFaker()
+        Faker<OrderItemEntity> GetOrderItemFaker()
         {
-            var faker = new Faker<OrderItem>()
+            var faker = new Faker<OrderItemEntity>()
                 .StrictMode(true)
                 .Ignore(x => x.Order)
                 .Ignore(x => x.MenuItem)
@@ -189,7 +189,9 @@ namespace Data.Core
                 .RuleFor(x => x.OrderId, s => s.PickRandom(Orders.Select(m => m.OrderId)))
                 .RuleFor(x => x.ShelfId, s => s.PickRandom(Shelves.Select(m => m.ShelfId)))
                 .RuleFor(x => x.TimePrepared, s => DateTime.Now)
+                .RuleFor(x => x.ExpiryTimestamp, s => DateTime.Now)
                 .RuleFor(x => x.StatusTimestamp, s => DateTime.Now)
+                .RuleFor(x => x.ShelfLife, s => s.Random.Decimal(50M, 100M))
                 .RuleFor(x => x.SpecialInstructions, s => s.PickRandom(string.Empty, "Some random instructions"))
                 .RuleFor(x => x.CreationTimestamp, s => DateTime.Now);
 
