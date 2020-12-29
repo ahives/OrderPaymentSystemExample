@@ -1,11 +1,11 @@
 namespace Data.Core
 {
-    public static class OrderStatus
+    public enum OrderStatus
     {
-        public static int Receipt = 0;
-        
-        public static int BeingPrepared = 1;
-        
-        public static int Delivered = 2;
+        Receipt = 0,
+        Preparing = 1,
+        Prepared = 2,
+        Delivering = 3,
+        Delivered = 4
     }
 }

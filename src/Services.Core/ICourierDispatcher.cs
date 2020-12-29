@@ -8,6 +8,10 @@ namespace Services.Core
     {
         Task<Result<Courier>> Confirm(Guid courierId);
         
-        Task<Result<Courier>> Dispatch(CourierDispatchCriteria request);
+        Task<Result<Order>> PickUpOrder(OrderPickUpCriteria criteria);
+        
+        Task<Result<Courier>> Deliver(Guid courierId);
+        
+        Task<Result<Courier>> Dispatch(CourierDispatchCriteria criteria);
     }
 }

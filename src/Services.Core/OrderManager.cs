@@ -63,7 +63,7 @@ namespace Services.Core
                 RestaurantId = data.RestaurantId,
                 CourierId = null,
                 // TODO: may need to change this to data.Status
-                Status = OrderStatus.Receipt,
+                Status = (int)OrderStatus.Receipt,
                 StatusTimestamp = DateTime.Now,
                 // Street = data.Street,
                 // City = data.City,

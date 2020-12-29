@@ -20,6 +20,7 @@ namespace Services.Core.Tests
         CourierEntity _courier;
         Guid _courierId;
         AddressEntity _address;
+        OrderEntity _order;
 
         [OneTimeSetUp]
         public async Task Setup()
@@ -34,8 +35,7 @@ namespace Services.Core.Tests
                     x.UseNpgsql(configuration.GetConnectionString("OrdersConnection")))
                 .BuildServiceProvider();
             
-            string[] cities = new[]
-            {
+            string[] cities = {
                 "Oakland",
                 "Atlanta",
                 "Seattle",
@@ -48,8 +48,7 @@ namespace Services.Core.Tests
                 "Philadelphia"
             };
             
-            string[] streets = new []
-            {
+            string[] streets = {
                 "123 E. 12th St.",
                 "425 Broadway Ave.",
                 "948 West St.",
@@ -59,9 +58,9 @@ namespace Services.Core.Tests
                 "294 E. Cotati Blvd."
             };
             
-            string[] firstNames = new []{"Albert", "Christy", "Jose", "Stephen", "Michael", "Sarah", "Mia"};
-            string[] lastNames = new []{"Jones", "Lacey", "Jordan", "Curry", "Wiseman", "Chavez", "Williams"};
-            string[] zipCodes = new []{"93483", "9230", "83324", "93924", "82474", "69843", "73934"};
+            string[] firstNames = {"Albert", "Christy", "Jose", "Stephen", "Michael", "Sarah", "Mia"};
+            string[] lastNames = {"Jones", "Lacey", "Jordan", "Curry", "Wiseman", "Chavez", "Williams"};
+            string[] zipCodes = {"93483", "9230", "83324", "93924", "82474", "69843", "73934"};
 
             var db = _provider.GetService<OrdersDbContext>();
             
@@ -87,7 +86,7 @@ namespace Services.Core.Tests
                 .StrictMode(true)
                 .Ignore(x => x.Address)
                 .RuleFor(x => x.CourierId, s => _courierId)
-                .RuleFor(x => x.Status, s => CourierStatus.Idle)
+                .RuleFor(x => x.Status, s => (int)CourierStatus.Idle)
                 .RuleFor(x => x.StatusTimestamp, s => DateTime.Now)
                 .RuleFor(x => x.FirstName, s => s.PickRandom(firstNames))
                 .RuleFor(x => x.LastName, s => s.PickRandom(lastNames))
@@ -96,7 +95,36 @@ namespace Services.Core.Tests
                 .RuleFor(x => x.CreationTimestamp, s => DateTime.Now);
 
             _courier = courierFaker.Generate(1).FirstOrDefault();
+            var orderFaker = new Faker<OrderEntity>()
+                .StrictMode(true)
+                .Ignore(x => x.Customer)
+                .Ignore(x => x.Courier)
+                .Ignore(x => x.Restaurant)
+                .Ignore(x => x.Address)
+                .RuleFor(x => x.OrderId, s => NewId.NextGuid())
+                .RuleFor(x => x.Status, s => s.Random.Int(0, 2))
+                .RuleFor(x => x.CustomerId, s =>
+                {
+                    var customers = db.Customers.Select(c => c.CustomerId).ToList();
+                    return s.PickRandom(customers);
+                })
+                .RuleFor(x => x.RestaurantId, s =>
+                {
+                    var restaurants = db.Restaurants.Select(r => r.RestaurantId).ToList();
+                    return s.PickRandom(restaurants);
+                })
+                .RuleFor(x => x.AddressId, s =>
+                {
+                    var addresses = db.Addresses.Select(x => x.AddressId).ToList();
+                    return s.PickRandom(addresses);
+                })
+                .RuleFor(x => x.CourierId, s => null)
+                .RuleFor(x => x.StatusTimestamp, s => DateTime.Now)
+                .RuleFor(x => x.CreationTimestamp, s => DateTime.Now);
 
+            _order = orderFaker.Generate(1).FirstOrDefault();
+            
+            await db.Orders.AddAsync(_order);
             await db.Addresses.AddAsync(_address);
             await db.Couriers.AddAsync(_courier);
 
@@ -127,7 +155,7 @@ namespace Services.Core.Tests
 
             if (courier != null)
             {
-                courier.Status = CourierStatus.Idle;
+                courier.Status = (int)CourierStatus.Idle;
 
                 db.Update(courier);
 
@@ -142,7 +170,32 @@ namespace Services.Core.Tests
 
             Result<Courier> result = await dispatcher.Confirm(_courierId);
 
-            Assert.AreEqual(CourierStatus.Confirmed, result.Value.Status);
+            Assert.AreEqual((int)CourierStatus.Confirmed, result.Value.Status);
+        }
+        
+        [Test]
+        public async Task Verify_can_confirm_courier_order_pickup()
+        {
+            var dispatcher = _provider.GetService<ICourierDispatcher>();
+
+            Result<Order> result = await dispatcher.PickUpOrder(new OrderPickUpCriteria
+            {
+                OrderId = _order.OrderId,
+                CourierId = _courierId
+            });
+
+            Assert.AreEqual((int)CourierStatus.PickedUpOrder, result.Value.Status);
+            Assert.AreEqual(_courierId, result.Value.CourierId);
+        }
+        
+        [Test]
+        public async Task Verify_can_confirm_courier_order_delivered()
+        {
+            var dispatcher = _provider.GetService<ICourierDispatcher>();
+
+            Result<Courier> result = await dispatcher.Deliver(_courierId);
+
+            Assert.AreEqual((int)CourierStatus.DeliveredOrder, result.Value.Status);
         }
 
         [Test]
@@ -159,7 +212,7 @@ namespace Services.Core.Tests
             });
             
             Assert.AreEqual(_courierId, result.Value.CourierId);
-            Assert.AreEqual(CourierStatus.Dispatched, result.Value.Status);
+            Assert.AreEqual((int)CourierStatus.Dispatched, result.Value.Status);
         }
     }
 }
