@@ -16,16 +16,16 @@ namespace Services.Core
             _db = db;
         }
 
-        public async Task<Result<Courier>> Find(Address address)
+        public async Task<Result<Courier>> Find(CourierFinderRequest request)
         {
-            var target = await _db.Couriers.FirstOrDefaultAsync(x => x.City == address.City
-                && x.RegionId == address.RegionId
+            var target = await _db.Couriers.FirstOrDefaultAsync(x => x.City == request.City
+                && x.RegionId == request.RegionId
                 && x.IsAvailable);
 
             if (target == null)
                 return new Result<Courier> {ChangeCount = 0, IsSuccessful = false};
             
-            var courier = MapCourier(target);
+            var courier = MapEntity(target);
 
             target.IsAvailable = false;
 
@@ -36,18 +36,18 @@ namespace Services.Core
             return new Result<Courier> {ChangeCount = changes, Value = courier, IsSuccessful = true};
         }
 
-        Courier MapCourier(CourierEntity courier) =>
+        Courier MapEntity(CourierEntity entity) =>
             new()
             {
-                CourierId = courier.CourierId,
-                FirstName = courier.FirstName,
-                LastName = courier.LastName,
+                CourierId = entity.CourierId,
+                FirstName = entity.FirstName,
+                LastName = entity.LastName,
                 Address = new Address
                 {
-                    Street = courier.Street,
-                    City = courier.City,
-                    RegionId = courier.RegionId,
-                    ZipCode = courier.ZipCode
+                    Street = entity.Street,
+                    City = entity.City,
+                    RegionId = entity.RegionId,
+                    ZipCode = entity.ZipCode
                 }
             };
     }

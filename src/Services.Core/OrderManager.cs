@@ -98,7 +98,7 @@ namespace Services.Core
 
         public async Task<Result> Prepare(PrepareOrderItem data)
         {
-            var order = await _db.OrderItems.FindAsync(data.OrderId);
+            OrderItemEntity order = await _db.OrderItems.FindAsync(data.OrderId);
 
             if (order == null)
             {

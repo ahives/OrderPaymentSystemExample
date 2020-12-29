@@ -5,6 +5,6 @@ namespace Services.Core
 
     public interface ICourierFinder
     {
-        Task<Result<Courier>> Find(Address address);
+        Task<Result<Courier>> Find(CourierFinderRequest request);
     }
 }

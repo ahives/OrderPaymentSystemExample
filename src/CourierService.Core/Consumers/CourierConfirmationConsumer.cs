@@ -4,7 +4,6 @@ namespace CourierService.Core.Consumers
     using MassTransit;
     using Services.Core;
     using Services.Core.Events;
-    using Services.Core.Model;
 
     public class CourierConfirmationConsumer :
         IConsumer<ConfirmCourier>
@@ -18,7 +17,7 @@ namespace CourierService.Core.Consumers
 
         public async Task Consume(ConsumeContext<ConfirmCourier> context)
         {
-            var result = await _finder.Find(new Address
+            var result = await _finder.Find(new CourierFinderRequest
             {
                 Street = context.Message.Street,
                 City = context.Message.City,

@@ -6,7 +6,6 @@ namespace Services.Core.Tests
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using Model;
     using NUnit.Framework;
 
     [TestFixture]
@@ -28,7 +27,7 @@ namespace Services.Core.Tests
 
             var finder = provider.GetService<ICourierFinder>();
 
-            var courier = await finder.Find(new Address
+            var courier = await finder.Find(new CourierFinderRequest
             {
                 Street = "99 California St.",
                 City = "Chicago",
