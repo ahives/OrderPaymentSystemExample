@@ -3,6 +3,6 @@
 	<s:String x:Key="/Default/Environment/Hierarchy/Build/BuildTool/CustomBuildToolPath/@EntryValue">/usr/local/share/dotnet/sdk/5.0.101/MSBuild.dll</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=7cb14e5e_002Dd877_002D4a26_002Dbfcd_002D3bc260d2f15b/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Test" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;TestAncestor&gt;
-    &lt;TestId&gt;NUnit3x::4E4F2CB3-2BA5-4362-A2D4-3108AB89C870::net5.0::Services.Core.Tests.CourierFinderTests.Test&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::4E4F2CB3-2BA5-4362-A2D4-3108AB89C870::net5.0::Services.Core.Tests.CourierFinderTests&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

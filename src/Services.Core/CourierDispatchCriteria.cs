@@ -1,6 +1,6 @@
 namespace Services.Core
 {
-    public record CourierQueryCriteria
+    public record CourierDispatchCriteria
     {
         public string Street { get; init; }
         

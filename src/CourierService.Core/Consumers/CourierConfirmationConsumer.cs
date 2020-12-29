@@ -8,22 +8,16 @@ namespace CourierService.Core.Consumers
     public class CourierConfirmationConsumer :
         IConsumer<ConfirmCourier>
     {
-        readonly ICourierFinder _finder;
+        readonly ICourierDispatcher _dispatcher;
 
-        public CourierConfirmationConsumer(ICourierFinder finder)
+        public CourierConfirmationConsumer(ICourierDispatcher dispatcher)
         {
-            _finder = finder;
+            _dispatcher = dispatcher;
         }
 
         public async Task Consume(ConsumeContext<ConfirmCourier> context)
         {
-            var result = await _finder.Find(new CourierQueryCriteria
-            {
-                Street = context.Message.Street,
-                City = context.Message.City,
-                RegionId = context.Message.RegionId,
-                ZipCode = context.Message.ZipCode
-            });
+            var result = await _dispatcher.Confirm(context.Message.CourierId);
             
             if (result.IsSuccessful)
             {
