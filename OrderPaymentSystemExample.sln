@@ -16,7 +16,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestaurantService.Core", "s
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services.Core", "src\Services.Core\Services.Core.csproj", "{910C5877-983D-4639-8D54-37D8F75C182C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseSeederConsole", "DatabaseSeederConsole\DatabaseSeederConsole.csproj", "{A694BA50-6C6D-407B-B061-452414532BD9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseSeederConsole", "src\DatabaseSeederConsole\DatabaseSeederConsole.csproj", "{A694BA50-6C6D-407B-B061-452414532BD9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services.Core.Tests", "src\Services.Core.Tests\Services.Core.Tests.csproj", "{4E4F2CB3-2BA5-4362-A2D4-3108AB89C870}"
 EndProject
