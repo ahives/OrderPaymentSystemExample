@@ -17,7 +17,7 @@ namespace CourierService.Core.Consumers
 
         public async Task Consume(ConsumeContext<ConfirmCourier> context)
         {
-            var result = await _finder.Find(new CourierFinderRequest
+            var result = await _finder.Find(new CourierQueryCriteria
             {
                 Street = context.Message.Street,
                 City = context.Message.City,

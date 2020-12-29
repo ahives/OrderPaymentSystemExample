@@ -20,8 +20,14 @@ namespace Data.Core.Model
         public long AddressId { get; init; }
         public AddressEntity Address { get; init; }
         
-        [Column("IsAvailable"), Required]
-        public bool IsAvailable { get; set; }
+        [Column("Status"), Required]
+        public int Status { get; set; }
+        
+        [Column("StatusTimestamp"), Required]
+        public DateTime StatusTimestamp { get; set; }
+        
+        [Column("IsActive"), Required]
+        public bool IsActive { get; set; }
         
         [Column("CreationTimestamp"), Required]
         public DateTime CreationTimestamp { get; set; }

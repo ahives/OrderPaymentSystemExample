@@ -90,16 +90,16 @@ namespace DatabaseSeederConsole
             _temperatures = new []{"Hot", "Cold", "Frozen", "Warm", "Overflow"};
             _regionNames = new []{"California", "New York", "Georgia", "Washington", "Oregon", "Texas"};
             
-            Regions = GetRegionFaker().Generate(3);
+            Regions = GetRegionFaker().Generate(5);
             Temperatures = GetTemperatureFaker().Generate(4);
             Addresses = GetAddressFaker().Generate(20);
-            Restaurants = GetRestaurantFaker().Generate(5);
+            Restaurants = GetRestaurantFaker().Generate(10);
             Menus = GetMenuFaker().Generate(3);
-            MenuItems = GetMenuItemFaker().Generate(15);
+            MenuItems = GetMenuItemFaker().Generate(20);
             Customers = GetCustomers().Generate(5);
             Shelves = GetShelfFaker().Generate(4);
-            Couriers = GetCourierFaker().Generate(5);
-            Orders = GetOrderFaker().Generate(3);
+            Couriers = GetCourierFaker().Generate(20);
+            Orders = GetOrderFaker().Generate(10);
             OrderItems = GetOrderItemFaker().Generate(20);
         }
 
@@ -126,9 +126,11 @@ namespace DatabaseSeederConsole
                 .StrictMode(true)
                 .Ignore(x => x.Address)
                 .RuleFor(x => x.CourierId, s => NewId.NextGuid())
+                .RuleFor(x => x.Status, s => s.Random.Int(0, 4))
+                .RuleFor(x => x.StatusTimestamp, s => DateTime.Now)
                 .RuleFor(x => x.FirstName, s => s.PickRandom(_firstNames))
                 .RuleFor(x => x.LastName, s => s.PickRandom(_lastNames))
-                .RuleFor(x => x.IsAvailable, s => s.PickRandom(true, false))
+                .RuleFor(x => x.IsActive, s => s.PickRandom(true, false))
                 .RuleFor(x => x.AddressId, s => s.PickRandom(Addresses.Select(x => x.AddressId)))
                 .RuleFor(x => x.CreationTimestamp, s => DateTime.Now);
 

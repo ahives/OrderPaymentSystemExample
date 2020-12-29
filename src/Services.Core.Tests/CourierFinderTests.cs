@@ -27,7 +27,7 @@ namespace Services.Core.Tests
 
             var finder = provider.GetService<ICourierFinder>();
 
-            var courier = await finder.Find(new CourierFinderRequest
+            var courier = await finder.Find(new CourierQueryCriteria
             {
                 Street = "99 California St.",
                 City = "Philadelphia",

@@ -17,14 +17,14 @@ namespace Services.Core
             _db = db;
         }
 
-        public async Task<Result<Courier>> Find(CourierFinderRequest request)
+        public async Task<Result<Courier>> Find(CourierQueryCriteria request)
         {
             var target = await (from courier in _db.Couriers
                     from address in _db.Addresses
                     where courier.AddressId == address.AddressId
                         && address.RegionId == request.RegionId
                         && address.City == request.City
-                        && courier.IsAvailable
+                        && courier.IsActive
                     select new
                     {
                         Courier = courier,
@@ -37,7 +37,7 @@ namespace Services.Core
             
             var mapped = MapEntity(target.Courier, target.Address);
             
-            target.Courier.IsAvailable = false;
+            target.Courier.IsActive = false;
             
             _db.Update(target.Courier);
             

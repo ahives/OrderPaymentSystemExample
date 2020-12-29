@@ -11,11 +11,8 @@ namespace CourierService.Core.Consumers
     public class CourierDispatchConsumer :
         IConsumer<DispatchCourier>
     {
-        readonly OrdersDbContext _db;
-
-        public CourierDispatchConsumer(OrdersDbContext db)
+        public CourierDispatchConsumer()
         {
-            _db = db;
         }
 
         public async Task Consume(ConsumeContext<DispatchCourier> context)
