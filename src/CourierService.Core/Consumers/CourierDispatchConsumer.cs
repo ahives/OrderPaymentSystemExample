@@ -36,27 +36,5 @@ namespace CourierService.Core.Consumers
                 throw;
             }
         }
-
-        async Task UpdateOrder(DispatchCourier data)
-        {
-            OrderEntity order = await _db.Orders.FindAsync(data.OrderId);
-
-            if (order != null)
-            {
-                CourierEntity courier = await _db.Couriers
-                    .FirstOrDefaultAsync(x => x.RegionId == order.RegionId && x.IsAvailable);;
-
-                if (courier == null)
-                {
-                    return;
-                }
-                
-                order.CourierId = courier.CourierId;
-
-                courier.IsAvailable = false;
-                
-                await _db.SaveChangesAsync();
-            }
-        }
     }
 }

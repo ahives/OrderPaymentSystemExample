@@ -45,6 +45,7 @@ namespace Services.Core
                 OrderId = entity.OrderId,
                 OrderItemId = entity.OrderItemId,
                 MenuItemId = entity.MenuItemId,
+                ShelfId = entity.ShelfId,
                 Status = entity.Status,
                 StatusTimestamp = entity.StatusTimestamp,
                 SpecialInstructions = entity.SpecialInstructions,

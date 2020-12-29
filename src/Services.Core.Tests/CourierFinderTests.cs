@@ -30,12 +30,12 @@ namespace Services.Core.Tests
             var courier = await finder.Find(new CourierFinderRequest
             {
                 Street = "99 California St.",
-                City = "Chicago",
-                RegionId = 3,
+                City = "Philadelphia",
+                RegionId = 2,
                 ZipCode = "69843"
             });
             
-            Assert.AreEqual(Guid.Parse("11220000-4800-acde-1336-08d8ab8e34e9"), courier.Value.CourierId);
+            Assert.AreEqual(Guid.Parse("11220000-4800-acde-be22-08d8ac16f995"), courier.Value.CourierId);
         }
     }
 }

@@ -13,18 +13,9 @@ namespace Data.Core.Model
         [Column("Name"), Required]
         public string Name { get; init; }
         
-        [Column("Street"), Required]
-        public string Street { get; init; }
-        
-        [Column("City"), Required]
-        public string City { get; init; }
-        
-        [ForeignKey("RegionId"), Required]
-        public int RegionId { get; init; }
-        public RegionEntity Region { get; init; }
-        
-        [Column("ZipCode"), Required]
-        public string ZipCode { get; init; }
+        [ForeignKey("AddressId"), Required]
+        public long AddressId { get; init; }
+        public AddressEntity Address { get; init; }
         
         [Column("CreationTimestamp")]
         public DateTime CreationTimestamp { get; init; }

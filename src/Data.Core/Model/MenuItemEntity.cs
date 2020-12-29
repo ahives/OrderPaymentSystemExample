@@ -26,9 +26,9 @@ namespace Data.Core.Model
         [Column("ShelfLife")]
         public decimal ShelfLife { get; set; }
         
-        [ForeignKey("StorageTemperatureId"), Required]
-        public int StorageTemperatureId { get; init; }
-        public StorageTemperatureEntity StorageTemperature { get; init; }
+        [ForeignKey("TemperatureId"), Required]
+        public int TemperatureId { get; init; }
+        public TemperatureEntity Temperature { get; init; }
         
         [Column("CreationTimestamp"), Required]
         public DateTime CreationTimestamp { get; init; }

@@ -25,6 +25,7 @@
             
             using (var context = provider.GetService<OrdersDbContext>())
             {
+                await context.Addresses.AddRangeAsync(generator.Addresses);
                 await context.Couriers.AddRangeAsync(generator.Couriers);
                 await context.Customers.AddRangeAsync(generator.Customers);
                 await context.Menus.AddRangeAsync(generator.Menus);

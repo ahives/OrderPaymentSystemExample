@@ -22,7 +22,7 @@ namespace DatabaseSeederConsole
         readonly string[] _regionNames;
         
         public List<RegionEntity> Regions { get; }
-        public List<StorageTemperatureEntity> Temperatures { get; }
+        public List<TemperatureEntity> Temperatures { get; }
         public List<RestaurantEntity> Restaurants { get; }
         public List<MenuEntity> Menus { get; }
         public List<MenuItemEntity> MenuItems { get; }
@@ -31,6 +31,7 @@ namespace DatabaseSeederConsole
         public List<CourierEntity> Couriers { get; }
         public List<OrderEntity> Orders { get; }
         public List<OrderItemEntity> OrderItems { get; }
+        public List<AddressEntity> Addresses { get; }
 
         public OrdersDataGenerator()
         {
@@ -90,7 +91,8 @@ namespace DatabaseSeederConsole
             _regionNames = new []{"California", "New York", "Georgia", "Washington", "Oregon", "Texas"};
             
             Regions = GetRegionFaker().Generate(3);
-            Temperatures = GetStorageTemperatureFaker().Generate(4);
+            Temperatures = GetTemperatureFaker().Generate(4);
+            Addresses = GetAddressFaker().Generate(20);
             Restaurants = GetRestaurantFaker().Generate(5);
             Menus = GetMenuFaker().Generate(3);
             MenuItems = GetMenuItemFaker().Generate(15);
@@ -100,20 +102,34 @@ namespace DatabaseSeederConsole
             Orders = GetOrderFaker().Generate(3);
             OrderItems = GetOrderItemFaker().Generate(20);
         }
-        
-        Faker<CourierEntity> GetCourierFaker()
+
+        Faker<AddressEntity> GetAddressFaker()
         {
-            var faker = new Faker<CourierEntity>()
+            long addressId = 1;
+            
+            var faker = new Faker<AddressEntity>()
                 .StrictMode(true)
                 .Ignore(x => x.Region)
-                .RuleFor(x => x.CourierId, s => NewId.NextGuid())
-                .RuleFor(x => x.FirstName, s => s.PickRandom(_firstNames))
-                .RuleFor(x => x.LastName, s => s.PickRandom(_lastNames))
-                .RuleFor(x => x.IsAvailable, s => s.PickRandom(true, false))
+                .RuleFor(x => x.AddressId, s => addressId++)
                 .RuleFor(x => x.City, s => s.PickRandom(_cities))
                 .RuleFor(x => x.Street, s => s.PickRandom(_streets))
                 .RuleFor(x => x.RegionId, s => s.PickRandom(Regions.Select(x => x.RegionId)))
                 .RuleFor(x => x.ZipCode, s => s.PickRandom(_zipCodes))
+                .RuleFor(x => x.CreationTimestamp, DateTime.Now);
+
+            return faker;
+        }
+
+        Faker<CourierEntity> GetCourierFaker()
+        {
+            var faker = new Faker<CourierEntity>()
+                .StrictMode(true)
+                .Ignore(x => x.Address)
+                .RuleFor(x => x.CourierId, s => NewId.NextGuid())
+                .RuleFor(x => x.FirstName, s => s.PickRandom(_firstNames))
+                .RuleFor(x => x.LastName, s => s.PickRandom(_lastNames))
+                .RuleFor(x => x.IsAvailable, s => s.PickRandom(true, false))
+                .RuleFor(x => x.AddressId, s => s.PickRandom(Addresses.Select(x => x.AddressId)))
                 .RuleFor(x => x.CreationTimestamp, s => DateTime.Now);
 
             return faker;
@@ -123,19 +139,16 @@ namespace DatabaseSeederConsole
         {
             var faker = new Faker<OrderEntity>()
                 .StrictMode(true)
-                .Ignore(x => x.Region)
                 .Ignore(x => x.Customer)
                 .Ignore(x => x.Courier)
                 .Ignore(x => x.Restaurant)
+                .Ignore(x => x.Address)
                 .RuleFor(x => x.OrderId, s => NewId.NextGuid())
                 .RuleFor(x => x.Status, s => s.Random.Int(0, 2))
                 .RuleFor(x => x.CustomerId, s => s.PickRandom(Customers.Select(c => c.CustomerId)))
                 .RuleFor(x => x.RestaurantId, s => s.PickRandom(Restaurants.Select(r => r.RestaurantId)))
-                .RuleFor(x => x.City, s => s.PickRandom(_cities))
-                .RuleFor(x => x.Street, s => s.PickRandom(_streets))
-                .RuleFor(x => x.RegionId, s => s.PickRandom(Regions.Select(x => x.RegionId)))
+                .RuleFor(x => x.AddressId, s => s.PickRandom(Addresses.Select(x => x.AddressId)))
                 .RuleFor(x => x.CourierId, s => s.PickRandom(Couriers.Select(x => x.CourierId)))
-                .RuleFor(x => x.ZipCode, s => s.PickRandom(_zipCodes))
                 .RuleFor(x => x.StatusTimestamp, s => DateTime.Now)
                 .RuleFor(x => x.CreationTimestamp, s => DateTime.Now);
 
@@ -146,14 +159,11 @@ namespace DatabaseSeederConsole
         {
             var faker = new Faker<CustomerEntity>()
                 .StrictMode(true)
-                .Ignore(x => x.Region)
+                .Ignore(x => x.Address)
                 .RuleFor(x => x.CustomerId, s => NewId.NextGuid())
                 .RuleFor(x => x.FirstName, s => s.PickRandom(_firstNames))
                 .RuleFor(x => x.LastName, s => s.PickRandom(_lastNames))
-                .RuleFor(x => x.City, s => s.PickRandom(_cities))
-                .RuleFor(x => x.Street, s => s.PickRandom(_streets))
-                .RuleFor(x => x.RegionId, s => s.PickRandom(Regions.Select(x => x.RegionId)))
-                .RuleFor(x => x.ZipCode, s => s.PickRandom(_zipCodes))
+                .RuleFor(x => x.AddressId, s => s.PickRandom(Addresses.Select(x => x.AddressId)))
                 .RuleFor(x => x.CreationTimestamp, s => DateTime.Now);
 
             return faker;
@@ -163,13 +173,10 @@ namespace DatabaseSeederConsole
         {
             var faker = new Faker<RestaurantEntity>()
                 .StrictMode(true)
-                .Ignore(x => x.Region)
+                .Ignore(x => x.Address)
                 .RuleFor(x => x.RestaurantId, s => NewId.NextGuid())
                 .RuleFor(x => x.Name, s => s.PickRandom(_restaurants))
-                .RuleFor(x => x.City, s => s.PickRandom(_cities))
-                .RuleFor(x => x.Street, s => s.PickRandom(_streets))
-                .RuleFor(x => x.RegionId, s => s.PickRandom(Regions.Select(x => x.RegionId)))
-                .RuleFor(x => x.ZipCode, s => s.PickRandom(_zipCodes))
+                .RuleFor(x => x.AddressId, s => s.PickRandom(Addresses.Select(x => x.AddressId)))
                 .RuleFor(x => x.CreationTimestamp, s => DateTime.Now);
 
             return faker;
@@ -204,12 +211,12 @@ namespace DatabaseSeederConsole
             
             var faker = new Faker<ShelfEntity>()
                 .StrictMode(true)
-                .Ignore(x => x.StorageTemperature)
+                .Ignore(x => x.Temperature)
                 .RuleFor(x => x.ShelfId, s => shelfId++)
                 .RuleFor(x => x.Capacity, s => s.PickRandom(5, 10, 15, 20))
                 .RuleFor(x => x.Name, s => s.Random.Replace("##-????"))
                 .RuleFor(x => x.DecayRate, s => s.Random.Decimal(10M, 20M))
-                .RuleFor(x => x.StorageTemperatureId, s => s.PickRandom(Temperatures.Select(t => t.StorageTemperatureId)))
+                .RuleFor(x => x.TemperatureId, s => s.PickRandom(Temperatures.Select(t => t.TemperatureId)))
                 .RuleFor(x => x.CreationTimestamp, s => DateTime.Now);
 
             return faker;
@@ -220,13 +227,13 @@ namespace DatabaseSeederConsole
             var faker = new Faker<MenuItemEntity>()
                 .StrictMode(true)
                 .Ignore(x => x.Menu)
-                .Ignore(x => x.StorageTemperature)
+                .Ignore(x => x.Temperature)
                 .RuleFor(x => x.MenuItemId, s => NewId.NextGuid())
                 .RuleFor(x => x.Name, s => s.PickRandom(_menuItems))
                 .RuleFor(x => x.Price, s => s.Random.Decimal(1, 25))
                 .RuleFor(x => x.ShelfLife, s => s.Random.Decimal(50M, 100M))
                 .RuleFor(x => x.IsValid, s => s.PickRandom(true, false))
-                .RuleFor(x => x.StorageTemperatureId, s => s.PickRandom(Temperatures.Select(m => m.StorageTemperatureId)))
+                .RuleFor(x => x.TemperatureId, s => s.PickRandom(Temperatures.Select(m => m.TemperatureId)))
                 .RuleFor(x => x.MenuId, s => s.PickRandom(Menus.Select(m => m.MenuId)))
                 .RuleFor(x => x.CreationTimestamp, s => DateTime.Now);
 
@@ -247,14 +254,14 @@ namespace DatabaseSeederConsole
             return faker;
         }
 
-        Faker<StorageTemperatureEntity> GetStorageTemperatureFaker()
+        Faker<TemperatureEntity> GetTemperatureFaker()
         {
-            int storageTemperatureId = 1;
+            int temperatureId = 1;
             int i = 0;
 
-            var faker = new Faker<StorageTemperatureEntity>()
+            var faker = new Faker<TemperatureEntity>()
                 .StrictMode(true)
-                .RuleFor(x => x.StorageTemperatureId, s => storageTemperatureId++)
+                .RuleFor(x => x.TemperatureId, s => temperatureId++)
                 .RuleFor(x => x.Name, s =>
                 {
                     if (i < _temperatures.Length)

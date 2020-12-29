@@ -1,5 +1,6 @@
 namespace Services.Core
 {
+    using System.Linq;
     using System.Threading.Tasks;
     using Data.Core;
     using Data.Core.Model;
@@ -18,36 +19,45 @@ namespace Services.Core
 
         public async Task<Result<Courier>> Find(CourierFinderRequest request)
         {
-            var target = await _db.Couriers.FirstOrDefaultAsync(x => x.City == request.City
-                && x.RegionId == request.RegionId
-                && x.IsAvailable);
+            var target = await (from courier in _db.Couriers
+                    from address in _db.Addresses
+                    where courier.AddressId == address.AddressId
+                        && address.RegionId == request.RegionId
+                        && address.City == request.City
+                        && courier.IsAvailable
+                    select new
+                    {
+                        Courier = courier,
+                        Address = address
+                    })
+                .FirstOrDefaultAsync();
 
             if (target == null)
                 return new Result<Courier> {ChangeCount = 0, IsSuccessful = false};
             
-            var courier = MapEntity(target);
-
-            target.IsAvailable = false;
-
-            _db.Update(target);
-
+            var mapped = MapEntity(target.Courier, target.Address);
+            
+            target.Courier.IsAvailable = false;
+            
+            _db.Update(target.Courier);
+            
             var changes = await _db.SaveChangesAsync();
-
-            return new Result<Courier> {ChangeCount = changes, Value = courier, IsSuccessful = true};
+            
+            return new Result<Courier> {ChangeCount = changes, Value = mapped, IsSuccessful = true};
         }
 
-        Courier MapEntity(CourierEntity entity) =>
+        Courier MapEntity(CourierEntity courier, AddressEntity address) =>
             new()
             {
-                CourierId = entity.CourierId,
-                FirstName = entity.FirstName,
-                LastName = entity.LastName,
+                CourierId = courier.CourierId,
+                FirstName = courier.FirstName,
+                LastName = courier.LastName,
                 Address = new Address
                 {
-                    Street = entity.Street,
-                    City = entity.City,
-                    RegionId = entity.RegionId,
-                    ZipCode = entity.ZipCode
+                    Street = address.Street,
+                    City = address.City,
+                    RegionId = address.RegionId,
+                    ZipCode = address.ZipCode
                 }
             };
     }

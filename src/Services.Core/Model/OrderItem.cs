@@ -14,6 +14,8 @@ namespace Services.Core.Model
         
         public Guid MenuItemId { get; init; }
         
+        public int? ShelfId { get; init; }
+        
         public string SpecialInstructions { get; init; }
         
         public DateTime? TimePrepared { get; init; }

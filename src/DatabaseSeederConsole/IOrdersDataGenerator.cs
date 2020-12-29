@@ -7,7 +7,7 @@ namespace DatabaseSeederConsole
     {
         List<RegionEntity> Regions { get; }
         
-        List<StorageTemperatureEntity> Temperatures { get; }
+        List<TemperatureEntity> Temperatures { get; }
         
         List<RestaurantEntity> Restaurants { get; }
         
@@ -24,5 +24,7 @@ namespace DatabaseSeederConsole
         List<OrderEntity> Orders { get; }
         
         List<OrderItemEntity> OrderItems { get; }
+        
+        List<AddressEntity> Addresses { get; }
     }
 }

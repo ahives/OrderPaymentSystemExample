@@ -65,10 +65,10 @@ namespace Services.Core
                 // TODO: may need to change this to data.Status
                 Status = OrderStatus.Receipt,
                 StatusTimestamp = DateTime.Now,
-                Street = data.Street,
-                City = data.City,
-                RegionId = data.RegionId,
-                ZipCode = data.ZipCode,
+                // Street = data.Street,
+                // City = data.City,
+                // RegionId = data.RegionId,
+                // ZipCode = data.ZipCode,
                 CreationTimestamp = DateTime.Now
             });
 
@@ -168,12 +168,12 @@ namespace Services.Core
             Shelf result = (from menuItem in _db.MenuItems
                     from shelf in _db.Shelves
                     where menuItem.MenuItemId == menuItemId &&
-                        menuItem.StorageTemperatureId == shelf.StorageTemperatureId
+                        menuItem.TemperatureId == shelf.TemperatureId
                     select new Shelf
                     {
                         ShelfId = shelf.ShelfId,
                         Name = shelf.Name,
-                        StorageTemperatureId = shelf.StorageTemperatureId,
+                        StorageTemperatureId = shelf.TemperatureId,
                         Capacity = shelf.Capacity
                     })
                 .FirstOrDefault();

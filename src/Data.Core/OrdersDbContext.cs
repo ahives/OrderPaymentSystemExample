@@ -14,8 +14,9 @@ namespace Data.Core
         public DbSet<OrderEntity> Orders { get; set; }
         public DbSet<OrderItemEntity> OrderItems { get; set; }
         public DbSet<ShelfEntity> Shelves { get; set; }
-        public DbSet<StorageTemperatureEntity> Temperatures { get; set; }
+        public DbSet<TemperatureEntity> Temperatures { get; set; }
         public DbSet<RegionEntity> Regions { get; set; }
+        public DbSet<AddressEntity> Addresses { get; set; }
 
         public OrdersDbContext(DbContextOptions options)
             : base(options)
