@@ -10,7 +10,7 @@ namespace Services.Core
         
         Task<Result<Order>> PickUpOrder(OrderPickUpCriteria criteria);
         
-        Task<Result<Courier>> Deliver(Guid courierId);
+        Task<Result<Order>> Deliver(OrderDeliveryCriteria criteria);
         
         Task<Result<Courier>> Dispatch(CourierDispatchCriteria criteria);
     }

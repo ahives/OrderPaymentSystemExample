@@ -193,7 +193,11 @@ namespace Services.Core.Tests
         {
             var dispatcher = _provider.GetService<ICourierDispatcher>();
 
-            Result<Courier> result = await dispatcher.Deliver(_courierId);
+            Result<Order> result = await dispatcher.Deliver(new OrderDeliveryCriteria
+            {
+                OrderId = _order.OrderId,
+                CourierId = _courierId
+            });
 
             Assert.AreEqual((int)CourierStatus.DeliveredOrder, result.Value.Status);
         }
