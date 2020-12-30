@@ -25,6 +25,20 @@
             
             using (var context = provider.GetService<OrdersDbContext>())
             {
+                context.Addresses.RemoveRange(context.Addresses);
+                context.Couriers.RemoveRange(context.Couriers);
+                context.Customers.RemoveRange(context.Customers);
+                context.Menus.RemoveRange(context.Menus);
+                context.MenuItems.RemoveRange(context.MenuItems);
+                context.OrderItems.RemoveRange(context.OrderItems);
+                context.Orders.RemoveRange(context.Orders);
+                context.Regions.RemoveRange(context.Regions);
+                context.Restaurants.RemoveRange(context.Restaurants);
+                context.Shelves.RemoveRange(context.Shelves);
+                context.Temperatures.RemoveRange(context.Temperatures);
+
+                await context.SaveChangesAsync();
+                
                 await context.Addresses.AddRangeAsync(generator.Addresses);
                 await context.Couriers.AddRangeAsync(generator.Couriers);
                 await context.Customers.AddRangeAsync(generator.Customers);

@@ -4,7 +4,6 @@ namespace Services.Core
     using System.Threading.Tasks;
     using Data.Core;
     using Data.Core.Model;
-    using MassTransit;
     using Model;
 
     public class Cook :
@@ -17,25 +16,29 @@ namespace Services.Core
             _db = db;
         }
 
-        public async Task<Result<OrderItem>> Prepare(OrderPrepRequest request)
+        public async Task<Result<OrderItem>> Prepare(OrderPrepCriteria criteria)
         {
-            var target = await _db.OrderItems.FindAsync(request.OrderItemId);
+            var target = await _db.OrderItems.FindAsync(criteria.OrderItemId);
 
             if (target != null)
                 return new Result<OrderItem> {Value = null, ChangeCount = 0, IsSuccessful = false};
             
-            var entity = MapRequest(request);
+            var entity = MapRequest(criteria);
                 
             await _db.OrderItems.AddAsync(entity);
 
             int changes = await _db.SaveChangesAsync();
+
+            if (changes <= 0)
+                return new Result<OrderItem> {Value = null, ChangeCount = changes, IsSuccessful = false};
+
+            var mapped = MapEntity(entity);
                 
             return new Result<OrderItem>
             {
-                Value = MapEntity(entity),
-                OperationPerformed = OperationType.None,
+                Value = mapped,
                 ChangeCount = changes,
-                IsSuccessful = false
+                IsSuccessful = true
             };
         }
 
@@ -55,16 +58,17 @@ namespace Services.Core
                 CreationTimestamp = entity.CreationTimestamp
             };
 
-        OrderItemEntity MapRequest(OrderPrepRequest request) =>
+        OrderItemEntity MapRequest(OrderPrepCriteria criteria) =>
             new()
             {
-                OrderItemId = NewId.NextGuid(),
-                OrderId = request.OrderId,
-                MenuItemId = request.MenuItemId,
-                SpecialInstructions = request.SpecialInstructions,
-                Status = OrderItemStatus.Prepared,
+                OrderItemId = criteria.OrderItemId,
+                OrderId = criteria.OrderId,
+                MenuItemId = criteria.MenuItemId,
+                SpecialInstructions = criteria.SpecialInstructions,
+                Status = (int)OrderItemStatus.Prepared,
                 StatusTimestamp = DateTime.Now,
                 TimePrepared = DateTime.Now,
+                ExpiryTimestamp = null,
                 CreationTimestamp = DateTime.Now
             };
     }

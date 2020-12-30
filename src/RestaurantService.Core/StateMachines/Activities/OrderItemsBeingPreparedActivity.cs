@@ -47,7 +47,7 @@ namespace RestaurantService.Core.StateMachines.Activities
             
             if (orderItem != null)
             {
-                if (orderItem.Status == OrderItemStatus.Prepared)
+                if (orderItem.Status == (int)OrderItemStatus.Prepared)
                     context.Instance.ItemCount += 1;
                 else
                     context.Instance.ItemCount -= 1;

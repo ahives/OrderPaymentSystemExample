@@ -23,7 +23,7 @@ namespace Services.Core
         public async IAsyncEnumerable<Result> Expire()
         {
             var orderItems = _db.OrderItems
-                .Where(x => x.Status == OrderItemStatus.Prepared)
+                .Where(x => x.Status == (int)OrderItemStatus.Prepared)
                 .ToList();
             
             for (int i = 0; i < orderItems.Count; i++)
@@ -139,7 +139,7 @@ namespace Services.Core
             }
 
             order.ShelfId = shelf.ShelfId;
-            order.Status = OrderItemStatus.Prepared;
+            order.Status = (int)OrderItemStatus.Prepared;
             order.StatusTimestamp = DateTime.Now;
 
             _db.Update(order);
@@ -157,7 +157,7 @@ namespace Services.Core
         bool IsShelfAvailable(Shelf shelf)
         {
             var orderItems = from orderItem in _db.OrderItems
-                where orderItem.Status == OrderItemStatus.Prepared && orderItem.ShelfId == shelf.ShelfId
+                where orderItem.Status == (int)OrderItemStatus.Prepared && orderItem.ShelfId == shelf.ShelfId
                 select orderItem;
 
             return orderItems.Count() < shelf.Capacity;

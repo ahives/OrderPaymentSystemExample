@@ -5,28 +5,27 @@ namespace Services.Core.Tests
     using System.Threading.Tasks;
     using Data.Core;
     using MassTransit;
-    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
-    using Model;
     using NUnit.Framework;
 
     [TestFixture]
-    public class CourierDispatcherTests :
+    public class CookTests :
         DatabaseTestHarness
     {
         Guid _courierId;
         Guid _orderId;
+        // Guid _orderItemId;
         Guid _menuItemId;
 
-        public CourierDispatcherTests()
+        public CookTests()
         {
             _provider = _services
-                .AddSingleton<ICourierDispatcher, CourierDispatcher>()
+                .AddSingleton<ICook, Cook>()
                 .BuildServiceProvider();
         }
 
         [OneTimeSetUp]
-        public async Task Setup()
+        protected async Task Setup()
         {
             var db = _provider.GetService<OrdersDbContext>();
 
@@ -80,6 +79,8 @@ namespace Services.Core.Tests
             
             OrderItems = GetOrderItemFaker(_orderId, shelfId, _menuItemId).Generate(1);
             await db.AddRangeAsync(OrderItems);
+            
+            // _orderItemId = db.OrderItems.Select(x => x.OrderItemId).ToList().Last();
 
             await db.SaveChangesAsync();
         }
@@ -109,78 +110,36 @@ namespace Services.Core.Tests
         {
             var db = _provider.GetService<OrdersDbContext>();
 
-            var courier = await db.Couriers.FindAsync(_courierId);
-
-            if (courier != null)
-            {
-                courier.Status = (int)CourierStatus.Idle;
-
-                db.Update(courier);
-
-                await db.SaveChangesAsync();
-            }
+            // var courier = await db.Couriers.FindAsync(_courierId);
+            //
+            // if (courier != null)
+            // {
+            //     courier.Status = (int)CourierStatus.Idle;
+            //
+            //     db.Update(courier);
+            //
+            //     await db.SaveChangesAsync();
+            // }
         }
 
+
         [Test]
-        public async Task Verify_can_confirm_courier_dispatch()
+        public async Task Test()
         {
-            var dispatcher = _provider.GetService<ICourierDispatcher>();
-
-            var db = _provider.GetService<OrdersDbContext>();
-
-            var target = await db.Couriers.FirstOrDefaultAsync();
-            
-            Result<Courier> result = await dispatcher.Confirm(target.CourierId);
-
-            Assert.AreEqual((int)CourierStatus.Confirmed, result.Value.Status);
-        }
-        
-        [Test]
-        public async Task Verify_can_confirm_courier_order_pickup()
-        {
-            var dispatcher = _provider.GetService<ICourierDispatcher>();
-
+            var cook = _provider.GetService<ICook>();
             // var db = _provider.GetService<OrdersDbContext>();
-            
-            var result = await dispatcher.PickUpOrder(new OrderPickUpCriteria
+
+            Guid orderItemId = NewId.NextGuid();
+            var result = await cook.Prepare(new OrderPrepCriteria
             {
                 OrderId = _orderId,
-                CourierId = _courierId
-            });
-
-            Assert.AreEqual((int)CourierStatus.PickedUpOrder, result.Value.Status);
-            Assert.AreEqual(_courierId, result.Value.CourierId);
-        }
-        
-        [Test]
-        public async Task Verify_can_confirm_courier_order_delivered()
-        {
-            var dispatcher = _provider.GetService<ICourierDispatcher>();
-
-            var result = await dispatcher.Deliver(new OrderDeliveryCriteria
-            {
-                OrderId = _orderId,
-                CourierId = _courierId
-            });
-
-            Assert.AreEqual((int)CourierStatus.DeliveredOrder, result.Value.Status);
-        }
-
-        [Test]
-        public async Task Verify_can_dispatch_courier()
-        {
-            var dispatcher = _provider.GetService<ICourierDispatcher>();
-
-            var result = await dispatcher.Dispatch(new CourierDispatchCriteria
-            {
-                Street = "99 California St.",
-                City = Addresses[0].City,
-                RegionId = Addresses[0].RegionId,
-                ZipCode = "69843"
+                OrderItemId = orderItemId,
+                MenuItemId = _menuItemId,
+                SpecialInstructions = "Cook light"
             });
             
-            Assert.AreEqual(_courierId, result.Value.CourierId);
-            Assert.AreEqual((int)CourierStatus.Dispatched, result.Value.Status);
+            Assert.AreEqual(orderItemId, result.Value.OrderItemId);
+            Assert.AreEqual((int)OrderItemStatus.Prepared, result.Value.Status);
         }
     }
 }

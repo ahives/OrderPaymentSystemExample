@@ -5,6 +5,6 @@ namespace Services.Core
 
     public interface ICook
     {
-        Task<Result<OrderItem>> Prepare(OrderPrepRequest request);
+        Task<Result<OrderItem>> Prepare(OrderPrepCriteria criteria);
     }
 }
