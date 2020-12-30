@@ -19,8 +19,6 @@ namespace Services.Core.Events
         
         public int Status { get; init; }
         
-        public int ShelfId { get; init; }
-        
         public DateTime Timestamp { get; }
     }
 }

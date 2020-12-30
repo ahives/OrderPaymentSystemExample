@@ -20,7 +20,7 @@ namespace Services.Core.Tests
         public CookTests()
         {
             _provider = _services
-                .AddSingleton<ICook, Cook>()
+                .AddSingleton<IPrepareOrder, PrepareOrder>()
                 .BuildServiceProvider();
         }
 
@@ -126,7 +126,7 @@ namespace Services.Core.Tests
         [Test]
         public async Task Test()
         {
-            var cook = _provider.GetService<ICook>();
+            var cook = _provider.GetService<IPrepareOrder>();
             // var db = _provider.GetService<OrdersDbContext>();
 
             Guid orderItemId = NewId.NextGuid();

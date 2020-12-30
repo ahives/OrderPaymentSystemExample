@@ -11,6 +11,6 @@ namespace Services.Core
 
         Task<Result> Receive(OrderReceiptConfirmed data);
         
-        Task<Result> Prepare(PrepareOrderItem data);
+        // Task<Result> Prepare(PrepareOrderItem data);
     }
 }

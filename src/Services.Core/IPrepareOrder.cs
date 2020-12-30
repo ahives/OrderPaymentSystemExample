@@ -3,7 +3,7 @@ namespace Services.Core
     using System.Threading.Tasks;
     using Model;
 
-    public interface ICook
+    public interface IPrepareOrder
     {
         Task<Result<OrderItem>> Prepare(OrderPrepCriteria criteria);
     }

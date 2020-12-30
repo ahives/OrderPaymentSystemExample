@@ -6,12 +6,12 @@ namespace Services.Core
     using Data.Core.Model;
     using Model;
 
-    public class Cook :
-        ICook
+    public class PrepareOrder :
+        IPrepareOrder
     {
         readonly OrdersDbContext _db;
 
-        public Cook(OrdersDbContext db)
+        public PrepareOrder(OrdersDbContext db)
         {
             _db = db;
         }

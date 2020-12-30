@@ -20,12 +20,12 @@ namespace RestaurantService.Core.StateMachines.Activities
 
         public void Probe(ProbeContext context)
         {
-            throw new NotImplementedException();
+            context.CreateScope("");
         }
 
         public void Accept(StateMachineVisitor visitor)
         {
-            throw new NotImplementedException();
+            visitor.Visit(this);
         }
 
         public async Task Execute(BehaviorContext<OrderItemState, PrepareOrderItemRequested> context,
@@ -34,10 +34,16 @@ namespace RestaurantService.Core.StateMachines.Activities
             await _context.Send<PrepareOrderItem>(new
             {
                 context.Data.OrderId,
-                context.Data
+                context.Data.MenuItemId
             });
         }
 
-        public async Task Faulted<TException>(BehaviorExceptionContext<OrderItemState, PrepareOrderItemRequested, TException> context, Behavior<OrderItemState, PrepareOrderItemRequested> next) where TException : Exception => throw new NotImplementedException();
+        public async Task Faulted<TException>(
+            BehaviorExceptionContext<OrderItemState, PrepareOrderItemRequested, TException> context,
+            Behavior<OrderItemState, PrepareOrderItemRequested> next)
+            where TException : Exception
+        {
+            await next.Faulted(context);
+        }
     }
 }

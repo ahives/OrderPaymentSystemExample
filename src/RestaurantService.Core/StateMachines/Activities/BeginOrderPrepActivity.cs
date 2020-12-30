@@ -44,8 +44,7 @@ namespace RestaurantService.Core.StateMachines.Activities
                     context.Data.OrderId,
                     context.Data.CustomerId,
                     context.Data.RestaurantId,
-                    context.Data.Items,
-                    Timestamp = DateTime.Now
+                    context.Data.Items
                 });
 
                 // await UpdateOrder(context.Data);

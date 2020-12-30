@@ -96,63 +96,63 @@ namespace Services.Core
             };
         }
 
-        public async Task<Result> Prepare(PrepareOrderItem data)
-        {
-            OrderItemEntity order = await _db.OrderItems.FindAsync(data.OrderId);
-
-            if (order == null)
-            {
-                var result = await _db.OrderItems.AddAsync(new OrderItemEntity
-                {
-                    OrderItemId = NewId.NextGuid(),
-                    OrderId = data.OrderId,
-                    MenuItemId = data.MenuItemId,
-                    SpecialInstructions = data.SpecialInstructions,
-                    Status = data.Status,
-                    StatusTimestamp = DateTime.Now,
-                    CreationTimestamp = DateTime.Now
-                });
-
-                order = result.Entity;
-
-                if (order == null)
-                {
-                    return new Result
-                    {
-                        OperationPerformed = OperationType.None,
-                        ChangeCount = 0,
-                        IsSuccessful = false
-                    };
-                }
-            }
-
-            Shelf shelf = GetShelf(order.MenuItemId);
-
-            if (!IsShelfAvailable(shelf))
-            {
-                return new Result
-                {
-                    OperationPerformed = OperationType.None,
-                    ChangeCount = 0,
-                    IsSuccessful = false
-                };
-            }
-
-            order.ShelfId = shelf.ShelfId;
-            order.Status = (int)OrderItemStatus.Prepared;
-            order.StatusTimestamp = DateTime.Now;
-
-            _db.Update(order);
-
-            int changes = await _db.SaveChangesAsync();
-
-            return new Result
-            {
-                OperationPerformed = OperationType.MovedToShelf,
-                ChangeCount = changes,
-                IsSuccessful = true
-            };
-        }
+        // public async Task<Result> Prepare(PrepareOrderItem data)
+        // {
+        //     OrderItemEntity order = await _db.OrderItems.FindAsync(data.OrderId);
+        //
+        //     if (order == null)
+        //     {
+        //         var result = await _db.OrderItems.AddAsync(new OrderItemEntity
+        //         {
+        //             OrderItemId = NewId.NextGuid(),
+        //             OrderId = data.OrderId,
+        //             MenuItemId = data.MenuItemId,
+        //             SpecialInstructions = data.SpecialInstructions,
+        //             Status = data.Status,
+        //             StatusTimestamp = DateTime.Now,
+        //             CreationTimestamp = DateTime.Now
+        //         });
+        //
+        //         order = result.Entity;
+        //
+        //         if (order == null)
+        //         {
+        //             return new Result
+        //             {
+        //                 OperationPerformed = OperationType.None,
+        //                 ChangeCount = 0,
+        //                 IsSuccessful = false
+        //             };
+        //         }
+        //     }
+        //
+        //     Shelf shelf = GetShelf(order.MenuItemId);
+        //
+        //     if (!IsShelfAvailable(shelf))
+        //     {
+        //         return new Result
+        //         {
+        //             OperationPerformed = OperationType.None,
+        //             ChangeCount = 0,
+        //             IsSuccessful = false
+        //         };
+        //     }
+        //
+        //     order.ShelfId = shelf.ShelfId;
+        //     order.Status = (int)OrderItemStatus.Prepared;
+        //     order.StatusTimestamp = DateTime.Now;
+        //
+        //     _db.Update(order);
+        //
+        //     int changes = await _db.SaveChangesAsync();
+        //
+        //     return new Result
+        //     {
+        //         OperationPerformed = OperationType.MovedToShelf,
+        //         ChangeCount = changes,
+        //         IsSuccessful = true
+        //     };
+        // }
 
         bool IsShelfAvailable(Shelf shelf)
         {
