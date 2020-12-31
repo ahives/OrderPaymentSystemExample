@@ -56,8 +56,9 @@ namespace CourierService.Core.Tests
 
                 Assert.That(await harness.Consumed.Any<ConfirmCourier>());
                 Assert.That(await consumer.Consumed.Any<ConfirmCourier>());
-                Assert.That(await harness.Published.Any<CourierConfirmed>());
-                Assert.That(await harness.Published.Any<Fault<CourierConfirmed>>(), Is.False);
+                // Assert.That(await harness.Published.Any<CourierConfirmed>());
+                Assert.That(await harness.Published.Any<CourierDeclined>());
+                Assert.That(await harness.Published.Any<Fault<ConfirmCourier>>(), Is.False);
             }
             finally
             {

@@ -6,5 +6,6 @@
     &lt;TestId&gt;NUnit3x::4E4F2CB3-2BA5-4362-A2D4-3108AB89C870::net5.0::Services.Core.Tests.CourierDispatcherTests&lt;/TestId&gt;
     &lt;TestId&gt;NUnit3x::4E4F2CB3-2BA5-4362-A2D4-3108AB89C870::net5.0::Services.Core.Tests.CookTests.Test&lt;/TestId&gt;
     &lt;TestId&gt;NUnit3x::239A4170-19E5-486C-8859-D1594C83ACE4::net5.0::CourierService.Core.Tests.CourierStateTests.Test&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::239A4170-19E5-486C-8859-D1594C83ACE4::net5.0::CourierService.Core.Tests.CourierConfirmationTests&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

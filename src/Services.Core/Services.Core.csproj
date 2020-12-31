@@ -9,6 +9,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="MassTransit" Version="7.1.1" />
       <PackageReference Include="NewId" Version="3.0.3" />
     </ItemGroup>
 

@@ -10,21 +10,6 @@ namespace CourierService.Core.StateMachines
     {
         public CourierStateMachine()
         {
-            Event(() => CourierDispatched,
-                x => x.CorrelateById(cxt => cxt.Message.OrderId));
-            Event(() => OrderPickedUp,
-                x => x.CorrelateById(cxt => cxt.Message.OrderId));
-            Event(() => OrderDelivered,
-                x => x.CorrelateById(cxt => cxt.Message.OrderId));
-            Event(() => CourierConfirmed,
-                x => x.CorrelateById(cxt => cxt.Message.OrderId));
-            Event(() => OrderCanceled,
-                x => x.CorrelateById(cxt => cxt.Message.OrderId));
-            Event(() => OrderExpired,
-                x => x.CorrelateById(cxt => cxt.Message.OrderId));
-            Event(() => CourierDeclined,
-                x => x.CorrelateById(cxt => cxt.Message.OrderId));
-
             InstanceState(x => x.CurrentState, Dispatched, Confirmed, PickedUp, Delivered, Canceled, Declined);
 
             Initially(When(CourierDispatched)
