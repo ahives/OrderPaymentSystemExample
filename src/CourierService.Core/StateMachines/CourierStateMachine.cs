@@ -10,7 +10,22 @@ namespace CourierService.Core.StateMachines
     {
         public CourierStateMachine()
         {
-            InstanceState(x => x.CurrentState, Dispatched, Confirmed, PickedUp, Delivered, Canceled);
+            Event(() => CourierDispatched,
+                x => x.CorrelateById(cxt => cxt.Message.OrderId));
+            Event(() => OrderPickedUp,
+                x => x.CorrelateById(cxt => cxt.Message.OrderId));
+            Event(() => OrderDelivered,
+                x => x.CorrelateById(cxt => cxt.Message.OrderId));
+            Event(() => CourierConfirmed,
+                x => x.CorrelateById(cxt => cxt.Message.OrderId));
+            Event(() => OrderCanceled,
+                x => x.CorrelateById(cxt => cxt.Message.OrderId));
+            Event(() => OrderExpired,
+                x => x.CorrelateById(cxt => cxt.Message.OrderId));
+            Event(() => CourierDeclined,
+                x => x.CorrelateById(cxt => cxt.Message.OrderId));
+
+            InstanceState(x => x.CurrentState, Dispatched, Confirmed, PickedUp, Delivered, Canceled, Declined);
 
             Initially(When(CourierDispatched)
                     .Activity(x => x.OfType<CourierDispatchActivity>())
@@ -21,6 +36,9 @@ namespace CourierService.Core.StateMachines
                 When(CourierConfirmed)
                     .Activity(x => x.OfType<CourierConfirmationActivity>())
                     .TransitionTo(Confirmed),
+                When(CourierDeclined)
+                    .Activity(x => x.OfType<CourierDeclinedActivity>())
+                    .TransitionTo(Declined),
                 When(OrderExpired)
                     .Activity(x => x.OfType<OrderExpiredActivity>())
                     .TransitionTo(Canceled),
@@ -55,19 +73,6 @@ namespace CourierService.Core.StateMachines
                 Ignore(OrderCanceled),
                 Ignore(CourierDispatched),
                 Ignore(OrderPickedUp));
-            
-            Event(() => CourierDispatched,
-                x => x.CorrelateById(cxt => cxt.Message.OrderId));
-            Event(() => OrderPickedUp,
-                x => x.CorrelateById(cxt => cxt.Message.OrderId));
-            Event(() => OrderDelivered,
-                x => x.CorrelateById(cxt => cxt.Message.OrderId));
-            Event(() => CourierConfirmed,
-                x => x.CorrelateById(cxt => cxt.Message.OrderId));
-            Event(() => OrderCanceled,
-                x => x.CorrelateById(cxt => cxt.Message.OrderId));
-            Event(() => OrderExpired,
-                x => x.CorrelateById(cxt => cxt.Message.OrderId));
         }
         
         public State Dispatched { get; }
@@ -75,6 +80,7 @@ namespace CourierService.Core.StateMachines
         public State PickedUp { get; }
         public State Delivered { get; }
         public State Canceled { get; }
+        public State Declined { get; }
         
         public Event<CourierDispatched> CourierDispatched { get; }
         public Event<OrderPickedUp> OrderPickedUp { get; }
@@ -82,5 +88,6 @@ namespace CourierService.Core.StateMachines
         public Event<CourierConfirmed> CourierConfirmed { get; }
         public Event<OrderCanceled> OrderCanceled { get; }
         public Event<OrderExpired> OrderExpired { get; }
+        public Event<CourierDeclined> CourierDeclined { get; }
     }
 }

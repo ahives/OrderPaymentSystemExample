@@ -34,6 +34,9 @@ namespace Services.Core
             if (target == null)
                 return new Result<Courier> {ChangeCount = 0, IsSuccessful = false};
             
+            if (target.Courier.Status != (int)CourierStatus.Idle || !target.Courier.IsActive)
+                return new Result<Courier> {ChangeCount = 0, IsSuccessful = false};
+
             target.Courier.Status = (int)CourierStatus.Confirmed;
             target.Courier.StatusTimestamp = DateTime.Now;
             

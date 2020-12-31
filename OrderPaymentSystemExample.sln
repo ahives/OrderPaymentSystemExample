@@ -22,6 +22,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services.Core.Tests", "src\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestaurantService.Core.Tests", "src\RestaurantService.Core.Tests\RestaurantService.Core.Tests.csproj", "{F4E7B1D4-ABAD-4FCB-B0C2-B9E8BC317984}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourierService.Core.Tests", "src\CourierService.Core.Tests\CourierService.Core.Tests.csproj", "{239A4170-19E5-486C-8859-D1594C83ACE4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -72,5 +74,9 @@ Global
 		{F4E7B1D4-ABAD-4FCB-B0C2-B9E8BC317984}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F4E7B1D4-ABAD-4FCB-B0C2-B9E8BC317984}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F4E7B1D4-ABAD-4FCB-B0C2-B9E8BC317984}.Release|Any CPU.Build.0 = Release|Any CPU
+		{239A4170-19E5-486C-8859-D1594C83ACE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{239A4170-19E5-486C-8859-D1594C83ACE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{239A4170-19E5-486C-8859-D1594C83ACE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{239A4170-19E5-486C-8859-D1594C83ACE4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

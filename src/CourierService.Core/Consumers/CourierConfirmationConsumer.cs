@@ -23,7 +23,17 @@ namespace CourierService.Core.Consumers
             {
                 await context.Publish<CourierConfirmed>(new
                 {
-                    CourierId = result.Value,
+                    result.Value.CourierId,
+                    context.Message.OrderId,
+                    context.Message.CustomerId,
+                    context.Message.RestaurantId
+                });
+            }
+            else
+            {
+                await context.Publish<CourierDeclined>(new
+                {
+                    result.Value.CourierId,
                     context.Message.OrderId,
                     context.Message.CustomerId,
                     context.Message.RestaurantId
