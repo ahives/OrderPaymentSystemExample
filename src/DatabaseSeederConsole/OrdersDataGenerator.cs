@@ -97,7 +97,17 @@ namespace DatabaseSeederConsole
             Menus = GetMenuFaker().Generate(3);
             MenuItems = GetMenuItemFaker().Generate(20);
             Customers = GetCustomers().Generate(5);
-            Shelves = GetShelfFaker().Generate(4);
+
+            Shelves = new List<ShelfEntity>();
+
+            int shelfId = 1;
+            for (int i = 0; i < 3; i++)
+            {
+                Shelves.AddRange(GetShelfFaker(shelfId++).Generate(1));
+            }
+            
+            Shelves.AddRange(GetShelfFaker(shelfId, true).Generate(1));
+
             Couriers = GetCourierFaker().Generate(20);
             Orders = GetOrderFaker().Generate(10);
             OrderItems = GetOrderItemFaker().Generate(20);
@@ -207,14 +217,13 @@ namespace DatabaseSeederConsole
             return faker;
         }
 
-        Faker<ShelfEntity> GetShelfFaker()
+        Faker<ShelfEntity> GetShelfFaker(int shelfId, bool isOverflow = false)
         {
-            int shelfId = 1;
-            
             var faker = new Faker<ShelfEntity>()
                 .StrictMode(true)
                 .Ignore(x => x.Temperature)
-                .RuleFor(x => x.ShelfId, s => shelfId++)
+                .RuleFor(x => x.ShelfId, s => shelfId)
+                .RuleFor(x => x.IsOverflow, s => isOverflow)
                 .RuleFor(x => x.Capacity, s => s.PickRandom(5, 10, 15, 20))
                 .RuleFor(x => x.Name, s => s.Random.Replace("##-????"))
                 .RuleFor(x => x.DecayRate, s => s.Random.Decimal(10M, 20M))
@@ -234,7 +243,7 @@ namespace DatabaseSeederConsole
                 .RuleFor(x => x.Name, s => s.PickRandom(_menuItems))
                 .RuleFor(x => x.Price, s => s.Random.Decimal(1, 25))
                 .RuleFor(x => x.ShelfLife, s => s.Random.Decimal(50M, 100M))
-                .RuleFor(x => x.IsValid, s => s.PickRandom(true, false))
+                .RuleFor(x => x.IsActive, s => s.PickRandom(true, false))
                 .RuleFor(x => x.TemperatureId, s => s.PickRandom(Temperatures.Select(m => m.TemperatureId)))
                 .RuleFor(x => x.MenuId, s => s.PickRandom(Menus.Select(m => m.MenuId)))
                 .RuleFor(x => x.CreationTimestamp, s => DateTime.Now);

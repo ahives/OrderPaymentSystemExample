@@ -43,7 +43,8 @@
                 .ConfigureServices((host, services) =>
                 {
                     services.AddSingleton<IOrderValidator, OrderValidator>();
-                    services.AddSingleton<IOrderManager, OrderManager>();
+                    services.AddSingleton<IKitchenManager, KitchenManager>();
+                    services.AddSingleton<IPrepareOrder, PrepareOrder>();
                     
                     services.AddDbContext<OrdersDbContext>(x =>
                         x.UseNpgsql(host.Configuration.GetConnectionString("OrdersConnection")));

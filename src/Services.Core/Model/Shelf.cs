@@ -6,7 +6,11 @@ namespace Services.Core.Model
         
         public string Name { get; init; }
         
-        public int StorageTemperatureId { get; init; }
+        public decimal DecayRate { get; init; }
+
+        public bool IsOverflow { get; init; }
+        
+        public int TemperatureId { get; init; }
         
         public int Capacity { get; init; }
     }

@@ -209,12 +209,13 @@ namespace Services.Core.Tests
             return faker;
         }
 
-        protected Faker<ShelfEntity> GetShelfFaker(int shelfId)
+        protected Faker<ShelfEntity> GetShelfFaker(int shelfId, bool isOverflow = false)
         {
             var faker = new Faker<ShelfEntity>()
                 .StrictMode(true)
                 .Ignore(x => x.Temperature)
                 .RuleFor(x => x.ShelfId, s => shelfId++)
+                .RuleFor(x => x.IsOverflow, s => isOverflow)
                 .RuleFor(x => x.Capacity, s => s.PickRandom(5, 10, 15, 20))
                 .RuleFor(x => x.Name, s => s.Random.Replace("##-????"))
                 .RuleFor(x => x.DecayRate, s => s.Random.Decimal(10M, 20M))
@@ -234,7 +235,7 @@ namespace Services.Core.Tests
                 .RuleFor(x => x.Name, s => s.PickRandom(_menuItems))
                 .RuleFor(x => x.Price, s => s.Random.Decimal(1, 25))
                 .RuleFor(x => x.ShelfLife, s => s.Random.Decimal(50M, 100M))
-                .RuleFor(x => x.IsValid, s => true)
+                .RuleFor(x => x.IsActive, s => true)
                 .RuleFor(x => x.TemperatureId, s => temperatureId)
                 .RuleFor(x => x.MenuId, s => menuId)
                 .RuleFor(x => x.CreationTimestamp, s => DateTime.Now);

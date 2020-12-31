@@ -173,7 +173,7 @@ namespace Services.Core
                     {
                         ShelfId = shelf.ShelfId,
                         Name = shelf.Name,
-                        StorageTemperatureId = shelf.TemperatureId,
+                        TemperatureId = shelf.TemperatureId,
                         Capacity = shelf.Capacity
                     })
                 .FirstOrDefault();

@@ -13,6 +13,9 @@ namespace Data.Core.Model
         [Column("Name"), Required]
         public string Name { get; init; }
         
+        [Column("IsOverflow")]
+        public bool IsOverflow { get; init; }
+        
         [Column("DecayRate"), Required]
         public decimal DecayRate { get; init; }
         

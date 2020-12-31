@@ -16,8 +16,8 @@ namespace Data.Core.Model
         [Column("Price"), Required]
         public decimal Price { get; init; }
         
-        [Column("IsValid"), Required]
-        public bool IsValid { get; init; }
+        [Column("IsActive"), Required]
+        public bool IsActive { get; init; }
         
         [ForeignKey("MenuId"), Required]
         public Guid MenuId { get; init; }
