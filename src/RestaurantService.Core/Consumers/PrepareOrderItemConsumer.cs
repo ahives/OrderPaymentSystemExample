@@ -4,6 +4,7 @@ namespace RestaurantService.Core.Consumers
     using MassTransit;
     using Services.Core;
     using Services.Core.Events;
+    using Services.Core.Model;
 
     public class PrepareOrderItemConsumer :
         IConsumer<PrepareOrderItem>
@@ -29,32 +30,72 @@ namespace RestaurantService.Core.Consumers
             
             if (result.IsSuccessful)
             {
-                var moveResult = await _manager.MoveToShelf(new ShelfMoveCriteria
-                {
-                    OrderItemId = result.Value.OrderItemId,
-                    MenuItemId = context.Message.MenuItemId
-                });
-                
-                if (moveResult.IsSuccessful)
-                {
-                    // TODO: move to appropriate shelf
-                    await context.Publish<OrderItemPrepared>(new
-                    {
-                        context.Message.OrderId,
-                        result.Value.OrderItemId,
-                        result.Value.Status,
-                        // result.Shelf.ShelfId
-                    });
-                }
+                await MoveToShelf(context, result.Value);
             }
             else
             {
-                // attempt to move to an overflow shelf
+                await context.Publish<OrderItemNotPrepared>(new
+                {
+                    context.Message.OrderId,
+                    result.Value.OrderItemId,
+                    result.Value.Status,
+                    result.Value.ShelfId
+                });
+            }
+        }
+
+        async Task MoveToShelf(ConsumeContext<PrepareOrderItem> context, OrderItem orderItem)
+        {
+            var result = await _manager.MoveToShelf(new ShelfMoveCriteria
+            {
+                OrderItemId = orderItem.OrderItemId,
+                MenuItemId = context.Message.MenuItemId
+            });
                 
-                // await context.Publish<OrderItemPrepared>(new
-                // {
-                //     context.Message.OrderId
-                // });
+            if (result.IsSuccessful)
+            {
+                // TODO: move to appropriate shelf
+                await context.Publish<OrderItemPrepared>(new
+                {
+                    context.Message.OrderId,
+                    orderItem.OrderItemId,
+                    orderItem.Status,
+                    orderItem.ShelfId
+                });
+            }
+            else
+            {
+                await MoveToOverflow(context, orderItem);
+            }
+        }
+
+        async Task MoveToOverflow(ConsumeContext<PrepareOrderItem> context, OrderItem orderItem)
+        {
+            var result = await _manager.MoveToOverflow(new ShelfMoveCriteria
+            {
+                OrderItemId = orderItem.OrderItemId,
+                MenuItemId = context.Message.MenuItemId
+            });
+
+            if (result.IsSuccessful)
+            {
+                await context.Publish<OrderItemPrepared>(new
+                {
+                    context.Message.OrderId,
+                    orderItem.OrderItemId,
+                    orderItem.Status,
+                    orderItem.ShelfId
+                });
+            }
+            else
+            {
+                await context.Publish<OrderItemNotPrepared>(new
+                {
+                    context.Message.OrderId,
+                    orderItem.OrderItemId,
+                    orderItem.Status,
+                    orderItem.ShelfId
+                });
             }
         }
     }

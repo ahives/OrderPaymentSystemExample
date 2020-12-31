@@ -10,6 +10,23 @@ namespace RestaurantService.Core.StateMachines
     {
         public OrderItemStateMachine()
         {
+            Event(() => PrepareOrderItemRequested,
+                x => x.CorrelateById(cxt => cxt.Message.OrderId));
+            Event(() => OrderItemNotPrepared,
+                x => x.CorrelateById(cxt => cxt.Message.OrderId));
+            Event(() => OrderItemPrepared,
+                x => x.CorrelateById(cxt => cxt.Message.OrderId));
+            Event(() => OrderItemExpired,
+                x => x.CorrelateById(cxt => cxt.Message.OrderId));
+            Event(() => OrderItemDiscarded,
+                x => x.CorrelateById(cxt => cxt.Message.OrderId));
+            Event(() => OrderCanceled,
+                x => x.CorrelateById(cxt => cxt.Message.OrderId));
+            Event(() => OrderItemCanceled,
+                x => x.CorrelateById(cxt => cxt.Message.OrderId));
+            Event(() => OrderItemExceededPreparationLimit,
+                x => x.CorrelateById(cxt => cxt.Message.OrderId));
+
             InstanceState(x => x.CurrentState, Preparing, Prepared, Discarded, Canceled, Expired, NotPrepared);
 
             Initially(When(PrepareOrderItemRequested)
@@ -20,6 +37,9 @@ namespace RestaurantService.Core.StateMachines
                 When(OrderItemPrepared)
                     .Activity(x => x.OfType<OrderItemPreparedActivity>())
                     .TransitionTo(Prepared),
+                When(OrderItemNotPrepared)
+                    .Activity(x => x.OfType<OrderItemNotPreparedActivity>())
+                    .TransitionTo(NotPrepared),
                 When(OrderCanceled)
                     .Activity(x => x.OfType<CancelOrderItemActivity>())
                     .TransitionTo(Canceled),
@@ -56,21 +76,6 @@ namespace RestaurantService.Core.StateMachines
                 Ignore(OrderItemCanceled),
                 Ignore(OrderItemExpired),
                 Ignore(OrderItemDiscarded));
-            
-            Event(() => PrepareOrderItemRequested,
-                x => x.CorrelateById(cxt => cxt.Message.OrderId));
-            Event(() => OrderItemPrepared,
-                x => x.CorrelateById(cxt => cxt.Message.OrderId));
-            Event(() => OrderItemExpired,
-                x => x.CorrelateById(cxt => cxt.Message.OrderId));
-            Event(() => OrderItemDiscarded,
-                x => x.CorrelateById(cxt => cxt.Message.OrderId));
-            Event(() => OrderCanceled,
-                x => x.CorrelateById(cxt => cxt.Message.OrderId));
-            Event(() => OrderItemCanceled,
-                x => x.CorrelateById(cxt => cxt.Message.OrderId));
-            Event(() => OrderItemExceededPreparationLimit,
-                x => x.CorrelateById(cxt => cxt.Message.OrderId));
         }
         
         public State Preparing { get; }
@@ -87,5 +92,6 @@ namespace RestaurantService.Core.StateMachines
         public Event<OrderCanceled> OrderCanceled { get; private set; }
         public Event<OrderItemCanceled> OrderItemCanceled { get; private set; }
         public Event<OrderItemExceededPreparationLimit> OrderItemExceededPreparationLimit { get; private set; }
+        public Event<OrderItemNotPrepared> OrderItemNotPrepared { get; private set; }
     }
 }

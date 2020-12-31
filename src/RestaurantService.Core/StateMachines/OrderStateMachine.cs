@@ -10,7 +10,14 @@ namespace RestaurantService.Core.StateMachines
     {
         public OrderStateMachine()
         {
-            InstanceState(x => x.CurrentState, Pending, Prepared, Canceled);
+            Event(() => PrepareOrder,
+                x => x.CorrelateById(cxt => cxt.Message.OrderId));
+            Event(() => OrderItemPrepared,
+                x => x.CorrelateById(cxt => cxt.Message.OrderId));
+            Event(() => OrderCanceled,
+                x => x.CorrelateById(cxt => cxt.Message.OrderId));
+
+            InstanceState(x => x.CurrentState, Pending, Prepared, NotPrepared, Canceled);
 
             Initially(
                 When(PrepareOrder)
@@ -20,26 +27,25 @@ namespace RestaurantService.Core.StateMachines
             During(Pending,
                 When(OrderItemPrepared)
                     .Activity(x => x.OfType<OrderItemsBeingPreparedActivity>())
-                    .TransitionTo(Prepared));
+                    .IfElse(context => context.Instance.ItemCount == context.Instance.Items.Count,
+                        thenBinder => thenBinder.TransitionTo(Prepared),
+                        elseBinder => elseBinder.TransitionTo(Pending)),
+                When(OrderItemNotPrepared)
+                    .TransitionTo(NotPrepared));
 
             During(Canceled,
                 When(OrderCanceled)
                     .TransitionTo(Canceled));
-            
-            Event(() => PrepareOrder,
-                x => x.CorrelateById(cxt => cxt.Message.OrderId));
-            Event(() => OrderItemPrepared,
-                x => x.CorrelateById(cxt => cxt.Message.OrderId));
-            Event(() => OrderCanceled,
-                x => x.CorrelateById(cxt => cxt.Message.OrderId));
         }
 
         public State Pending { get; }
         public State Prepared { get; }
         public State Canceled { get; }
+        public State NotPrepared { get; }
 
         public Event<PrepareOrder> PrepareOrder { get; private set; }
         public Event<OrderItemPrepared> OrderItemPrepared { get; private set; }
         public Event<OrderCanceled> OrderCanceled { get; private set; }
+        public Event<OrderItemNotPrepared> OrderItemNotPrepared { get; private set; }
     }
 }

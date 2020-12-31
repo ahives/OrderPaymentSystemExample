@@ -52,6 +52,8 @@ namespace RestaurantService.Core.StateMachines.Activities
                 else
                     context.Instance.ItemCount -= 1;
             }
+
+            await next.Execute(context).ConfigureAwait(false);
         }
 
         public async Task Faulted<TException>(

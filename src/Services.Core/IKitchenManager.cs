@@ -6,5 +6,7 @@ namespace Services.Core
     public interface IKitchenManager
     {
         Task<Result<Shelf>> MoveToShelf(ShelfMoveCriteria criteria);
+
+        Task<Result<Shelf>> MoveToOverflow(ShelfMoveCriteria criteria);
     }
 }
