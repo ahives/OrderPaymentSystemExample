@@ -36,7 +36,16 @@ namespace CourierService.Core.Consumers
             }
             else
             {
-                result.Reason
+                if (result.Reason == ReasonType.RestaurantNotActive || result.Reason == ReasonType.RestaurantNotOpen)
+                {
+                    await context.Publish<CancelOrderRequest>(new
+                    {
+                        context.Message.OrderId,
+                        context.Message.CourierId,
+                        context.Message.CustomerId,
+                        context.Message.RestaurantId
+                    });
+                }
             }
         }
     }

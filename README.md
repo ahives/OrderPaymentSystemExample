@@ -44,13 +44,15 @@ Couriers are dispatched when the order has been confirmed by the restaurant to h
 
 #### When a courier is dispatched...
 
-When a courier is dispatched he/she can either confirm or decline the restaurant's request. A courier is dispatched by the restaurant by finding a courier
+When a courier is dispatched, he/she can either confirm or decline the restaurant's request. A courier is dispatched by the restaurant by finding a courier
 that meets certain criteria based on locale and whether or not the courier is active. Once an appropriate courier is chosen, a request is sent to the chosen
-courier so that can confirm or decline delivery of the order. status is updated. If the courier confirms the request for delivery, they will subsequently
-head to the restaurant location to pick up the order. If the courier declines the request, the restaurant must dispatch a new courier or cancel the order.
-An order can be canceled by either the customer, restaurant, or courier at different points in the workflow. A customer or restaurant can cancel an order up
-to the point when the order is picked up by the courier. A courier can only cancel an order after it has picked up the order in route to delivery. The state
-machine diagram in figure 3 represents the aforementioned states and transitions. The black colored states are considered final states.
+courier so that can confirm or decline delivery of the order. If the courier confirms the request for delivery, they will subsequently head to the restaurant
+location to pick up the order. If the courier declines the request, the restaurant must dispatch a new courier or cancel the order. An order can be canceled
+by either the customer, restaurant, or courier at different points in the workflow. A customer or restaurant can cancel an order up to the point when the
+order is picked up by the courier. A courier can only cancel an order after it has picked up the order in route to delivery. When a courier requests that an
+order be canceled, the restaurant must make a decision on whether or not dispatch a new courier or discard the order.
+
+The state machine diagram in figure 3 represents the aforementioned states and transitions. The black colored states are considered final states.
 
 ![Courier State Machine Diagram](CourierStateMachine.png)
 

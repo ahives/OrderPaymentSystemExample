@@ -61,6 +61,8 @@
                         x.AddConsumer<OrderValidationConsumer>();
                         x.AddConsumer<PrepareOrderItemConsumer>();
                         x.AddConsumer<ReceiptConfirmationConsumer>();
+                        x.AddConsumer<CancelOrderRequestConsumer>();
+                        
                         x.SetKebabCaseEndpointNameFormatter();
                         
                         x.UsingRabbitMq((context, cfg) =>
