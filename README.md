@@ -44,3 +44,13 @@ Couriers are dispatched when the order has been confirmed by the restaurant to h
 
 ![Courier State Machine Diagram](CourierStateMachine.png)
 
+**Figure 3**
+
+####  Courier Sate Machine Orchestration
+The state machine diagram in Figure 3 represents a rendering of how states are transitioned by certain events. Figure 4 represents how the tasks are  
+orchestrated so that the various state transitions can take place.
+
+![Courier State Machine with Consumers Diagram](CourierStateMachineWithConsumers.png)
+
+**Figure 4**
+

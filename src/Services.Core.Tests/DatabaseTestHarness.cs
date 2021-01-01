@@ -126,7 +126,7 @@ namespace Services.Core.Tests
                 .StrictMode(true)
                 .Ignore(x => x.Address)
                 .RuleFor(x => x.CourierId, s => courierId)
-                .RuleFor(x => x.Status, s => s.Random.Int(0, 4))
+                .RuleFor(x => x.Status, s => 0)
                 .RuleFor(x => x.StatusTimestamp, s => DateTime.Now)
                 .RuleFor(x => x.FirstName, s => s.PickRandom(_firstNames))
                 .RuleFor(x => x.LastName, s => s.PickRandom(_lastNames))

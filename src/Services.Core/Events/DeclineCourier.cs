@@ -5,9 +5,9 @@ namespace Services.Core.Events
     using MassTransit;
     using MassTransit.Topology.Topologies;
 
-    public record DeliverOrder
+    public record DeclineCourier
     {
-        public DeliverOrder()
+        public DeclineCourier()
         {
             EventId = NewId.NextGuid();
             Timestamp = DateTime.Now;
@@ -16,7 +16,7 @@ namespace Services.Core.Events
         [ModuleInitializer]
         internal static void Init()
         {
-            GlobalTopology.Send.UseCorrelationId<DeliverOrder>(x => x.OrderId);
+            GlobalTopology.Send.UseCorrelationId<DeclineCourier>(x => x.OrderId);
         }
 
         public Guid EventId { get; }

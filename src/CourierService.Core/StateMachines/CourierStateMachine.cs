@@ -36,6 +36,9 @@ namespace CourierService.Core.StateMachines
                 When(OrderPickedUp)
                     .Activity(x => x.OfType<OrderPickedUpActivity>())
                     .TransitionTo(PickedUp),
+                When(CourierDeclined)
+                    .Activity(x => x.OfType<CourierDeclinedActivity>())
+                    .TransitionTo(Declined),
                 When(OrderCanceled)
                     .Activity(x => x.OfType<OrderCanceledActivity>())
                     .TransitionTo(Canceled),
@@ -52,11 +55,13 @@ namespace CourierService.Core.StateMachines
             During(Delivered,
                 Ignore(OrderExpired),
                 Ignore(OrderCanceled),
+                Ignore(CourierDeclined),
                 Ignore(CourierDispatched));
             
             During(Canceled,
                 Ignore(OrderCanceled),
                 Ignore(CourierDispatched),
+                Ignore(CourierDeclined),
                 Ignore(OrderPickedUp));
         }
         

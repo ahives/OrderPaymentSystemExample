@@ -39,10 +39,11 @@ namespace Services.Core.Tests
             Temperatures = GetTemperatureFaker(temperatureId).Generate(1);
             await db.AddRangeAsync(Temperatures);
             
-            long addressId = db.Addresses.Select(x => x.AddressId).ToList().Last() + 1;
+            // long addressId = db.Addresses.Select(x => x.AddressId).ToList().Last() + 1;
+            long addressId = db.Addresses.Select(x => x.AddressId).ToList().Last();
             
-            Addresses = GetAddressFaker(addressId, regionId).Generate(1);
-            await db.AddRangeAsync(Addresses);
+            // Addresses = GetAddressFaker(addressId, regionId).Generate(1);
+            // await db.AddRangeAsync(Addresses);
             
             Restaurants = GetRestaurantFaker(addressId).Generate(1);
             await db.AddRangeAsync(Restaurants);
@@ -68,10 +69,11 @@ namespace Services.Core.Tests
             Couriers = GetCourierFaker(_courierId, true, addressId).Generate(1);
             await db.AddRangeAsync(Couriers);
             
-            int shelfId = db.Shelves.Select(x => x.ShelfId).ToList().Last() + 1;
+            // int shelfId = db.Shelves.Select(x => x.ShelfId).ToList().Last() + 1;
+            int shelfId = db.Shelves.Select(x => x.ShelfId).ToList().Last();
             
-            Shelves = GetShelfFaker(shelfId).Generate(1);
-            await db.AddRangeAsync(Shelves);
+            // Shelves = GetShelfFaker(shelfId).Generate(1);
+            // await db.AddRangeAsync(Shelves);
             
             Orders = GetOrderFaker(customerId, restaurantId, addressId, _courierId).Generate(1);
             await db.AddRangeAsync(Orders);
@@ -90,7 +92,7 @@ namespace Services.Core.Tests
             var db = _provider.GetService<OrdersDbContext>();
 
             db.Regions.RemoveRange(Regions);
-            db.Addresses.RemoveRange(Addresses);
+            // db.Addresses.RemoveRange(Addresses);
             db.Menus.RemoveRange(Menus);
             db.MenuItems.RemoveRange(MenuItems);
             db.Temperatures.RemoveRange(Temperatures);
@@ -98,7 +100,7 @@ namespace Services.Core.Tests
             db.Restaurants.RemoveRange(Restaurants);
             db.Orders.RemoveRange(Orders);
             db.OrderItems.RemoveRange(OrderItems);
-            db.Shelves.RemoveRange(Shelves);
+            // db.Shelves.RemoveRange(Shelves);
             db.Couriers.RemoveRange(Couriers);
 
             await db.SaveChangesAsync();
@@ -130,7 +132,8 @@ namespace Services.Core.Tests
 
             var target = await db.Couriers.FirstOrDefaultAsync();
             
-            Result<Courier> result = await dispatcher.Confirm(target.CourierId);
+            // Result<Courier> result = await dispatcher.Confirm(target.CourierId);
+            Result<Courier> result = await dispatcher.Confirm(_courierId);
 
             Assert.AreEqual((int)CourierStatus.Confirmed, result.Value.Status);
         }
