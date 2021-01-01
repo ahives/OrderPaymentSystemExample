@@ -10,13 +10,6 @@ namespace RestaurantService.Core.StateMachines
     {
         public OrderStateMachine()
         {
-            Event(() => PrepareOrder,
-                x => x.CorrelateById(cxt => cxt.Message.OrderId));
-            Event(() => OrderItemPrepared,
-                x => x.CorrelateById(cxt => cxt.Message.OrderId));
-            Event(() => OrderCanceled,
-                x => x.CorrelateById(cxt => cxt.Message.OrderId));
-
             InstanceState(x => x.CurrentState, Pending, Prepared, NotPrepared, Canceled);
 
             Initially(

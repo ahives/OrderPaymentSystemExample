@@ -1,7 +1,9 @@
 namespace Services.Core.Events
 {
     using System;
+    using System.Runtime.CompilerServices;
     using MassTransit;
+    using MassTransit.Topology.Topologies;
     using Model;
 
     public record OrderReceived
@@ -10,6 +12,12 @@ namespace Services.Core.Events
         {
             EventId = NewId.NextGuid();
             Timestamp = DateTime.Now;
+        }
+
+        [ModuleInitializer]
+        internal static void Init()
+        {
+            GlobalTopology.Send.UseCorrelationId<OrderReceived>(x => x.OrderId);
         }
 
         public Guid EventId { get; }

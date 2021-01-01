@@ -1,9 +1,26 @@
 namespace Services.Core.Events
 {
     using System;
+    using System.Runtime.CompilerServices;
+    using MassTransit;
+    using MassTransit.Topology.Topologies;
 
     public record OrderPrepared
     {
+        public OrderPrepared()
+        {
+            EventId = NewId.NextGuid();
+            Timestamp = DateTime.Now;
+        }
+
+        [ModuleInitializer]
+        internal static void Init()
+        {
+            GlobalTopology.Send.UseCorrelationId<OrderPrepared>(x => x.OrderId);
+        }
+
+        public Guid EventId { get; }
+        
         public Guid OrderId { get; init; }
         
         public Guid CustomerId { get; init; }
@@ -12,6 +29,6 @@ namespace Services.Core.Events
         
         public Guid[] Items { get; init; }
         
-        public DateTime Timestamp { get; init; }
+        public DateTime Timestamp { get; }
     }
 }
