@@ -42,7 +42,7 @@ Cooks are dispatched when the order has been confirmed by the restaurant to have
 
 Couriers are dispatched when the order has been confirmed by the restaurant to have been valid.
 
-##### When a courier is dispatched...
+#### When a courier is dispatched...
 
 When a courier is dispatched he/she can either confirm or decline the restaurant's request. A courier is dispatched by the restaurant by finding a courier
 that meets certain criteria based on locale and whether or not the courier is active. Once an appropriate courier is chosen, a request is sent to the chosen

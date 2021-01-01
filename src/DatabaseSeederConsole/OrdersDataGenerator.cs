@@ -188,6 +188,8 @@ namespace DatabaseSeederConsole
                 .Ignore(x => x.Address)
                 .RuleFor(x => x.RestaurantId, s => NewId.NextGuid())
                 .RuleFor(x => x.Name, s => s.PickRandom(_restaurants))
+                .RuleFor(x => x.IsActive, s => true)
+                .RuleFor(x => x.IsOpen, s => s.PickRandom(true, false))
                 .RuleFor(x => x.AddressId, s => s.PickRandom(Addresses.Select(x => x.AddressId)))
                 .RuleFor(x => x.CreationTimestamp, s => DateTime.Now);
 

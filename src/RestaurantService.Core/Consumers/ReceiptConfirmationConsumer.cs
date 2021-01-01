@@ -19,7 +19,7 @@ namespace RestaurantService.Core.Consumers
         {
             Result result = await _manager.Receive(context.Message);
             
-            if (result.OperationPerformed == OperationType.Receipt)
+            if (result.Reason == ReasonType.Receipt)
             {
                 await context.Send<ValidateOrder>(new
                 {

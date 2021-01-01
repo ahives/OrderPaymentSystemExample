@@ -26,6 +26,14 @@ namespace Services.Core
 
         public async Task<Result<Order>> PickUpOrder(OrderPickUpCriteria criteria)
         {
+            var restaurant = await _db.Restaurants.FindAsync(criteria.RestaurantId);
+            
+            if (restaurant == null || !restaurant.IsActive)
+                return new Result<Order> {Reason = ReasonType.RestaurantNotActive, IsSuccessful = false};
+            
+            if (!restaurant.IsOpen)
+                return new Result<Order> {Reason = ReasonType.RestaurantNotOpen, IsSuccessful = false};
+
             var target = await (
                     from courier in _db.Couriers
                     from address in _db.Addresses

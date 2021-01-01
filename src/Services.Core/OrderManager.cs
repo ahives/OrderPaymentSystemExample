@@ -45,7 +45,7 @@ namespace Services.Core
                     {
                         yield return new Result
                         {
-                            OperationPerformed = OperationType.ExpiredOrder
+                            Reason = ReasonType.ExpiredOrder
                         };
                     }
                 }
@@ -92,7 +92,7 @@ namespace Services.Core
             {
                 ChangeCount = changes,
                 IsSuccessful = changes > 0,
-                OperationPerformed = OperationType.Receipt
+                Reason = ReasonType.Receipt
             };
         }
 

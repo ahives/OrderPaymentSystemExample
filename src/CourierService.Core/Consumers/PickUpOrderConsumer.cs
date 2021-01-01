@@ -20,6 +20,7 @@ namespace CourierService.Core.Consumers
             var result = await _dispatcher.PickUpOrder(new OrderPickUpCriteria()
             {
                 CourierId = context.Message.CourierId,
+                RestaurantId = context.Message.RestaurantId,
                 OrderId = context.Message.OrderId
             });
             
@@ -32,6 +33,10 @@ namespace CourierService.Core.Consumers
                     context.Message.CustomerId,
                     context.Message.RestaurantId
                 });
+            }
+            else
+            {
+                result.Reason
             }
         }
     }

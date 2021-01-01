@@ -11,11 +11,17 @@ namespace Data.Core.Model
         public Guid RestaurantId { get; init; }
         
         [Column("Name"), Required]
-        public string Name { get; init; }
+        public string Name { get; set; }
+        
+        [Column("IsOpen"), Required]
+        public bool IsOpen { get; set; }
+        
+        [Column("IsActive"), Required]
+        public bool IsActive { get; set; }
         
         [ForeignKey("AddressId"), Required]
-        public long AddressId { get; init; }
-        public AddressEntity Address { get; init; }
+        public long AddressId { get; set; }
+        public AddressEntity Address { get; set; }
         
         [Column("CreationTimestamp")]
         public DateTime CreationTimestamp { get; init; }

@@ -8,11 +8,12 @@ namespace Services.Core
         public Result()
         {
             Timestamp = DateTime.Now;
+            Reason = ReasonType.None;
         }
 
         public int ChangeCount { get; init; }
         
-        public OperationType OperationPerformed { get; init; }
+        public ReasonType Reason { get; init; }
         
         public bool IsSuccessful { get; init; }
         
@@ -24,13 +25,14 @@ namespace Services.Core
         public Result()
         {
             Timestamp = DateTime.Now;
+            Reason = ReasonType.None;
         }
 
         public T Value { get; init; }
         
         public int ChangeCount { get; init; }
         
-        public OperationType OperationPerformed { get; init; }
+        public ReasonType Reason { get; init; }
         
         public bool IsSuccessful { get; init; }
         
