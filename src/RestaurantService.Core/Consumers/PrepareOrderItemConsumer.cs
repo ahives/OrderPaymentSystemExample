@@ -49,6 +49,7 @@ namespace RestaurantService.Core.Consumers
             var result = await _manager.MoveToShelf(new ShelfMoveCriteria
             {
                 OrderItemId = orderItem.OrderItemId,
+                RestaurantId = context.Message.RestaurantId,
                 MenuItemId = context.Message.MenuItemId
             });
                 

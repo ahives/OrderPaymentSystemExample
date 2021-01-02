@@ -22,6 +22,8 @@ namespace Services.Core.Events
         public Guid EventId { get; }
         
         public Guid OrderId { get; init; }
+                
+        public Guid RestaurantId { get; init; }
         
         public Guid MenuItemId { get; init; }
         

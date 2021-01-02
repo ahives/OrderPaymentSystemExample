@@ -13,6 +13,10 @@ namespace Data.Core.Model
         [Column("Name"), Required]
         public string Name { get; init; }
         
+        [ForeignKey("RestaurantId"), Required]
+        public Guid RestaurantId { get; init; }
+        public RestaurantEntity Restaurant { get; init; }
+        
         [Column("IsOverflow")]
         public bool IsOverflow { get; init; }
         

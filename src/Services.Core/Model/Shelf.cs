@@ -1,8 +1,12 @@
 namespace Services.Core.Model
 {
+    using System;
+
     public record Shelf
     {
         public int ShelfId { get; init; }
+        
+        public Guid RestaurantId { get; init; }
         
         public string Name { get; init; }
         

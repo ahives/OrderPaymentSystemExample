@@ -6,6 +6,8 @@ namespace Services.Core
     {
         public Guid OrderItemId { get; init; }
         
+        public Guid RestaurantId { get; init; }
+        
         public int? ShelfId { get; init; }
         
         public Guid MenuItemId { get; init; }

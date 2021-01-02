@@ -215,6 +215,7 @@ namespace Services.Core.Tests
                 .StrictMode(true)
                 .Ignore(x => x.Temperature)
                 .RuleFor(x => x.ShelfId, s => shelfId++)
+                .RuleFor(x => x.RestaurantId, s => s.PickRandom(Restaurants.Select(r => r.RestaurantId)))
                 .RuleFor(x => x.IsOverflow, s => isOverflow)
                 .RuleFor(x => x.Capacity, s => s.PickRandom(5, 10, 15, 20))
                 .RuleFor(x => x.Name, s => s.Random.Replace("##-????"))

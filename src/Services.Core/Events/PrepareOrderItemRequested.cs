@@ -23,6 +23,8 @@ namespace Services.Core.Events
         
         public Guid OrderId { get; init; }
         
+        public Guid RestaurantId { get; init; }
+        
         public Guid MenuItemId { get; init; }
         
         public string SpecialInstructions { get; init; }

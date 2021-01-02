@@ -34,8 +34,11 @@ namespace RestaurantService.Core.StateMachines.Activities
             await _context.Send<PrepareOrderItem>(new
             {
                 context.Data.OrderId,
+                context.Data.RestaurantId,
                 context.Data.MenuItemId
             });
+
+            await next.Execute(context).ConfigureAwait(false);
         }
 
         public async Task Faulted<TException>(
