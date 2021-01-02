@@ -31,16 +31,16 @@ in parallel.
 
 **Figure 2**
 
-Joining
-Each item are being prepared independently but somehow has to roll up to the initiating order. This is called a ***Join***.
+#### Joining
+Each item are being prepared independently but somehow has to roll up to the initiating order. This is called a ***Join***. In our example, the state machine
+can only transition to the *Prepared* or *Not Prepare* state until all forked transactions have been completed.
  
 ![Forking Diagram](Joining.png)
 
 **Figure 3**
 
+It can be said that the order state machine orchestrates activities and observes the results.
 
-Essentially, an order may consist of one or more items that must be prepared individually. Each item being prepared impacts the final state of the
-order. Each order item has its own state as well as it is being prepared.
 
 ![Order Item State Machine Diagram](OrderItemStateMachine.png)
 
