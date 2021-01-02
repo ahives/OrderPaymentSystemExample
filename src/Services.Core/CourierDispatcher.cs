@@ -18,11 +18,73 @@ namespace Services.Core
             _db = db;
         }
 
-        public async Task<Result<Courier>> Confirm(Guid courierId) =>
-            await ChangeCourierStatus(courierId, CourierStatus.Confirmed);
+        public async Task<Result<Courier>> Confirm(Guid courierId)
+        {
+            var target = await (
+                    from courier in _db.Couriers
+                    from address in _db.Addresses
+                    where courier.CourierId == courierId
+                    select new
+                    {
+                        Courier = courier,
+                        Address = address
+                    })
+                .FirstOrDefaultAsync();
 
-        public async Task<Result<Courier>> Decline(Guid courierId) =>
-            await ChangeCourierStatus(courierId, CourierStatus.Declined);
+            if (target == null)
+                return new Result<Courier> {Reason = ReasonType.CourierNotFound, IsSuccessful = false};
+            
+            if (!target.Courier.IsActive)
+                return new Result<Courier> {Reason = ReasonType.CourierNotActive, IsSuccessful = false};
+            
+            if (target.Courier.Status != (int)CourierStatus.Idle)
+                return new Result<Courier> {Reason = ReasonType.CourierNotAvailable, IsSuccessful = false};
+
+            target.Courier.Status = (int)CourierStatus.Confirmed;
+            target.Courier.StatusTimestamp = DateTime.Now;
+            
+            _db.Update(target.Courier);
+            
+            var changes = await _db.SaveChangesAsync();
+            
+            if (changes <= 0)
+                return new Result<Courier> {ChangeCount = changes, IsSuccessful = false};
+            
+            var mapped = MapEntity(target.Courier, target.Address);
+            
+            return new Result<Courier> {ChangeCount = changes, Value = mapped, IsSuccessful = true};
+        }
+
+        public async Task<Result<Courier>> Decline(Guid courierId)
+        {
+            var target = await (
+                    from courier in _db.Couriers
+                    from address in _db.Addresses
+                    where courier.CourierId == courierId
+                    select new
+                    {
+                        Courier = courier,
+                        Address = address
+                    })
+                .FirstOrDefaultAsync();
+
+            if (target == null)
+                return new Result<Courier> {Reason = ReasonType.CourierNotFound, IsSuccessful = false};
+
+            target.Courier.Status = (int)CourierStatus.Declined;
+            target.Courier.StatusTimestamp = DateTime.Now;
+            
+            _db.Update(target.Courier);
+            
+            var changes = await _db.SaveChangesAsync();
+            
+            if (changes <= 0)
+                return new Result<Courier> {ChangeCount = changes, IsSuccessful = false};
+            
+            var mapped = MapEntity(target.Courier, target.Address);
+            
+            return new Result<Courier> {ChangeCount = changes, Value = mapped, IsSuccessful = true};
+        }
 
         public async Task<Result<Order>> PickUpOrder(OrderPickUpCriteria criteria)
         {
@@ -146,40 +208,6 @@ namespace Services.Core
             if (changes <= 0)
                 return new Result<Courier> {ChangeCount = changes, IsSuccessful = false};
 
-            var mapped = MapEntity(target.Courier, target.Address);
-            
-            return new Result<Courier> {ChangeCount = changes, Value = mapped, IsSuccessful = true};
-        }
-
-        async Task<Result<Courier>> ChangeCourierStatus(Guid courierId, CourierStatus status)
-        {
-            var target = await (
-                    from courier in _db.Couriers
-                    from address in _db.Addresses
-                    where courier.CourierId == courierId
-                    select new
-                    {
-                        Courier = courier,
-                        Address = address
-                    })
-                .FirstOrDefaultAsync();
-
-            if (target == null)
-                return new Result<Courier> {ChangeCount = 0, IsSuccessful = false};
-            
-            if (target.Courier.Status != (int)CourierStatus.Idle || !target.Courier.IsActive)
-                return new Result<Courier> {ChangeCount = 0, IsSuccessful = false};
-
-            target.Courier.Status = (int)status;
-            target.Courier.StatusTimestamp = DateTime.Now;
-            
-            _db.Update(target.Courier);
-            
-            var changes = await _db.SaveChangesAsync();
-            
-            if (changes <= 0)
-                return new Result<Courier> {ChangeCount = changes, IsSuccessful = false};
-            
             var mapped = MapEntity(target.Courier, target.Address);
             
             return new Result<Courier> {ChangeCount = changes, Value = mapped, IsSuccessful = true};

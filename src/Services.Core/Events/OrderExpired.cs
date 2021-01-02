@@ -9,6 +9,8 @@ namespace Services.Core.Events
     {
         public OrderExpired()
         {
+            EventId = NewId.NextGuid();
+            Timestamp = DateTime.Now;
         }
 
         [ModuleInitializer]
@@ -17,14 +19,14 @@ namespace Services.Core.Events
             GlobalTopology.Send.UseCorrelationId<OrderExpired>(x => x.OrderId);
         }
 
+        public Guid EventId { get; }
+        
         public Guid OrderId { get; init; }
         
         public Guid CustomerId { get; init; }
         
         public Guid RestaurantId { get; init; }
         
-        public Guid[] Items { get; init; }
-        
-        public DateTime Timestamp { get; init; }
+        public DateTime Timestamp { get; }
     }
 }

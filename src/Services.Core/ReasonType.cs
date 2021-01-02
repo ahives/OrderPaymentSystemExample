@@ -4,6 +4,9 @@ namespace Services.Core
     {
         RestaurantNotOpen,
         RestaurantNotActive,
+        CourierNotFound,
+        CourierNotActive,
+        CourierNotAvailable,
         MovedToShelf,
         Receipt,
         ExpiredOrder,

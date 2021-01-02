@@ -5,9 +5,9 @@ namespace Services.Core.Events
     using MassTransit;
     using MassTransit.Topology.Topologies;
 
-    public record OrderItemExpired
+    public record CourierNotAvailable
     {
-        public OrderItemExpired()
+        public CourierNotAvailable()
         {
             EventId = NewId.NextGuid();
             Timestamp = DateTime.Now;
@@ -16,10 +16,12 @@ namespace Services.Core.Events
         [ModuleInitializer]
         internal static void Init()
         {
-            GlobalTopology.Send.UseCorrelationId<OrderItemExpired>(x => x.OrderId);
+            GlobalTopology.Send.UseCorrelationId<CourierNotAvailable>(x => x.OrderId);
         }
 
         public Guid EventId { get; }
+        
+        public Guid CourierId { get; init; }
         
         public Guid OrderId { get; init; }
         
