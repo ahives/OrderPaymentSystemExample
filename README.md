@@ -10,21 +10,41 @@ for pick up
 - **Kitchen Staff** - say something here
 - **Courier** - arrives at the kitchen, picks up the order, and delivers said order back to the customer
 
-#### What is an Order?
+### Orders
 
 An order has several meanings. To better understand, lets look at its meaning from different perspectives.
 - **Customer/Courier** - from the customer or courier's perspective, an order is a single, atomic transaction between it and a restaurant.
 - **Restaurant** - from the restaurant perspective, an order is a single, atomic transaction between it and a courier. To most efficiently prepare the order, however, the restaurant may require that multiple chefs or cooks prepare each item within the order in parallel.
 - **Chef/Cook** - from the chef or cook perspective, an order is a set of singular requests to prepare food items in order to fulfill the order.
 
-Essentially, an order may consist of one or more items that must be prepared individually. That said, each item being prepared impacts the final state of the
+![Order State Machine Diagram](OrderStateMachine.png)
+
+**Figure 1**
+
+#### Forking
+In the Pending state in figure 1, this represents a ***Fork***. We call this a Fork because a single request comes in to process an order and forks into
+one or more requests to prepare items in the order. For example, a single order could have have a cheese pizza, hamburger, french fries, 3 chocolate chip
+cookies, and 2 fountain drinks. Ideally, this would not be all prepared by a single person. Also, the expectation is that all of the items can be prepared
+in parallel.
+
+![Forking Diagram](Forking.png)
+
+**Figure 2**
+
+Joining
+Each item are being prepared independently but somehow has to roll up to the initiating order. This is called a ***Join***.
+ 
+![Forking Diagram](Joining.png)
+
+**Figure 3**
+
+
+Essentially, an order may consist of one or more items that must be prepared individually. Each item being prepared impacts the final state of the
 order. Each order item has its own state as well as it is being prepared.
-
-
 
 ![Order Item State Machine Diagram](OrderItemStateMachine.png)
 
-**Figure 2**
+**Figure 4**
 
 
 ### Customer
@@ -38,7 +58,7 @@ Cooks are dispatched when the order has been confirmed by the restaurant to have
 ### Kitchen Staff
 
 
-### Courier
+### Couriers
 
 Couriers are dispatched when the order has been confirmed by the restaurant to have been valid.
 
@@ -70,7 +90,7 @@ From the above workflow, we have identified the following states:
 
 ![Courier State Machine Diagram](CourierStateMachine.png)
 
-**Figure 3**
+**Figure 5**
 
 MassTransit provides us a nice API to represent states and behaviors. Here is an code snippet taken from CourierStateMachine.cs.
 
@@ -83,8 +103,6 @@ During(Dispatched,
 ...
 ```
 
-<br>
-
 ###### Wanna know more about creating state machines in MassTransit?
 
 Check the below links:
@@ -93,12 +111,12 @@ Check the below links:
 <br>
 
 ####  Orchestration/Choreography
-The state machine diagram in Figure 3 represents a rendering of how states are transitioned by certain events. Figure 4 represents how the various tasks are
+The state machine diagram in Figure 5 represents a rendering of how states are transitioned by certain events. Figure 6 represents how the various tasks are
 orchestrated so that state transitions can take place.
 
 ![Courier State Machine with Consumers Diagram](CourierStateMachineWithConsumers.png)
 
-**Figure 4**
+**Figure 6**
 
 
 
