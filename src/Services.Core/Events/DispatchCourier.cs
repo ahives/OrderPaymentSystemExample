@@ -23,7 +23,7 @@ namespace Services.Core.Events
         
         public string City { get; init; }
         
-        public int RegionId { get; init; }
+        public Guid RegionId { get; init; }
         
         public string ZipCode { get; init; }
         

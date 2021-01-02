@@ -7,8 +7,8 @@ namespace Data.Core.Model
     [Table("Shelves")]
     public class ShelfEntity
     {
-        [Column("ShelfId"), Key, DatabaseGenerated(DatabaseGeneratedOption.Identity), Required]
-        public int ShelfId { get; init; }
+        [Column("ShelfId"), Key, Required]
+        public Guid ShelfId { get; init; }
         
         [Column("Name"), Required]
         public string Name { get; init; }
@@ -24,7 +24,7 @@ namespace Data.Core.Model
         public decimal DecayRate { get; init; }
         
         [ForeignKey("TemperatureId"), Required]
-        public int TemperatureId { get; init; }
+        public Guid TemperatureId { get; init; }
         public TemperatureEntity Temperature { get; init; }
         
         [Column("Capacity"), Required]

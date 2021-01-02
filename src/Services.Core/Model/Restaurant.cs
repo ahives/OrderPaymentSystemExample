@@ -12,6 +12,6 @@ namespace Services.Core.Model
         
         public bool IsActive { get; init; }
         
-        public long AddressId { get; init; }
+        public Guid AddressId { get; init; }
     }
 }

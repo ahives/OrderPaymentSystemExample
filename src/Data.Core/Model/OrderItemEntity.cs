@@ -19,7 +19,7 @@ namespace Data.Core.Model
         public MenuItemEntity MenuItem { get; init; }
         
         [ForeignKey("ShelfId")]
-        public int? ShelfId { get; set; }
+        public Guid? ShelfId { get; set; }
         public ShelfEntity Shelf { get; set; }
         
         [Column("Status"), Required]

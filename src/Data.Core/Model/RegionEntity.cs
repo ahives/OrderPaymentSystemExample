@@ -7,8 +7,8 @@ namespace Data.Core.Model
     [Table("Regions")]
     public class RegionEntity
     {
-        [Column("RegionId"), Key, DatabaseGenerated(DatabaseGeneratedOption.Identity), Required]
-        public int RegionId { get; init; }
+        [Column("RegionId"), Key, Required]
+        public Guid RegionId { get; init; }
         
         [Column("Name"), Required]
         public string Name { get; init; }

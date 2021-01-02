@@ -20,7 +20,8 @@ namespace DatabaseSeederConsole
         readonly string[] _menuNames;
         readonly string[] _temperatures;
         readonly string[] _regionNames;
-        
+        readonly string[] _ingredients;
+
         public List<RegionEntity> Regions { get; }
         public List<TemperatureEntity> Temperatures { get; }
         public List<RestaurantEntity> Restaurants { get; }
@@ -32,6 +33,9 @@ namespace DatabaseSeederConsole
         public List<OrderEntity> Orders { get; }
         public List<OrderItemEntity> OrderItems { get; }
         public List<AddressEntity> Addresses { get; }
+        public List<IngredientEntity> Ingredients { get; }
+        public List<InventoryItemEntity> InventoryItems { get; }
+        public List<MenuItemIngredientEntity> MenuItemIngredients { get; }
 
         public OrdersDataGenerator()
         {
@@ -81,6 +85,32 @@ namespace DatabaseSeederConsole
                 "Bacon, Egg, and Cheese Burrito",
                 "Desert"
             };
+            
+            _ingredients = new []
+            {
+                "Chocolate",
+                "Ice",
+                "American Cheese",
+                "Steak",
+                "Rice",
+                "Dough",
+                "Hamburger Patty",
+                "Noodles",
+                "Chicken",
+                "Milk",
+                "Orange",
+                "Lettuce",
+                "Tomato",
+                "Lemon",
+                "Onion",
+                "Potato",
+                "Flower Tortilla",
+                "Cookie Dough",
+                "Bacon",
+                "Apple Juice",
+                "Hamburger Bun",
+                "Egg"
+            };
 
             _zipCodes = new []{"93483", "9230", "83324", "93924", "82474", "69843", "73934"};
             _firstNames = new []{"Albert", "Christy", "Jose", "Stephen", "Michael", "Sarah", "Mia"};
@@ -97,16 +127,15 @@ namespace DatabaseSeederConsole
             Menus = GetMenuFaker().Generate(3);
             MenuItems = GetMenuItemFaker().Generate(20);
             Customers = GetCustomers().Generate(5);
+            Ingredients = GetIngredientFaker().Generate(15);
+            InventoryItems = GetInventoryItemFaker().Generate(20);
+            MenuItemIngredients = GetMenuItemIngredientFaker().Generate(50);
 
             Shelves = new List<ShelfEntity>();
 
-            int shelfId = 1;
             for (int i = 0; i < 3; i++)
-            {
-                Shelves.AddRange(GetShelfFaker(shelfId++).Generate(1));
-            }
-            
-            Shelves.AddRange(GetShelfFaker(shelfId, true).Generate(1));
+                Shelves.AddRange(GetShelfFaker(NewId.NextGuid()).Generate(1));
+            Shelves.AddRange(GetShelfFaker(NewId.NextGuid(), true).Generate(1));
 
             Couriers = GetCourierFaker().Generate(20);
             Orders = GetOrderFaker().Generate(10);
@@ -115,12 +144,10 @@ namespace DatabaseSeederConsole
 
         Faker<AddressEntity> GetAddressFaker()
         {
-            long addressId = 1;
-            
             var faker = new Faker<AddressEntity>()
                 .StrictMode(true)
                 .Ignore(x => x.Region)
-                .RuleFor(x => x.AddressId, s => addressId++)
+                .RuleFor(x => x.AddressId, s => NewId.NextGuid())
                 .RuleFor(x => x.City, s => s.PickRandom(_cities))
                 .RuleFor(x => x.Street, s => s.PickRandom(_streets))
                 .RuleFor(x => x.RegionId, s => s.PickRandom(Regions.Select(x => x.RegionId)))
@@ -142,6 +169,51 @@ namespace DatabaseSeederConsole
                 .RuleFor(x => x.LastName, s => s.PickRandom(_lastNames))
                 .RuleFor(x => x.IsActive, s => s.PickRandom(true, false))
                 .RuleFor(x => x.AddressId, s => s.PickRandom(Addresses.Select(x => x.AddressId)))
+                .RuleFor(x => x.CreationTimestamp, s => DateTime.Now);
+
+            return faker;
+        }
+
+        Faker<InventoryItemEntity> GetInventoryItemFaker()
+        {
+            var faker = new Faker<InventoryItemEntity>()
+                .StrictMode(true)
+                .Ignore(x => x.Ingredient)
+                .Ignore(x => x.Restaurant)
+                .RuleFor(x => x.InventoryItemId, s => NewId.NextGuid())
+                .RuleFor(x => x.RestaurantId, s => s.PickRandom(Restaurants.Select(r => r.RestaurantId)))
+                .RuleFor(x => x.IngredientId, s => s.PickRandom(Ingredients.Select(i => i.IngredientId)))
+                .RuleFor(x => x.QuantityOnHand, s => s.Random.Decimal(0M, 1000.0M))
+                .RuleFor(x => x.ReplenishmentThreshold, s => s.Random.Decimal(5.0M, 10.0M))
+                .RuleFor(x => x.CreationTimestamp, s => DateTime.Now);
+
+            return faker;
+        }
+
+        Faker<MenuItemIngredientEntity> GetMenuItemIngredientFaker()
+        {
+            var faker = new Faker<MenuItemIngredientEntity>()
+                .StrictMode(true)
+                .Ignore(x => x.Ingredient)
+                .Ignore(x => x.MenuItem)
+                .RuleFor(x => x.MenuItemIngredientId, s => NewId.NextGuid())
+                .RuleFor(x => x.MenuItemId, s => s.PickRandom(MenuItems.Select(m => m.MenuItemId)))
+                .RuleFor(x => x.IngredientId, s => s.PickRandom(Ingredients.Select(i => i.IngredientId)))
+                .RuleFor(x => x.IngredientId, s => s.PickRandom(Ingredients.Select(i => i.IngredientId)))
+                .RuleFor(x => x.QuantityToUse, s => s.Random.Decimal(5.0M, 10.0M))
+                .RuleFor(x => x.CreationTimestamp, s => DateTime.Now);
+
+            return faker;
+        }
+
+        Faker<IngredientEntity> GetIngredientFaker()
+        {
+            var faker = new Faker<IngredientEntity>()
+                .StrictMode(true)
+                .Ignore(x => x.Temperature)
+                .RuleFor(x => x.IngredientId, s => NewId.NextGuid())
+                .RuleFor(x => x.Name, s => s.PickRandom(_ingredients))
+                .RuleFor(x => x.TemperatureId, s => s.PickRandom(Temperatures.Select(t => t.TemperatureId)))
                 .RuleFor(x => x.CreationTimestamp, s => DateTime.Now);
 
             return faker;
@@ -219,7 +291,7 @@ namespace DatabaseSeederConsole
             return faker;
         }
 
-        Faker<ShelfEntity> GetShelfFaker(int shelfId, bool isOverflow = false)
+        Faker<ShelfEntity> GetShelfFaker(Guid shelfId, bool isOverflow = false)
         {
             var faker = new Faker<ShelfEntity>()
                 .StrictMode(true)
@@ -271,12 +343,11 @@ namespace DatabaseSeederConsole
 
         Faker<TemperatureEntity> GetTemperatureFaker()
         {
-            int temperatureId = 1;
             int i = 0;
 
             var faker = new Faker<TemperatureEntity>()
                 .StrictMode(true)
-                .RuleFor(x => x.TemperatureId, s => temperatureId++)
+                .RuleFor(x => x.TemperatureId, s => NewId.NextGuid())
                 .RuleFor(x => x.Name, s =>
                 {
                     if (i < _temperatures.Length)
@@ -292,12 +363,10 @@ namespace DatabaseSeederConsole
 
         Faker<RegionEntity> GetRegionFaker()
         {
-            int regionId = 1;
-
             int i = 0;
             var faker = new Faker<RegionEntity>()
                 .StrictMode(true)
-                .RuleFor(x => x.RegionId, s => regionId++)
+                .RuleFor(x => x.RegionId, s => NewId.NextGuid())
                 .RuleFor(x => x.Name, s =>
                 {
                     if (i < _regionNames.Length)

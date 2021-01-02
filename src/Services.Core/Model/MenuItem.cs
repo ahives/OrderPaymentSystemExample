@@ -14,6 +14,6 @@ namespace Services.Core.Model
         
         public decimal ShelfLife { get; set; }
         
-        public int TemperatureId { get; init; }
+        public Guid TemperatureId { get; init; }
     }
 }

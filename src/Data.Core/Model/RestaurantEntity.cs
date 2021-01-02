@@ -20,7 +20,7 @@ namespace Data.Core.Model
         public bool IsActive { get; set; }
         
         [ForeignKey("AddressId"), Required]
-        public long AddressId { get; set; }
+        public Guid AddressId { get; set; }
         public AddressEntity Address { get; set; }
         
         [Column("CreationTimestamp")]

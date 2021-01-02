@@ -4,7 +4,7 @@ namespace Services.Core.Model
 
     public record Shelf
     {
-        public int ShelfId { get; init; }
+        public Guid ShelfId { get; init; }
         
         public Guid RestaurantId { get; init; }
         
@@ -14,7 +14,7 @@ namespace Services.Core.Model
 
         public bool IsOverflow { get; init; }
         
-        public int TemperatureId { get; init; }
+        public Guid TemperatureId { get; init; }
         
         public int Capacity { get; init; }
     }

@@ -7,8 +7,8 @@ namespace Data.Core.Model
     [Table("Addresses")]
     public class AddressEntity
     {
-        [Column("AddressId"), Key, DatabaseGenerated(DatabaseGeneratedOption.Identity), Required]
-        public long AddressId { get; init; }
+        [Column("AddressId"), Key, Required]
+        public Guid AddressId { get; init; }
         
         [Column("Street"), Required]
         public string Street { get; init; }
@@ -17,7 +17,7 @@ namespace Data.Core.Model
         public string City { get; init; }
         
         [ForeignKey("RegionId"), Required]
-        public int RegionId { get; init; }
+        public Guid RegionId { get; init; }
         public RegionEntity Region { get; init; }
         
         [Column("ZipCode"), Required]

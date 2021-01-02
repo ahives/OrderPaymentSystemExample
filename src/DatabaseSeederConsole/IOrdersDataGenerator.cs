@@ -26,5 +26,11 @@ namespace DatabaseSeederConsole
         List<OrderItemEntity> OrderItems { get; }
         
         List<AddressEntity> Addresses { get; }
+        
+        List<IngredientEntity> Ingredients { get; }
+        
+        List<InventoryItemEntity> InventoryItems { get; }
+        
+        List<MenuItemIngredientEntity> MenuItemIngredients { get; }
     }
 }

@@ -105,12 +105,12 @@ namespace Services.Core.Tests
                     x.UseNpgsql(configuration.GetConnectionString("OrdersConnection")));
         }
 
-        protected Faker<AddressEntity> GetAddressFaker(long addressId, int regionId)
+        protected Faker<AddressEntity> GetAddressFaker(Guid addressId, Guid regionId)
         {
             var faker = new Faker<AddressEntity>()
                 .StrictMode(true)
                 .Ignore(x => x.Region)
-                .RuleFor(x => x.AddressId, s => addressId++)
+                .RuleFor(x => x.AddressId, s => addressId)
                 .RuleFor(x => x.City, s => s.PickRandom(_cities))
                 .RuleFor(x => x.Street, s => s.PickRandom(_streets))
                 .RuleFor(x => x.RegionId, s => regionId)
@@ -120,7 +120,7 @@ namespace Services.Core.Tests
             return faker;
         }
 
-        protected Faker<CourierEntity> GetCourierFaker(Guid courierId, bool isActive, long addressId)
+        protected Faker<CourierEntity> GetCourierFaker(Guid courierId, bool isActive, Guid addressId)
         {
             var faker = new Faker<CourierEntity>()
                 .StrictMode(true)
@@ -137,7 +137,7 @@ namespace Services.Core.Tests
             return faker;
         }
 
-        protected Faker<OrderEntity> GetOrderFaker(Guid customerId, Guid restaurantId, long addressId, Guid? courierId)
+        protected Faker<OrderEntity> GetOrderFaker(Guid customerId, Guid restaurantId, Guid addressId, Guid? courierId)
         {
             var faker = new Faker<OrderEntity>()
                 .StrictMode(true)
@@ -157,7 +157,7 @@ namespace Services.Core.Tests
             return faker;
         }
 
-        protected Faker<CustomerEntity> GetCustomers(long addressId)
+        protected Faker<CustomerEntity> GetCustomers(Guid addressId)
         {
             var faker = new Faker<CustomerEntity>()
                 .StrictMode(true)
@@ -171,7 +171,7 @@ namespace Services.Core.Tests
             return faker;
         }
 
-        protected Faker<RestaurantEntity> GetRestaurantFaker(long addressId)
+        protected Faker<RestaurantEntity> GetRestaurantFaker(Guid addressId)
         {
             var faker = new Faker<RestaurantEntity>()
                 .StrictMode(true)
@@ -186,7 +186,7 @@ namespace Services.Core.Tests
             return faker;
         }
 
-        protected Faker<OrderItemEntity> GetOrderItemFaker(Guid orderId, int? shelfId, Guid menuItemId)
+        protected Faker<OrderItemEntity> GetOrderItemFaker(Guid orderId, Guid? shelfId, Guid menuItemId)
         {
             var faker = new Faker<OrderItemEntity>()
                 .StrictMode(true)
@@ -209,12 +209,12 @@ namespace Services.Core.Tests
             return faker;
         }
 
-        protected Faker<ShelfEntity> GetShelfFaker(int shelfId, bool isOverflow = false)
+        protected Faker<ShelfEntity> GetShelfFaker(Guid shelfId, bool isOverflow = false)
         {
             var faker = new Faker<ShelfEntity>()
                 .StrictMode(true)
                 .Ignore(x => x.Temperature)
-                .RuleFor(x => x.ShelfId, s => shelfId++)
+                .RuleFor(x => x.ShelfId, s => shelfId)
                 .RuleFor(x => x.RestaurantId, s => s.PickRandom(Restaurants.Select(r => r.RestaurantId)))
                 .RuleFor(x => x.IsOverflow, s => isOverflow)
                 .RuleFor(x => x.Capacity, s => s.PickRandom(5, 10, 15, 20))
@@ -226,7 +226,7 @@ namespace Services.Core.Tests
             return faker;
         }
 
-        protected Faker<MenuItemEntity> GetMenuItemFaker(int temperatureId, Guid menuId)
+        protected Faker<MenuItemEntity> GetMenuItemFaker(Guid temperatureId, Guid menuId)
         {
             var faker = new Faker<MenuItemEntity>()
                 .StrictMode(true)
@@ -258,7 +258,7 @@ namespace Services.Core.Tests
             return faker;
         }
 
-        protected Faker<TemperatureEntity> GetTemperatureFaker(int temperatureId)
+        protected Faker<TemperatureEntity> GetTemperatureFaker(Guid temperatureId)
         {
             int i = 0;
 
@@ -278,7 +278,7 @@ namespace Services.Core.Tests
             return faker;
         }
 
-        protected Faker<RegionEntity> GetRegionFaker(int regionId)
+        protected Faker<RegionEntity> GetRegionFaker(Guid regionId)
         {
             int i = 0;
             var faker = new Faker<RegionEntity>()

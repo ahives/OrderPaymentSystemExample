@@ -16,6 +16,6 @@ namespace Services.Core.Model
         
         public Guid CourierId { get; init; }
         
-        public long AddressId { get; init; }
+        public Guid AddressId { get; init; }
     }
 }

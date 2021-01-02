@@ -36,6 +36,9 @@
                 context.Restaurants.RemoveRange(context.Restaurants);
                 context.Shelves.RemoveRange(context.Shelves);
                 context.Temperatures.RemoveRange(context.Temperatures);
+                context.Ingredients.RemoveRange(context.Ingredients);
+                context.InventoryItems.RemoveRange(context.InventoryItems);
+                context.MenuItemIngredients.RemoveRange(context.MenuItemIngredients);
 
                 await context.SaveChangesAsync();
                 
@@ -50,6 +53,9 @@
                 await context.Restaurants.AddRangeAsync(generator.Restaurants);
                 await context.Shelves.AddRangeAsync(generator.Shelves);
                 await context.Temperatures.AddRangeAsync(generator.Temperatures);
+                await context.Ingredients.AddRangeAsync(generator.Ingredients);
+                await context.InventoryItems.AddRangeAsync(generator.InventoryItems);
+                await context.MenuItemIngredients.AddRangeAsync(generator.MenuItemIngredients);
 
                 await context.SaveChangesAsync();
             }

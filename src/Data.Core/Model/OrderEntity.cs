@@ -29,7 +29,7 @@ namespace Data.Core.Model
         public CourierEntity Courier { get; set; }
         
         [ForeignKey("AddressId"), Required]
-        public long AddressId { get; init; }
+        public Guid AddressId { get; init; }
         public AddressEntity Address { get; init; }
         
         [Column("CreationTimestamp"), Required]

@@ -29,16 +29,16 @@ namespace Services.Core.Tests
         {
             var db = _provider.GetService<OrdersDbContext>();
 
-            int regionId = db.Regions.Select(x => x.RegionId).ToList().Last() + 1;
+            Guid regionId = NewId.NextGuid();
             Regions = GetRegionFaker(regionId).Generate(1);
             await db.AddRangeAsync(Regions);
             
-            int temperatureId = db.Temperatures.Select(x => x.TemperatureId).ToList().Last() + 1;
+            Guid temperatureId = NewId.NextGuid();
             
             Temperatures = GetTemperatureFaker(temperatureId).Generate(1);
             await db.AddRangeAsync(Temperatures);
             
-            long addressId = db.Addresses.Select(x => x.AddressId).ToList().Last() + 1;
+            Guid addressId = NewId.NextGuid();
             
             Addresses = GetAddressFaker(addressId, regionId).Generate(1);
             await db.AddRangeAsync(Addresses);
@@ -67,7 +67,7 @@ namespace Services.Core.Tests
             Couriers = GetCourierFaker(_courierId, true, addressId).Generate(1);
             await db.AddRangeAsync(Couriers);
             
-            int shelfId = db.Shelves.Select(x => x.ShelfId).ToList().Last() + 1;
+            Guid shelfId = NewId.NextGuid();
             
             Shelves = GetShelfFaker(shelfId).Generate(1);
             await db.AddRangeAsync(Shelves);
