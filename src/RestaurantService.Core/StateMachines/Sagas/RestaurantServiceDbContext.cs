@@ -8,7 +8,7 @@ namespace RestaurantService.Core.StateMachines.Sagas
     public class RestaurantServiceDbContext :
         SagaDbContext
     {
-        public RestaurantServiceDbContext(DbContextOptions options)
+        public RestaurantServiceDbContext(DbContextOptions<RestaurantServiceDbContext> options)
             : base(options)
         {
         }
