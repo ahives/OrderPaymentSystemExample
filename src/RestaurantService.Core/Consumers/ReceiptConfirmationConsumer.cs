@@ -8,27 +8,31 @@ namespace RestaurantService.Core.Consumers
     public class ReceiptConfirmationConsumer :
         IConsumer<OrderReceiptConfirmed>
     {
-        readonly IOrderManager _manager;
+        // readonly IOrderManager _manager;
 
-        public ReceiptConfirmationConsumer(IOrderManager manager)
+        // public ReceiptConfirmationConsumer(IOrderManager manager)
+        // {
+        //     _manager = manager;
+        // }
+
+        public ReceiptConfirmationConsumer()
         {
-            _manager = manager;
         }
 
         public async Task Consume(ConsumeContext<OrderReceiptConfirmed> context)
         {
-            Result result = await _manager.Receive(context.Message);
-            
-            if (result.Reason == ReasonType.Receipt)
-            {
-                await context.Send<ValidateOrder>(new
-                {
-                    context.Message.OrderId,
-                    context.Message.CustomerId,
-                    context.Message.Items,
-                    context.Message.RestaurantId
-                });
-            }
+            // Result result = await _manager.Receive(context.Message);
+            //
+            // if (result.Reason == ReasonType.Receipt)
+            // {
+            //     await context.Send<ValidateOrder>(new
+            //     {
+            //         context.Message.OrderId,
+            //         context.Message.CustomerId,
+            //         context.Message.Items,
+            //         context.Message.RestaurantId
+            //     });
+            // }
         }
     }
 }
