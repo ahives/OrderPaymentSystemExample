@@ -147,7 +147,7 @@ namespace CourierService.Core.Tests
                 Assert.That(await harness.Consumed.Any<ConfirmCourierDispatch>());
                 Assert.That(await consumer.Consumed.Any<ConfirmCourierDispatch>());
                 // Assert.That(await harness.Published.Any<CourierConfirmed>());
-                Assert.That(await harness.Published.Any<CourierDeclined>());
+                Assert.That(await harness.Published.Any<CourierDispatchDeclined>());
                 Assert.That(await harness.Published.Any<Fault<ConfirmCourierDispatch>>(), Is.False);
             }
             finally

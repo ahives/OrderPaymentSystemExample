@@ -8,7 +8,7 @@ namespace CourierService.Core.StateMachines.Activities
     using Services.Core.Events;
 
     public class CourierDeclinedActivity :
-        Activity<CourierState, CourierDeclined>
+        Activity<CourierState, CourierDispatchDeclined>
     {
         public void Probe(ProbeContext context)
         {
@@ -20,16 +20,16 @@ namespace CourierService.Core.StateMachines.Activities
             visitor.Visit(this);
         }
 
-        public async Task Execute(BehaviorContext<CourierState, CourierDeclined> context,
-            Behavior<CourierState, CourierDeclined> next)
+        public async Task Execute(BehaviorContext<CourierState, CourierDispatchDeclined> context,
+            Behavior<CourierState, CourierDispatchDeclined> next)
         {
             context.Instance.Timestamp = DateTime.Now;
             context.Instance.CourierId = null;
         }
 
         public async Task Faulted<TException>(
-            BehaviorExceptionContext<CourierState, CourierDeclined, TException> context,
-            Behavior<CourierState, CourierDeclined> next) where TException : Exception
+            BehaviorExceptionContext<CourierState, CourierDispatchDeclined, TException> context,
+            Behavior<CourierState, CourierDispatchDeclined> next) where TException : Exception
         {
             await next.Faulted(context);
         }

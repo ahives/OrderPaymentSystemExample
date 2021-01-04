@@ -7,7 +7,8 @@ namespace Data.Core
         Confirmed = 2,
         PickedUpOrder = 3,
         DeliveredOrder = 4,
-        EnRoute = 5,
-        Declined = 6
+        EnRouteToRestaurant = 5,
+        EnRouteToCustomer = 6,
+        Declined = 7
     }
 }

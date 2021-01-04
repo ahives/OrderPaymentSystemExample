@@ -21,7 +21,7 @@ namespace CourierService.Core.Consumers
             
             if (result.IsSuccessful)
             {
-                await context.Publish<CourierDeclined>(new
+                await context.Publish<CourierDispatchDeclined>(new
                 {
                     context.Message.CourierId,
                     context.Message.OrderId,

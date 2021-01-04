@@ -31,7 +31,7 @@ namespace CourierService.Core.Consumers
             }
             else
             {
-                await context.Publish<CourierDeclined>(new
+                await context.Publish<CourierDispatchDeclined>(new
                 {
                     result.Value.CourierId,
                     context.Message.OrderId,
