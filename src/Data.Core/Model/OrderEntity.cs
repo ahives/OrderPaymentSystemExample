@@ -28,6 +28,9 @@ namespace Data.Core.Model
         public Guid? CourierId { get; set; }
         public CourierEntity Courier { get; set; }
         
+        [Column("CustomerPickup"), Required]
+        public bool CustomerPickup { get; set; }
+        
         [ForeignKey("AddressId"), Required]
         public Guid AddressId { get; init; }
         public AddressEntity Address { get; init; }

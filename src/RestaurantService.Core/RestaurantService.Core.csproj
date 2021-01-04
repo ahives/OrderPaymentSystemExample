@@ -19,4 +19,8 @@
       <ProjectReference Include="..\Services.Core\Services.Core.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="RestaurantJobFactory.cs" />
+    </ItemGroup>
+
 </Project>

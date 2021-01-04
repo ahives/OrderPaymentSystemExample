@@ -44,21 +44,20 @@
                 })
                 .ConfigureServices((host, services) =>
                 {
-                    services.AddSingleton<IOrderValidator, OrderValidator>();
-                    services.AddSingleton<IKitchenManager, KitchenManager>();
-                    services.AddSingleton<IPrepareOrder, PrepareOrder>();
-                    services.AddSingleton<ILowInventoryDetector, LowInventoryDetector>();
-                    
+                    services.AddScoped<IOrderValidator, OrderValidator>();
+                    services.AddScoped<IKitchenManager, KitchenManager>();
+                    services.AddScoped<IPrepareOrder, PrepareOrder>();
+                    services.AddScoped<ILowInventoryDetector, LowInventoryDetector>();
+
                     services.AddDbContext<OrdersDbContext>(x =>
-                        x.UseNpgsql(host.Configuration.GetConnectionString("OrdersConnection")),
-                        ServiceLifetime.Singleton);
+                        x.UseNpgsql(host.Configuration.GetConnectionString("OrdersConnection")));
 
                     services.AddDbContext<RestaurantServiceDbContext>(builder =>
                         builder.UseNpgsql(host.Configuration.GetConnectionString("OrdersConnection"), m =>
                         {
                             m.MigrationsAssembly(Assembly.GetExecutingAssembly().GetName().Name);
                             m.MigrationsHistoryTable($"__{nameof(RestaurantServiceDbContext)}");
-                        }), ServiceLifetime.Singleton);
+                        }));
                     
                     services.AddMassTransit(x =>
                     {
@@ -114,10 +113,9 @@
                     
                     services.AddQuartz(q =>
                     {
-                        q.UseJobFactory<RestaurantJobFactory>(x =>
+                        q.UseMicrosoftDependencyInjectionScopedJobFactory(x =>
                         {
                             x.CreateScope = true;
-                            x.AllowDefaultConstructor = true;
                         });
                         
                         q.UsePersistentStore(s =>

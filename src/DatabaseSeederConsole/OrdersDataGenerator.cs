@@ -228,6 +228,7 @@ namespace DatabaseSeederConsole
                 .Ignore(x => x.Restaurant)
                 .Ignore(x => x.Address)
                 .RuleFor(x => x.OrderId, s => NewId.NextGuid())
+                .RuleFor(x => x.CustomerPickup, s => false)
                 .RuleFor(x => x.Status, s => s.Random.Int(0, 2))
                 .RuleFor(x => x.CustomerId, s => s.PickRandom(Customers.Select(c => c.CustomerId)))
                 .RuleFor(x => x.RestaurantId, s => s.PickRandom(Restaurants.Select(r => r.RestaurantId)))
