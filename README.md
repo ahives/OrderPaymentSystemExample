@@ -104,11 +104,12 @@ From the above workflow, we have identified the following states:
 |---|---|
 | **Dispatched** | This state represents the system choosing a courier to deliver the order based on proximity to the customer and current availability. When a courier has been chosen it is said to have been dispatched (or requested). |
 | **Confirmed** | This state represents the courier having confirmed the dispatch, agreeing to deliver the order to the customer. |
-| **Picked Up** | This state represents the courier having verified that they have picked up the order in route to the customer. |
-| **Delivered** | This is a final state representing the courier having delivered the order to the customer. |
 | **Declined** | This is a final state representing the courier declining the dispatch. |
 | **Canceled** | This is a final state representing the restaurant or customer canceling the order. From the courier's perspective, a canceled or can only be initiated by the customer before pickup or at any time by the restaurant. |
-|  |  |
+| **EnRouteToRestaurant** | This state represents the courier having notified the system that he/she is en route to the restaurant location to pick up the order. |
+| **PickedUp** | This state represents the courier having verified that they have picked up the order in route to the customer. |
+| **EnRouteToCustomer** | This state represents the courier having notified the system that he/she is en route to the customer location to deliver the order. |
+| **Delivered** | This is a final state representing the courier having delivered the order to the customer. |
 
 ![Courier State Machine Diagram](CourierStateMachine.png)
 
