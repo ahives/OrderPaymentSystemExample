@@ -27,8 +27,6 @@ accurate than five people performing one task. In either case, someone at the re
 package them for delivery to the customer. Delivery to the customer can take on several forms, e.g., dispatching a courier to deliver to a business or
 residence, notifying the customer to pick up their food, or via a waiter. 
 
-<br>
-
 #### Order State Machine
 
 In the workflow, the restaurant is responsible for facilitating the fulfillment of a order. To do so, it may require several individual items to be prepared.
@@ -42,7 +40,8 @@ responsible for preparing the items in the order, Order Item State Machine.
 
 **Figure 1**
 
-##### Forking
+**Forking**
+
 In the Pending state in figure 1, this represents a ***Fork***. We call this a Fork because a single request comes in to process an order and forks into
 one or more requests to prepare items in the order. For example, a single order could have have a cheese pizza, hamburger, french fries, 3 chocolate chip
 cookies, and 2 fountain drinks. Ideally, this would not be all prepared by a single person. Also, the expectation is that all of the items can be prepared
@@ -52,7 +51,8 @@ in parallel.
 
 **Figure 2**
 
-##### Joining
+**Joining**
+
 Each item are being prepared independently but somehow has to roll up to the initiating order. This is called a ***Join***. In our example, the state machine
 can only transition to the *Prepared* or *Not Prepare* state until all forked transactions have been completed.
  
