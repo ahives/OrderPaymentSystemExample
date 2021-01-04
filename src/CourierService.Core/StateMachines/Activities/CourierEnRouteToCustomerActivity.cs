@@ -7,8 +7,8 @@ namespace CourierService.Core.StateMachines.Activities
     using Sagas;
     using Services.Core.Events;
 
-    public class CourierDeclinedActivity :
-        Activity<CourierState, CourierDeclined>
+    public class CourierEnRouteToCustomerActivity :
+        Activity<CourierState, CourierEnRouteToCustomer>
     {
         public void Probe(ProbeContext context)
         {
@@ -20,16 +20,15 @@ namespace CourierService.Core.StateMachines.Activities
             visitor.Visit(this);
         }
 
-        public async Task Execute(BehaviorContext<CourierState, CourierDeclined> context,
-            Behavior<CourierState, CourierDeclined> next)
+        public async Task Execute(BehaviorContext<CourierState, CourierEnRouteToCustomer> context,
+            Behavior<CourierState, CourierEnRouteToCustomer> next)
         {
             context.Instance.Timestamp = DateTime.Now;
-            context.Instance.CourierId = null;
         }
 
         public async Task Faulted<TException>(
-            BehaviorExceptionContext<CourierState, CourierDeclined, TException> context,
-            Behavior<CourierState, CourierDeclined> next) where TException : Exception
+            BehaviorExceptionContext<CourierState, CourierEnRouteToCustomer, TException> context,
+            Behavior<CourierState, CourierEnRouteToCustomer> next) where TException : Exception
         {
             await next.Faulted(context);
         }

@@ -10,6 +10,8 @@ namespace Services.Core
         
         Task<Result<Courier>> Decline(Guid courierId);
         
+        Task<Result<Courier>> EnRouteToRestaurant(Guid courierId);
+        
         Task<Result<Order>> PickUpOrder(OrderPickUpCriteria criteria);
         
         Task<Result<Order>> Deliver(OrderDeliveryCriteria criteria);

@@ -8,12 +8,12 @@ namespace CourierService.Core.StateMachines.Activities
     using Sagas;
     using Services.Core.Events;
 
-    public class OrderPickedUpActivity :
+    public class CourierPickedUpOrderActivity :
         Activity<CourierState, OrderPickedUp>
     {
         readonly ConsumeContext _context;
 
-        public OrderPickedUpActivity(ConsumeContext context)
+        public CourierPickedUpOrderActivity(ConsumeContext context)
         {
             _context = context;
         }

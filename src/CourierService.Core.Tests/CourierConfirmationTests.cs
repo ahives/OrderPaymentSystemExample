@@ -34,7 +34,7 @@ namespace CourierService.Core.Tests
                 .AddSingleton<ICourierDispatcher, CourierDispatcher>()
                 .AddMassTransitInMemoryTestHarness(x =>
                 {
-                    x.AddConsumer<CourierConfirmationConsumer>();
+                    x.AddConsumer<CourierDispatchConfirmationConsumer>();
                 })
                 .AddDbContext<OrdersDbContext>(x =>
                     x.UseNpgsql(configuration.GetConnectionString("OrdersConnection")))
@@ -129,13 +129,13 @@ namespace CourierService.Core.Tests
         public async Task Test()
         {
             var harness = _provider.GetRequiredService<InMemoryTestHarness>();
-            var consumer = harness.Consumer(() => _provider.GetRequiredService<CourierConfirmationConsumer>());
+            var consumer = harness.Consumer(() => _provider.GetRequiredService<CourierDispatchConfirmationConsumer>());
             
             await harness.Start();
 
             try
             {
-                await harness.InputQueueSendEndpoint.Send<ConfirmCourier>(new
+                await harness.InputQueueSendEndpoint.Send<ConfirmCourierDispatch>(new
                 {
                     OrderId = NewId.NextGuid(),
                     CourierId = NewId.NextGuid(),
@@ -144,11 +144,11 @@ namespace CourierService.Core.Tests
                     RestaurantId = NewId.NextGuid()
                 });
 
-                Assert.That(await harness.Consumed.Any<ConfirmCourier>());
-                Assert.That(await consumer.Consumed.Any<ConfirmCourier>());
+                Assert.That(await harness.Consumed.Any<ConfirmCourierDispatch>());
+                Assert.That(await consumer.Consumed.Any<ConfirmCourierDispatch>());
                 // Assert.That(await harness.Published.Any<CourierConfirmed>());
                 Assert.That(await harness.Published.Any<CourierDeclined>());
-                Assert.That(await harness.Published.Any<Fault<ConfirmCourier>>(), Is.False);
+                Assert.That(await harness.Published.Any<Fault<ConfirmCourierDispatch>>(), Is.False);
             }
             finally
             {
@@ -161,13 +161,13 @@ namespace CourierService.Core.Tests
         public async Task Test2()
         {
             var harness = _provider.GetRequiredService<InMemoryTestHarness>();
-            var consumer = harness.Consumer(() => _provider.GetRequiredService<CourierConfirmationConsumer>());
+            var consumer = harness.Consumer(() => _provider.GetRequiredService<CourierDispatchConfirmationConsumer>());
             
             await harness.Start();
 
             try
             {
-                await harness.InputQueueSendEndpoint.Send<ConfirmCourier>(new
+                await harness.InputQueueSendEndpoint.Send<ConfirmCourierDispatch>(new
                 {
                     OrderId = _orderId,
                     CourierId = _courierId,
@@ -175,11 +175,11 @@ namespace CourierService.Core.Tests
                     RestaurantId = NewId.NextGuid()
                 });
 
-                Assert.That(await harness.Consumed.Any<ConfirmCourier>());
-                Assert.That(await consumer.Consumed.Any<ConfirmCourier>());
-                Assert.That(await harness.Published.Any<CourierConfirmed>());
+                Assert.That(await harness.Consumed.Any<ConfirmCourierDispatch>());
+                Assert.That(await consumer.Consumed.Any<ConfirmCourierDispatch>());
+                Assert.That(await harness.Published.Any<CourierDispatchConfirmed>());
                 // Assert.That(await harness.Published.Any<CourierDeclined>());
-                Assert.That(await harness.Published.Any<Fault<ConfirmCourier>>(), Is.False);
+                Assert.That(await harness.Published.Any<Fault<ConfirmCourierDispatch>>(), Is.False);
             }
             finally
             {

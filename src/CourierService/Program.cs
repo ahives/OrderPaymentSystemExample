@@ -47,7 +47,7 @@
                     services.AddMassTransit(x =>
                     {
                         x.AddConsumer<CourierDispatchConsumer>();
-                        x.AddConsumer<CourierConfirmationConsumer>();
+                        x.AddConsumer<CourierDispatchConfirmationConsumer>();
                         x.AddConsumer<OrderDeliveryConsumer>();
                         x.AddConsumer<PickUpOrderConsumer>();
                         

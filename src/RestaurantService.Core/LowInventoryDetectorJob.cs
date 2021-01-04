@@ -2,6 +2,7 @@ namespace RestaurantService.Core
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Data.Core;
     using Quartz;
     using Serilog;
     using Services.Core;

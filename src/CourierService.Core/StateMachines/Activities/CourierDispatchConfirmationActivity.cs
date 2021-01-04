@@ -8,12 +8,12 @@ namespace CourierService.Core.StateMachines.Activities
     using Sagas;
     using Services.Core.Events;
 
-    public class CourierConfirmationActivity :
-        Activity<CourierState, CourierConfirmed>
+    public class CourierDispatchConfirmationActivity :
+        Activity<CourierState, CourierDispatchConfirmed>
     {
         readonly ConsumeContext _context;
 
-        public CourierConfirmationActivity(ConsumeContext context)
+        public CourierDispatchConfirmationActivity(ConsumeContext context)
         {
             _context = context;
         }
@@ -28,22 +28,22 @@ namespace CourierService.Core.StateMachines.Activities
             visitor.Visit(this);
         }
 
-        public async Task Execute(BehaviorContext<CourierState, CourierConfirmed> context,
-            Behavior<CourierState, CourierConfirmed> next)
+        public async Task Execute(BehaviorContext<CourierState, CourierDispatchConfirmed> context,
+            Behavior<CourierState, CourierDispatchConfirmed> next)
         {
             context.Instance.Timestamp = DateTime.Now;
             
-            await _context.Send<PickUpOrder>(new
-            {
-                context.Data.OrderId,
-                context.Data.CustomerId,
-                context.Data.RestaurantId
-            });
+            // await _context.Send<PickUpOrder>(new
+            // {
+            //     context.Data.OrderId,
+            //     context.Data.CustomerId,
+            //     context.Data.RestaurantId
+            // });
         }
 
         public async Task Faulted<TException>(
-            BehaviorExceptionContext<CourierState, CourierConfirmed, TException> context,
-            Behavior<CourierState, CourierConfirmed> next)
+            BehaviorExceptionContext<CourierState, CourierDispatchConfirmed, TException> context,
+            Behavior<CourierState, CourierDispatchConfirmed> next)
             where TException : Exception
         {
             await next.Faulted(context);

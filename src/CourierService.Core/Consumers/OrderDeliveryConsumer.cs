@@ -9,13 +9,13 @@ namespace CourierService.Core.Consumers
     {
         public async Task Consume(ConsumeContext<DeliverOrder> context)
         {
-            await context.Publish<OrderDelivered>(new
-            {
-                context.Message.CourierId,
-                context.Message.OrderId,
-                context.Message.CustomerId,
-                context.Message.RestaurantId
-            });
+            // await context.Publish<CourierEnRoute>(new
+            // {
+            //     context.Message.CourierId,
+            //     context.Message.OrderId,
+            //     context.Message.CustomerId,
+            //     context.Message.RestaurantId
+            // });
         }
     }
 }

@@ -33,7 +33,7 @@ namespace CourierService.Core.StateMachines.Activities
         {
             context.Instance.Timestamp = DateTime.Now;
             
-            await _context.Send<ConfirmCourier>(new
+            await _context.Send<ConfirmCourierDispatch>(new
             {
                 context.Data.OrderId,
                 context.Data.CustomerId,

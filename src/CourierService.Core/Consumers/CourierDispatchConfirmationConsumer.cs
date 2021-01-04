@@ -5,23 +5,23 @@ namespace CourierService.Core.Consumers
     using Services.Core;
     using Services.Core.Events;
 
-    public class CourierConfirmationConsumer :
-        IConsumer<ConfirmCourier>
+    public class CourierDispatchConfirmationConsumer :
+        IConsumer<ConfirmCourierDispatch>
     {
         readonly ICourierDispatcher _dispatcher;
 
-        public CourierConfirmationConsumer(ICourierDispatcher dispatcher)
+        public CourierDispatchConfirmationConsumer(ICourierDispatcher dispatcher)
         {
             _dispatcher = dispatcher;
         }
 
-        public async Task Consume(ConsumeContext<ConfirmCourier> context)
+        public async Task Consume(ConsumeContext<ConfirmCourierDispatch> context)
         {
             var result = await _dispatcher.Confirm(context.Message.CourierId);
             
             if (result.IsSuccessful)
             {
-                await context.Publish<CourierConfirmed>(new
+                await context.Publish<CourierDispatchConfirmed>(new
                 {
                     result.Value.CourierId,
                     context.Message.OrderId,
