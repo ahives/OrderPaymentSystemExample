@@ -10,95 +10,96 @@ namespace CourierService.Core.StateMachines
     {
         public CourierStateMachine()
         {
-            InstanceState(x => x.CurrentState, Dispatched, Confirmed, EnRouteToRestaurant, PickedUp, EnRouteToCustomer, Delivered, Canceled, Declined);
+            InstanceState(x => x.CurrentState, Dispatched, DispatchConfirmed, EnRouteToRestaurant, OrderPickedUp,
+                EnRouteToCustomer, OrderDelivered, OrderCanceled, DispatchDeclined);
 
-            Initially(When(CourierDispatched)
+            Initially(When(CourierDispatchedEvent)
                     .Activity(x => x.OfType<CourierDispatchActivity>())
                     .TransitionTo(Dispatched),
-                Ignore(OrderCanceled));
+                Ignore(OrderCanceledEvent));
 
             During(Dispatched,
-                When(CourierDispatchConfirmed)
+                When(CourierDispatchConfirmedEvent)
                     .Activity(x => x.OfType<CourierDispatchConfirmationActivity>())
-                    .TransitionTo(Confirmed),
-                When(CourierDeclined)
+                    .TransitionTo((DispatchConfirmed;)),
+                When(CourierDeclinedEvent)
                     .Activity(x => x.OfType<CourierDeclinedActivity>())
-                    .TransitionTo(Declined),
-                When(OrderExpired)
+                    .TransitionTo(DispatchDeclined),
+                When(OrderExpiredEvent)
                     .Activity(x => x.OfType<OrderExpiredActivity>())
-                    .TransitionTo(Canceled),
-                When(OrderCanceled)
+                    .TransitionTo(OrderCanceled),
+                When(OrderCanceledEvent)
                     .Activity(x => x.OfType<OrderCanceledActivity>())
-                    .TransitionTo(Canceled),
-                Ignore(CourierDispatched));
+                    .TransitionTo(OrderCanceled),
+                Ignore(CourierDispatchedEvent));
 
-            During(Confirmed,
-                When(CourierEnRouteRestaurant)
+            During(DispatchConfirmed,
+                When(CourierEnRouteRestaurantEvent)
                     .Activity(x => x.OfType<CourierEnRouteToRestaurantActivity>())
                     .TransitionTo(EnRouteToRestaurant),
-                When(CourierDeclined)
+                When(CourierDeclinedEvent)
                     .Activity(x => x.OfType<CourierDeclinedActivity>())
-                    .TransitionTo(Declined),
-                When(OrderCanceled)
+                    .TransitionTo(DispatchDeclined),
+                When(OrderCanceledEvent)
                     .Activity(x => x.OfType<OrderCanceledActivity>())
-                    .TransitionTo(Canceled),
-                Ignore(CourierDispatched));
+                    .TransitionTo(OrderCanceled),
+                Ignore(CourierDispatchedEvent));
 
             During(EnRouteToRestaurant,
-                When(OrderPickedUp)
+                When(OrderPickedUpEvent)
                     .Activity(x => x.OfType<CourierPickedUpOrderActivity>())
-                    .TransitionTo(PickedUp),
-                When(CourierDeclined)
+                    .TransitionTo(OrderPickedUp),
+                When(CourierDeclinedEvent)
                     .Activity(x => x.OfType<CourierDeclinedActivity>())
-                    .TransitionTo(Declined));
+                    .TransitionTo(DispatchDeclined));
             
-            During(PickedUp,
-                When(OrderDelivered)
+            During(OrderPickedUp,
+                When(OrderDeliveredEvent)
                     .Activity(x => x.OfType<OrderDeliveryActivity>())
-                    .TransitionTo(Delivered),
-                When(CourierDeclined)
+                    .TransitionTo(OrderDelivered),
+                When(CourierDeclinedEvent)
                     .Activity(x => x.OfType<CourierDeclinedActivity>())
-                    .TransitionTo(Declined),
-                Ignore(OrderCanceled),
-                Ignore(OrderExpired),
-                Ignore(CourierEnRouteRestaurant),
-                Ignore(CourierDispatched));
+                    .TransitionTo(DispatchDeclined),
+                Ignore(OrderCanceledEvent),
+                Ignore(OrderExpiredEvent),
+                Ignore(CourierEnRouteRestaurantEvent),
+                Ignore(CourierDispatchedEvent));
 
             During(EnRouteToCustomer,
-                When(CourierEnRouteToCustomer)
+                When(CourierEnRouteToCustomerEvent)
                     .Activity(x => x.OfType<CourierEnRouteToCustomerActivity>())
-                    .TransitionTo(Delivered));
+                    .TransitionTo(OrderDelivered));
             
-            During(Delivered,
-                Ignore(OrderExpired),
-                Ignore(OrderCanceled),
-                Ignore(CourierDeclined),
-                Ignore(CourierDispatched));
+            During(OrderDelivered,
+                Ignore(OrderExpiredEvent),
+                Ignore(OrderCanceledEvent),
+                Ignore(CourierDeclinedEvent),
+                Ignore(CourierDispatchedEvent));
             
-            During(Canceled,
-                Ignore(OrderCanceled),
-                Ignore(CourierDispatched),
-                Ignore(CourierDeclined),
-                Ignore(OrderPickedUp));
+            During(OrderCanceled,
+                Ignore(OrderCanceledEvent),
+                Ignore(CourierDispatchedEvent),
+                Ignore(CourierDeclinedEvent),
+                Ignore(OrderPickedUpEvent));
         }
         
         public State Dispatched { get; }
-        public State Confirmed { get; }
-        public State PickedUp { get; }
-        public State Delivered { get; }
-        public State Canceled { get; }
-        public State Declined { get; }
+        public State DispatchConfirmed { get; }
+        public State OrderPickedUp { get; }
+        public State OrderDelivered { get; }
+        public State OrderCanceled { get; }
+        public State DispatchDeclined { get; }
         public State EnRouteToRestaurant { get; }
         public State EnRouteToCustomer { get; }
         
-        public Event<CourierDispatched> CourierDispatched { get; }
-        public Event<OrderPickedUp> OrderPickedUp { get; }
-        public Event<OrderDelivered> OrderDelivered { get; }
-        public Event<CourierDispatchConfirmed> CourierDispatchConfirmed { get; }
-        public Event<OrderCanceled> OrderCanceled { get; }
-        public Event<OrderExpired> OrderExpired { get; }
-        public Event<CourierDeclined> CourierDeclined { get; }
-        public Event<CourierEnRouteToRestaurant> CourierEnRouteRestaurant { get; }
-        public Event<CourierEnRouteToCustomer> CourierEnRouteToCustomer { get; }
+        public Event<CourierDispatched> CourierDispatchedEvent { get; }
+        public Event<OrderPickedUp> OrderPickedUpEvent { get; }
+        public Event<OrderDelivered> OrderDeliveredEvent { get; }
+        public Event<CourierDispatchConfirmed> CourierDispatchConfirmedEvent { get; }
+        public Event<OrderCanceled> OrderCanceledEvent { get; }
+        public Event<OrderExpired> OrderExpiredEvent { get; }
+        public Event<CourierDeclined> CourierDeclinedEvent { get; }
+        public Event<CourierEnRouteToRestaurant> CourierEnRouteRestaurantEvent { get; }
+        public Event<CourierEnRouteToCustomer> CourierEnRouteToCustomerEvent { get; }
     }
 }
