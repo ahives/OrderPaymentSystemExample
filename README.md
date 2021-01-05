@@ -92,7 +92,9 @@ courier so that can confirm or decline delivery of the order. If the courier con
 location to pick up the order. If the courier declines the request, the restaurant must dispatch a new courier or cancel the order. An order can be canceled
 by either the customer, restaurant, or courier at different points in the workflow. A customer or restaurant can cancel an order up until the point when the
 order is picked up by a courier. A courier can only cancel an order after he/she has picked up said order in route to the customer. When a courier requests
-that an order be canceled, the restaurant must make a decision on whether or not dispatch a new courier or discard the order.
+that an order be canceled, the restaurant must make a decision on whether or not dispatch a new courier or discard the order. The courier will send
+notifications when he/she is en route to the restaurant, has picked up the order, when he/she is en route to the customer and when the order is delivered.
+These notifications are sent via the courier service.
 
 #### State Machine
 
@@ -136,7 +138,7 @@ Check the below links:
 The state machine diagram in Figure 5 represents a rendering of how states are transitioned by certain events. Figure 6 represents how the various tasks are
 orchestrated so that state transitions can take place.
 
-![Courier State Machine with Consumers Diagram](CourierStateMachineWithConsumers.png)
+![Courier State Machine with Consumers/Service Diagram](CourierStateMachineWithConsumers.png)
 
 **Figure 6**
 
