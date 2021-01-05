@@ -2,6 +2,7 @@ namespace CourierService.Core.Consumers
 {
     using System.Threading.Tasks;
     using MassTransit;
+    using Serilog;
     using Services.Core;
     using Services.Core.Events;
 
@@ -17,6 +18,8 @@ namespace CourierService.Core.Consumers
 
         public async Task Consume(ConsumeContext<PickUpOrder> context)
         {
+            Log.Information($"Courier State Machine - {nameof(PickUpOrderConsumer)}");
+            
             var result = await _dispatcher.PickUpOrder(new OrderPickUpCriteria()
             {
                 CourierId = context.Message.CourierId,

@@ -5,6 +5,7 @@ namespace CourierService.Core.StateMachines.Activities
     using Automatonymous;
     using GreenPipes;
     using Sagas;
+    using Serilog;
     using Services.Core.Events;
 
     public class OrderDeliveryActivity :
@@ -23,7 +24,11 @@ namespace CourierService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<CourierState, OrderDelivered> context,
             Behavior<CourierState, OrderDelivered> next)
         {
+            Log.Information($"Courier State Machine - {nameof(OrderDeliveryActivity)}");
+            
             context.Instance.Timestamp = DateTime.Now;
+
+            await next.Execute(context).ConfigureAwait(false);
         }
 
         public async Task Faulted<TException>(

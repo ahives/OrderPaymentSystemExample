@@ -2,6 +2,7 @@ namespace CourierService.Core.Consumers
 {
     using System.Threading.Tasks;
     using MassTransit;
+    using Serilog;
     using Services.Core.Events;
 
     public class OrderDeliveryConsumer :
@@ -9,6 +10,8 @@ namespace CourierService.Core.Consumers
     {
         public async Task Consume(ConsumeContext<DeliverOrder> context)
         {
+            Log.Information($"Courier State Machine - {nameof(OrderDeliveryConsumer)}");
+            
             // await context.Publish<CourierEnRoute>(new
             // {
             //     context.Message.CourierId,

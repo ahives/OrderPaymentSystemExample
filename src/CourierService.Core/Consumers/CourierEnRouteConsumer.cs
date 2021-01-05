@@ -2,6 +2,7 @@ namespace CourierService.Core.Consumers
 {
     using System.Threading.Tasks;
     using MassTransit;
+    using Serilog;
     using Services.Core.Events;
 
     public class CourierEnRouteConsumer :
@@ -9,6 +10,8 @@ namespace CourierService.Core.Consumers
     {
         public async Task Consume(ConsumeContext<CourierEnRouteToRestaurant> context)
         {
+            Log.Information($"Consumer - {nameof(CourierEnRouteConsumer)}");
+            
             await context.Publish<OrderDelivered>(new
             {
                 context.Message.CourierId,

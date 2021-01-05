@@ -2,6 +2,7 @@ namespace CourierService.Core.Consumers
 {
     using System.Threading.Tasks;
     using MassTransit;
+    using Serilog;
     using Services.Core;
     using Services.Core.Events;
 
@@ -17,6 +18,8 @@ namespace CourierService.Core.Consumers
 
         public async Task Consume(ConsumeContext<DispatchCourier> context)
         {
+            Log.Information($"Consumer - {nameof(CourierDispatchConsumer)}");
+            
             var result = await _dispatcher.Dispatch(new ()
             {
                 Street = context.Message.Street,

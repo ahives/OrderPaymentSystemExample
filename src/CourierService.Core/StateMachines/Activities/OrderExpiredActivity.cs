@@ -6,6 +6,7 @@ namespace CourierService.Core.StateMachines.Activities
     using GreenPipes;
     using MassTransit;
     using Sagas;
+    using Serilog;
     using Services.Core.Events;
 
     public class OrderExpiredActivity :
@@ -31,16 +32,22 @@ namespace CourierService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<CourierState, OrderExpired> context,
             Behavior<CourierState, OrderExpired> next)
         {
+            Log.Information($"Courier State Machine - {nameof(OrderExpiredActivity)}");
+            
             context.Instance.Timestamp = DateTime.Now;
 
-            await _context.Publish<CourierCanceled>(new
-            {
-                CourierId = context.Instance.OrderId,
-                context.Instance.OrderId,
-                context.Instance.CustomerId,
-                context.Instance.RestaurantId,
-                Timestamp = DateTime.Now
-            });
+            // await _context.Publish<CourierCanceled>(new
+            // {
+            //     CourierId = context.Instance.OrderId,
+            //     context.Instance.OrderId,
+            //     context.Instance.CustomerId,
+            //     context.Instance.RestaurantId,
+            //     Timestamp = DateTime.Now
+            // });
+
+            Log.Information($"Published {nameof(OrderExpired)}");
+
+            await next.Execute(context).ConfigureAwait(false);
         }
 
         public async Task Faulted<TException>(BehaviorExceptionContext<CourierState, OrderExpired, TException> context,

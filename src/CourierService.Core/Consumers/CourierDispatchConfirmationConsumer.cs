@@ -2,6 +2,7 @@ namespace CourierService.Core.Consumers
 {
     using System.Threading.Tasks;
     using MassTransit;
+    using Serilog;
     using Services.Core;
     using Services.Core.Events;
 
@@ -17,6 +18,8 @@ namespace CourierService.Core.Consumers
 
         public async Task Consume(ConsumeContext<ConfirmCourierDispatch> context)
         {
+            Log.Information($"Consumer - {nameof(CourierDispatchConfirmationConsumer)}");
+            
             var result = await _dispatcher.Confirm(context.Message.CourierId);
             
             if (result.IsSuccessful)

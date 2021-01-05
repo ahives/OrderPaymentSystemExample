@@ -6,6 +6,7 @@ namespace CourierService.Core.StateMachines.Activities
     using GreenPipes;
     using MassTransit;
     using Sagas;
+    using Serilog;
     using Services.Core.Events;
 
     public class CourierDispatchConfirmationActivity :
@@ -31,6 +32,8 @@ namespace CourierService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<CourierState, CourierDispatchConfirmed> context,
             Behavior<CourierState, CourierDispatchConfirmed> next)
         {
+            Log.Information($"Courier State Machine - {nameof(CourierDispatchConfirmationActivity)}");
+            
             context.Instance.Timestamp = DateTime.Now;
             
             // await _context.Send<PickUpOrder>(new
@@ -39,6 +42,8 @@ namespace CourierService.Core.StateMachines.Activities
             //     context.Data.CustomerId,
             //     context.Data.RestaurantId
             // });
+
+            await next.Execute(context).ConfigureAwait(false);
         }
 
         public async Task Faulted<TException>(

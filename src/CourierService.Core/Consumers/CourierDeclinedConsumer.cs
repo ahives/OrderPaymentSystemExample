@@ -2,8 +2,10 @@ namespace CourierService.Core.Consumers
 {
     using System.Threading.Tasks;
     using MassTransit;
+    using Serilog;
     using Services.Core;
     using Services.Core.Events;
+    using StateMachines.Activities;
 
     public class CourierDeclinedConsumer :
         IConsumer<DeclineCourier>
@@ -17,6 +19,8 @@ namespace CourierService.Core.Consumers
 
         public async Task Consume(ConsumeContext<DeclineCourier> context)
         {
+            Log.Information($"Consumer - {nameof(CourierDeclinedConsumer)}");
+            
             var result = await _dispatcher.Decline(context.Message.CourierId);
             
             if (result.IsSuccessful)
