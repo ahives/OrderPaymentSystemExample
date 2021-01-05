@@ -5,21 +5,20 @@ namespace CourierService.Core.Consumers
     using Serilog;
     using Services.Core;
     using Services.Core.Events;
-    using StateMachines.Activities;
 
-    public class CourierDeclinedConsumer :
-        IConsumer<DeclineCourier>
+    public class CourierDispatchDeclinedConsumer :
+        IConsumer<DeclineCourierDispatch>
     {
         readonly ICourierDispatcher _dispatcher;
 
-        public CourierDeclinedConsumer(ICourierDispatcher dispatcher)
+        public CourierDispatchDeclinedConsumer(ICourierDispatcher dispatcher)
         {
             _dispatcher = dispatcher;
         }
 
-        public async Task Consume(ConsumeContext<DeclineCourier> context)
+        public async Task Consume(ConsumeContext<DeclineCourierDispatch> context)
         {
-            Log.Information($"Consumer - {nameof(CourierDeclinedConsumer)}");
+            Log.Information($"Consumer - {nameof(CourierDispatchDeclinedConsumer)}");
             
             var result = await _dispatcher.Decline(context.Message.CourierId);
             

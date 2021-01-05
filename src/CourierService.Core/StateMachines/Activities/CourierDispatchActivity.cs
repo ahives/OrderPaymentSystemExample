@@ -5,7 +5,6 @@ namespace CourierService.Core.StateMachines.Activities
     using Automatonymous;
     using GreenPipes;
     using MassTransit;
-    using MassTransit.Context;
     using Sagas;
     using Serilog;
     using Services.Core.Events;

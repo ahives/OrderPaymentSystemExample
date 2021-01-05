@@ -94,8 +94,6 @@ by either the customer, restaurant, or courier at different points in the workfl
 order is picked up by a courier. A courier can only cancel an order after he/she has picked up said order in route to the customer. When a courier requests
 that an order be canceled, the restaurant must make a decision on whether or not dispatch a new courier or discard the order.
 
-<br>
-
 #### State Machine
 
 From the above workflow, we have identified the following states:

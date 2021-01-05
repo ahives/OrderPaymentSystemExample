@@ -51,6 +51,7 @@
                         x.AddConsumer<OrderDeliveryConsumer>();
                         x.AddConsumer<PickUpOrderConsumer>();
                         x.AddConsumer<CourierEnRouteConsumer>();
+                        x.AddConsumer<CourierDispatchDeclinedConsumer>();
                         
                         x.SetKebabCaseEndpointNameFormatter();
                         
