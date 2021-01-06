@@ -20,7 +20,7 @@ namespace RestaurantService.Core.StateMachines
             During(Pending,
                 When(OrderItemPrepared)
                     .Activity(x => x.OfType<OrderItemsBeingPreparedActivity>())
-                    .IfElse(context => context.Instance.ItemCount == context.Instance.Items.Count,
+                    .IfElse(context => context.Instance.ActualItemCount == context.Instance.ExpectedItemCount,
                         thenBinder => thenBinder.TransitionTo(Prepared),
                         elseBinder => elseBinder.TransitionTo(Pending)),
                 When(OrderItemNotPrepared)
@@ -28,6 +28,7 @@ namespace RestaurantService.Core.StateMachines
 
             During(Canceled,
                 When(OrderCanceled)
+                    .Activity(x => x.OfType<OrderCanceledActivity>())
                     .TransitionTo(Canceled));
         }
 

@@ -4,6 +4,7 @@ namespace Services.Core
     using System.Linq;
     using Data.Core;
     using Data.Core.Model;
+    using Model;
 
     public class LowInventoryDetector :
         ILowInventoryDetector

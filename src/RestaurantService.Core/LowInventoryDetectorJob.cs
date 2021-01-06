@@ -6,6 +6,7 @@ namespace RestaurantService.Core
     using Quartz;
     using Serilog;
     using Services.Core;
+    using Services.Core.Model;
 
     public class LowInventoryDetectorJob :
         IJob

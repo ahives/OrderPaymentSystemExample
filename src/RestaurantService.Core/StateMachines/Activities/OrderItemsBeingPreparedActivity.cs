@@ -1,6 +1,7 @@
 namespace RestaurantService.Core.StateMachines.Activities
 {
     using System;
+    using System.Linq;
     using System.Threading.Tasks;
     using Automatonymous;
     using Data.Core;
@@ -11,10 +12,6 @@ namespace RestaurantService.Core.StateMachines.Activities
     public class OrderItemsBeingPreparedActivity :
         Activity<OrderState, OrderItemPrepared>
     {
-        public OrderItemsBeingPreparedActivity()
-        {
-        }
-
         public void Probe(ProbeContext context)
         {
             context.CreateScope("");
@@ -28,30 +25,18 @@ namespace RestaurantService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<OrderState, OrderItemPrepared> context,
             Behavior<OrderState, OrderItemPrepared> next)
         {
-            ExpectedOrderItem orderItem = null;
-
-            int i = 0;
-            while (i < context.Instance.Items.Count)
+            for (int i = 0; i < context.Instance.Items.Count; i++)
             {
-                if (context.Instance.Items[i].CorrelationId == context.Data.OrderItemId)
-                {
-                    context.Instance.Items[i].Status = context.Data.Status;
-                    context.Instance.Items[i].Timestamp = context.Data.Timestamp;
+                if (context.Instance.Items[i].CorrelationId != context.Data.OrderItemId)
+                    continue;
                 
-                    orderItem = context.Instance.Items[i];
-                    break;
-                }
+                context.Instance.Items[i].Status = context.Data.Status;
+                context.Instance.Items[i].Timestamp = context.Data.Timestamp;
+                break;
+            }
 
-                i++;
-            }
-            
-            if (orderItem != null)
-            {
-                if (orderItem.Status == (int)OrderItemStatus.Prepared)
-                    context.Instance.ItemCount += 1;
-                else
-                    context.Instance.ItemCount -= 1;
-            }
+            context.Instance.ActualItemCount = context.Instance.Items
+                .Count(x => x.Status == (int) OrderItemStatus.Prepared);
 
             await next.Execute(context).ConfigureAwait(false);
         }

@@ -37,7 +37,7 @@ namespace RestaurantService.Core.StateMachines
             
             During(Prepared,
                 When(OrderCanceled)
-                    .Activity(x => x.OfType<OrderCanceledActivity>())
+                    .Activity(x => x.OfType<RestaurantCanceledOrderActivity>())
                     .TransitionTo(Prepared),
                 When(OrderDiscarded)
                     .Activity(x => x.OfType<OrderDiscardedActivity>())

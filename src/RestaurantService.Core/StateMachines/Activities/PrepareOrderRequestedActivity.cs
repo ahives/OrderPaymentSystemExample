@@ -34,9 +34,16 @@ namespace RestaurantService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<OrderState, PrepareOrder> context,
             Behavior<OrderState, PrepareOrder> next)
         {
-            context.Instance.ExpectedItemCount = context.Data.Items.Length;
-            context.Instance.Items = context.Data.Items.GetExpectedOrderItems().ToList();
+            var items = context.Data.Items.MapExpectedOrderItems().ToList();
             
+            context.Instance.CustomerId = context.Data.CustomerId;
+            context.Instance.RestaurantId = context.Data.RestaurantId;
+            context.Instance.ExpectedItemCount = items.Count;
+            context.Instance.ActualItemCount = 0;
+            context.Instance.Items = items;
+            context.Instance.Timestamp = DateTime.Now;
+            
+            // fork each item in order to be prepared
             for (int i = 0; i < context.Data.Items.Length; i++)
             {
                 await _context.Publish<PrepareOrderItemRequested>(new

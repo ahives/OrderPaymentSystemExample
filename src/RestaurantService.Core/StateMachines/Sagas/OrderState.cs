@@ -13,11 +13,13 @@ namespace RestaurantService.Core.StateMachines.Sagas
         
         public Guid CustomerId { get; set; }
         
+        public Guid RestaurantId { get; set; }
+        
         public Guid? CourierId { get; set; }
         
         public int ExpectedItemCount { get; set; }
         
-        public int ItemCount { get; set; }
+        public int ActualItemCount { get; set; }
         
         public List<ExpectedOrderItem> Items { get; set; }
         

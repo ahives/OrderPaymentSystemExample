@@ -12,7 +12,11 @@ namespace RestaurantService.Core.StateMachines.Sagas
             entity.Property(x => x.CurrentState).IsRequired();
             entity.Property(x => x.CustomerId).IsRequired();
             entity.Property(x => x.CourierId).IsRequired();
+            entity.Property(x => x.RestaurantId).IsRequired();
+            entity.Property(x => x.ExpectedItemCount).IsRequired();
+            entity.Property(x => x.ActualItemCount).IsRequired();
             entity.Property(x => x.Timestamp).IsRequired();
+            entity.Property(x => x.Items).IsRequired();
             entity.Property(x => x.RowVersion).IsRowVersion();
         }
     }

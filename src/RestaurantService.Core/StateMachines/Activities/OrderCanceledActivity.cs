@@ -3,25 +3,39 @@ namespace RestaurantService.Core.StateMachines.Activities
     using System;
     using System.Threading.Tasks;
     using Automatonymous;
+    using Data.Core;
     using GreenPipes;
     using Sagas;
     using Services.Core.Events;
 
     public class OrderCanceledActivity :
-        Activity<RestaurantState, OrderCanceled>
+        Activity<OrderState, OrderCanceled>
     {
         public void Probe(ProbeContext context)
         {
-            throw new NotImplementedException();
+            context.CreateScope("");
         }
 
         public void Accept(StateMachineVisitor visitor)
         {
-            throw new NotImplementedException();
+            visitor.Visit(this);
         }
 
-        public async Task Execute(BehaviorContext<RestaurantState, OrderCanceled> context, Behavior<RestaurantState, OrderCanceled> next) => throw new NotImplementedException();
+        public async Task Execute(BehaviorContext<OrderState, OrderCanceled> context,
+            Behavior<OrderState, OrderCanceled> next)
+        {
+            foreach (var item in context.Instance.Items)
+                item.Status = (int) OrderItemStatus.Canceled;
 
-        public async Task Faulted<TException>(BehaviorExceptionContext<RestaurantState, OrderCanceled, TException> context, Behavior<RestaurantState, OrderCanceled> next) where TException : Exception => throw new NotImplementedException();
+            context.Instance.Timestamp = DateTime.Now;
+            
+            await next.Execute(context).ConfigureAwait(false);
+        }
+
+        public async Task Faulted<TException>(BehaviorExceptionContext<OrderState, OrderCanceled, TException> context,
+            Behavior<OrderState, OrderCanceled> next) where TException : Exception
+        {
+            await next.Faulted(context);
+        }
     }
 }
