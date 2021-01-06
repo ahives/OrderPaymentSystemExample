@@ -12,13 +12,13 @@ namespace CourierService.Core.Consumers
         {
             Log.Information($"Courier State Machine - {nameof(OrderDeliveryConsumer)}");
             
-            // await context.Publish<CourierEnRoute>(new
-            // {
-            //     context.Message.CourierId,
-            //     context.Message.OrderId,
-            //     context.Message.CustomerId,
-            //     context.Message.RestaurantId
-            // });
+            await context.Publish<OrderDelivered>(new
+            {
+                context.Message.CourierId,
+                context.Message.OrderId,
+                context.Message.CustomerId,
+                context.Message.RestaurantId
+            });
         }
     }
 }

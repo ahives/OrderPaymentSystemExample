@@ -10,12 +10,12 @@ namespace CourierService.Core.StateMachines.Activities
     using Serilog;
     using Services.Core.Events;
 
-    public class CourierEnRouteToCustomerActivity :
-        Activity<CourierState, CourierEnRouteToCustomer>
+    public class CourierArrivedAtRestaurantActivity :
+        Activity<CourierState, CourierArrivedAtRestaurant>
     {
         readonly ConsumeContext _context;
 
-        public CourierEnRouteToCustomerActivity(ConsumeContext context)
+        public CourierArrivedAtRestaurantActivity(ConsumeContext context)
         {
             _context = context;
         }
@@ -30,12 +30,13 @@ namespace CourierService.Core.StateMachines.Activities
             visitor.Visit(this);
         }
 
-        public async Task Execute(BehaviorContext<CourierState, CourierEnRouteToCustomer> context,
-            Behavior<CourierState, CourierEnRouteToCustomer> next)
+        public async Task Execute(BehaviorContext<CourierState, CourierArrivedAtRestaurant> context,
+            Behavior<CourierState, CourierArrivedAtRestaurant> next)
         {
-            Log.Information($"Courier State Machine - {nameof(CourierEnRouteToRestaurantActivity)}");
+            Log.Information($"Courier State Machine - {nameof(OrderExpiredActivity)}");
             
             context.Instance.Timestamp = DateTime.Now;
+            context.Instance.HasCourierArrived = true;
 
             await _context.Send<UpdateCourierStatus>(new()
             {
@@ -43,15 +44,15 @@ namespace CourierService.Core.StateMachines.Activities
                 RestaurantId = context.Data.RestaurantId,
                 CustomerId = context.Data.CustomerId,
                 OrderId = context.Data.OrderId,
-                Status = (int)CourierStatus.EnRouteToCustomer
+                Status = (int)CourierStatus.EnRouteToRestaurant
             });
 
             await next.Execute(context).ConfigureAwait(false);
         }
 
         public async Task Faulted<TException>(
-            BehaviorExceptionContext<CourierState, CourierEnRouteToCustomer, TException> context,
-            Behavior<CourierState, CourierEnRouteToCustomer> next)
+            BehaviorExceptionContext<CourierState, CourierArrivedAtRestaurant, TException> context,
+            Behavior<CourierState, CourierArrivedAtRestaurant> next)
             where TException : Exception
         {
             await next.Faulted(context);

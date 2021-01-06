@@ -9,11 +9,14 @@ namespace CourierService.Core.StateMachines.Sagas
     {
         protected override void Configure(EntityTypeBuilder<CourierState> entity, ModelBuilder model)
         {
-            entity.Property(x => x.CurrentState);
-            entity.Property(x => x.CustomerId);
-            entity.Property(x => x.OrderId);
-            entity.Property(x => x.RestaurantId);
-            entity.Property(x => x.Timestamp);
+            entity.Property(x => x.CurrentState).IsRequired();
+            entity.Property(x => x.CustomerId).IsRequired();
+            entity.Property(x => x.CourierId);
+            entity.Property(x => x.OrderId).IsRequired();
+            entity.Property(x => x.RestaurantId).IsRequired();
+            entity.Property(x => x.HasCourierArrived).IsRequired();
+            entity.Property(x => x.IsOrderReady).IsRequired();
+            entity.Property(x => x.Timestamp).IsRequired();
             entity.Property(x => x.RowVersion).IsRowVersion();
         }
     }

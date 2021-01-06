@@ -18,6 +18,10 @@ namespace CourierService.Core.StateMachines.Sagas
         
         public Guid OrderId { get; set; }
         
+        public bool HasCourierArrived { get; set; }
+        
+        public bool IsOrderReady { get; set; }
+        
         public DateTime Timestamp { get; set; }
         
         public byte[] RowVersion { get; set; }

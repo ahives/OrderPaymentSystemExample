@@ -36,15 +36,6 @@ namespace CourierService.Core.StateMachines.Activities
             
             context.Instance.Timestamp = DateTime.Now;
             
-            await _context.Send<DeliverOrder>(new
-            {
-                context.Data.OrderId,
-                context.Data.CustomerId,
-                context.Data.RestaurantId
-            });
-
-            Log.Information($"Sent {nameof(DeliverOrder)}");
-
             await next.Execute(context).ConfigureAwait(false);
         }
 

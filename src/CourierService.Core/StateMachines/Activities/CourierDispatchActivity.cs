@@ -39,6 +39,8 @@ namespace CourierService.Core.StateMachines.Activities
             context.Instance.CustomerId = context.Data.CustomerId;
             context.Instance.OrderId = context.Data.OrderId;
             context.Instance.CourierId = context.Data.CourierId;
+            context.Instance.IsOrderReady = false;
+            context.Instance.HasCourierArrived = false;
             
             await _context.Send<ConfirmCourierDispatch>(new
             {

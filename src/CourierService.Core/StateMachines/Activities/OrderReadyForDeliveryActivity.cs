@@ -4,21 +4,13 @@ namespace CourierService.Core.StateMachines.Activities
     using System.Threading.Tasks;
     using Automatonymous;
     using GreenPipes;
-    using MassTransit;
     using Sagas;
     using Serilog;
     using Services.Core.Events;
 
-    public class OrderExpiredActivity :
-        Activity<CourierState, OrderExpired>
+    public class OrderReadyForDeliveryActivity :
+        Activity<CourierState, OrderReadyForDelivery>
     {
-        readonly ConsumeContext _context;
-
-        public OrderExpiredActivity(ConsumeContext context)
-        {
-            _context = context;
-        }
-
         public void Probe(ProbeContext context)
         {
             context.CreateScope("");
@@ -29,18 +21,20 @@ namespace CourierService.Core.StateMachines.Activities
             visitor.Visit(this);
         }
 
-        public async Task Execute(BehaviorContext<CourierState, OrderExpired> context,
-            Behavior<CourierState, OrderExpired> next)
+        public async Task Execute(BehaviorContext<CourierState, OrderReadyForDelivery> context,
+            Behavior<CourierState, OrderReadyForDelivery> next)
         {
             Log.Information($"Courier State Machine - {nameof(OrderExpiredActivity)}");
             
             context.Instance.Timestamp = DateTime.Now;
+            context.Instance.IsOrderReady = true;
 
             await next.Execute(context).ConfigureAwait(false);
         }
 
-        public async Task Faulted<TException>(BehaviorExceptionContext<CourierState, OrderExpired, TException> context,
-            Behavior<CourierState, OrderExpired> next)
+        public async Task Faulted<TException>(
+            BehaviorExceptionContext<CourierState, OrderReadyForDelivery, TException> context,
+            Behavior<CourierState, OrderReadyForDelivery> next)
             where TException : Exception
         {
             await next.Faulted(context);
