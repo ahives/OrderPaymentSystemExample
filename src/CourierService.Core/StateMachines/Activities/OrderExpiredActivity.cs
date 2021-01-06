@@ -36,15 +36,6 @@ namespace CourierService.Core.StateMachines.Activities
             
             context.Instance.Timestamp = DateTime.Now;
 
-            // await _context.Publish<CourierCanceled>(new
-            // {
-            //     CourierId = context.Instance.OrderId,
-            //     context.Instance.OrderId,
-            //     context.Instance.CustomerId,
-            //     context.Instance.RestaurantId,
-            //     Timestamp = DateTime.Now
-            // });
-
             Log.Information($"Published {nameof(OrderExpired)}");
 
             await next.Execute(context).ConfigureAwait(false);

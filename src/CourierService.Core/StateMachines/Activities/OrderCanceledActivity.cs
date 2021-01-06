@@ -36,7 +36,7 @@ namespace CourierService.Core.StateMachines.Activities
             
             context.Instance.Timestamp = DateTime.Now;
 
-            await _context.Publish<CourierCanceled>(new
+            await _context.Publish<CourierDispatchCanceled>(new
             {
                 context.Instance.CourierId,
                 context.Instance.OrderId,
@@ -44,7 +44,7 @@ namespace CourierService.Core.StateMachines.Activities
                 context.Instance.RestaurantId
             });
 
-            Log.Information($"Published {nameof(CourierCanceled)}");
+            Log.Information($"Published {nameof(CourierDispatchCanceled)}");
 
             await next.Execute(context).ConfigureAwait(false);
         }

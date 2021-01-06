@@ -11,7 +11,7 @@ namespace CourierService.Core.StateMachines
         public CourierStateMachine()
         {
             InstanceState(x => x.CurrentState, Dispatched, DispatchConfirmed, EnRouteToRestaurant, OrderPickedUp,
-                EnRouteToCustomer, OrderDelivered, OrderCanceled, DispatchDeclined);
+                EnRouteToCustomer, OrderDelivered, DispatchCanceled, DispatchDeclined);
 
             Initially(When(CourierDispatchedEvent)
                     .Activity(x => x.OfType<CourierDispatchActivity>())
@@ -27,10 +27,10 @@ namespace CourierService.Core.StateMachines
                     .TransitionTo(DispatchDeclined),
                 When(OrderExpiredEvent)
                     .Activity(x => x.OfType<OrderExpiredActivity>())
-                    .TransitionTo(OrderCanceled),
+                    .TransitionTo(Dispatched),
                 When(OrderCanceledEvent)
                     .Activity(x => x.OfType<OrderCanceledActivity>())
-                    .TransitionTo(OrderCanceled),
+                    .TransitionTo(DispatchCanceled),
                 Ignore(CourierDispatchedEvent));
 
             During(DispatchConfirmed,
@@ -42,7 +42,7 @@ namespace CourierService.Core.StateMachines
                     .TransitionTo(DispatchDeclined),
                 When(OrderCanceledEvent)
                     .Activity(x => x.OfType<OrderCanceledActivity>())
-                    .TransitionTo(OrderCanceled),
+                    .TransitionTo(DispatchCanceled),
                 Ignore(CourierDispatchedEvent));
 
             During(EnRouteToRestaurant,
@@ -51,7 +51,13 @@ namespace CourierService.Core.StateMachines
                     .TransitionTo(OrderPickedUp),
                 When(CourierDispatchDeclinedEvent)
                     .Activity(x => x.OfType<CourierDeclinedActivity>())
-                    .TransitionTo(DispatchDeclined));
+                    .TransitionTo(DispatchDeclined),
+                When(OrderExpiredEvent)
+                    .Activity(x => x.OfType<OrderExpiredActivity>())
+                    .TransitionTo(EnRouteToRestaurant),
+                When(OrderCanceledEvent)
+                    .Activity(x => x.OfType<OrderCanceledActivity>())
+                    .TransitionTo(DispatchCanceled));
             
             During(OrderPickedUp,
                 When(OrderDeliveredEvent)
@@ -60,8 +66,12 @@ namespace CourierService.Core.StateMachines
                 When(CourierDispatchDeclinedEvent)
                     .Activity(x => x.OfType<CourierDeclinedActivity>())
                     .TransitionTo(DispatchDeclined),
-                Ignore(OrderCanceledEvent),
-                Ignore(OrderExpiredEvent),
+                When(OrderCanceledEvent)
+                    .Activity(x => x.OfType<OrderCanceledActivity>())
+                    .TransitionTo(DispatchCanceled),
+                When(OrderExpiredEvent)
+                    .Activity(x => x.OfType<OrderExpiredActivity>())
+                    .TransitionTo(OrderPickedUp),
                 Ignore(CourierEnRouteRestaurantEvent),
                 Ignore(CourierDispatchedEvent));
 
@@ -78,7 +88,7 @@ namespace CourierService.Core.StateMachines
                 Ignore(CourierDispatchDeclinedEvent),
                 Ignore(CourierDispatchedEvent));
             
-            During(OrderCanceled,
+            During(DispatchCanceled,
                 Ignore(OrderCanceledEvent),
                 Ignore(CourierDispatchedEvent),
                 Ignore(CourierDispatchDeclinedEvent),
@@ -89,7 +99,7 @@ namespace CourierService.Core.StateMachines
         public State DispatchConfirmed { get; }
         public State OrderPickedUp { get; }
         public State OrderDelivered { get; }
-        public State OrderCanceled { get; }
+        public State DispatchCanceled { get; }
         public State DispatchDeclined { get; }
         public State EnRouteToRestaurant { get; }
         public State EnRouteToCustomer { get; }
