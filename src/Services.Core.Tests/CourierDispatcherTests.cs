@@ -7,6 +7,7 @@ namespace Services.Core.Tests
     using Grpc.Net.Client;
     using MassTransit;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Model;
     using NUnit.Framework;
@@ -22,6 +23,12 @@ namespace Services.Core.Tests
 
         public CourierDispatcherTests()
         {
+            _services
+                .AddGrpcClient<ICourierDispatcher>(o =>
+                {
+                    o.Address = new Uri("http://localhost:5001");
+                });
+            
             _provider = _services
                 .AddSingleton<ICourierDispatcher, CourierDispatcher>()
                 .BuildServiceProvider();
@@ -126,13 +133,12 @@ namespace Services.Core.Tests
         [Test]
         public async Task Test()
         {
-            using var channel = GrpcChannel.ForAddress("http://localhost:5001");
-            var client = channel.CreateGrpcService<ICourierDispatcher>();
-
+            var client = _provider.GetService<ICourierDispatcher>();
+            
             var result = await client.EnRoute(new CourierDispatchRequest()
             {
                 CourierId = Guid.Parse("11220000-4800-acde-d916-08d8b0f69e93"),
-                Status = CourierStatus.EnRouteToCustomer
+                Status = CourierStatus.EnRouteToRestaurant
             });
             
             Assert.IsTrue(result.IsSuccessful);

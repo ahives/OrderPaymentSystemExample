@@ -5,6 +5,7 @@ namespace CourierService.Core.Consumers
     using Serilog;
     using Services.Core;
     using Services.Core.Events;
+    using Services.Core.Model;
 
     public class CourierDispatchConsumer :
         IConsumer<DispatchCourier>
@@ -20,7 +21,7 @@ namespace CourierService.Core.Consumers
         {
             Log.Information($"Consumer - {nameof(CourierDispatchConsumer)}");
             
-            var result = await _dispatcher.Dispatch(new ()
+            Result<Courier> result = await _dispatcher.Dispatch(new ()
             {
                 Street = context.Message.Street,
                 City = context.Message.City,

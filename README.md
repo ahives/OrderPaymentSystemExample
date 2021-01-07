@@ -136,7 +136,8 @@ Check the below links:
 
 ####  Orchestration/Choreography
 The state machine diagram in Figure 5 represents a rendering of how states are transitioned by certain events. Figure 6 represents how the various tasks are
-orchestrated so that state transitions can take place.
+orchestrated so that state transitions can take place. What you'll notice in the diagram is that the state machine (represented by circles) orchestrates work
+performed by the various consumers (represented by grey colored boxes).
 
 ![Courier State Machine with Consumers/Service Diagram](CourierStateMachineWithConsumers.png)
 

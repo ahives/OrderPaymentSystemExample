@@ -16,6 +16,7 @@
     using Microsoft.Extensions.Hosting;
     using Serilog;
     using Serilog.Events;
+    using Services.Core;
 
     class Program
     {
@@ -43,6 +44,15 @@
                 {
                     services.AddDbContext<OrdersDbContext>(x =>
                         x.UseNpgsql(host.Configuration.GetConnectionString("OrdersConnection")));
+
+                    services.AddGrpcClient<ICourierDispatcher>(o =>
+                    {
+                        string uri = host.Configuration
+                            .GetSection("Application")
+                            .GetValue<string>("GrpcChannelUri");
+
+                        o.Address = new Uri(uri);
+                    });
                     
                     services.AddMassTransit(x =>
                     {

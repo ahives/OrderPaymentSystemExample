@@ -6,6 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="Grpc.Net.ClientFactory" Version="2.34.0" />
       <PackageReference Include="MassTransit" Version="7.1.1" />
       <PackageReference Include="MassTransit.AspNetCore" Version="7.1.1" />
       <PackageReference Include="MassTransit.EntityFrameworkCore" Version="7.1.1" />
