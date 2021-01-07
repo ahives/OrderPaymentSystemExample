@@ -20,7 +20,7 @@ namespace CourierService.Core.Consumers
         {
             Log.Information($"Courier State Machine - {nameof(PickUpOrderConsumer)}");
             
-            var result = await _dispatcher.PickUpOrder(new OrderPickUpCriteria()
+            var result = await _dispatcher.PickUpOrder(new OrderPickUpRequest()
             {
                 CourierId = context.Message.CourierId,
                 RestaurantId = context.Message.RestaurantId,

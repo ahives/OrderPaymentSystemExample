@@ -8,6 +8,7 @@
     &lt;/Not&gt;
     &lt;TestAncestor&gt;
       &lt;TestId&gt;NUnit3x::4E4F2CB3-2BA5-4362-A2D4-3108AB89C870::net5.0::Services.Core.Tests.CourierDispatcherTests.Verify_can_confirm_courier_dispatch&lt;/TestId&gt;
+      &lt;TestId&gt;NUnit3x::4E4F2CB3-2BA5-4362-A2D4-3108AB89C870::net5.0::Services.Core.Tests.CourierDispatcherTests.Test&lt;/TestId&gt;
     &lt;/TestAncestor&gt;
   &lt;/Or&gt;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

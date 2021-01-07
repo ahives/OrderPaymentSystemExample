@@ -20,7 +20,7 @@ namespace CourierService.Core.Consumers
         {
             Log.Information($"Consumer - {nameof(CourierDispatchConfirmationConsumer)}");
             
-            var result = await _dispatcher.Confirm(context.Message.CourierId);
+            var result = await _dispatcher.Confirm(new () {CourierId = context.Message.CourierId});
             
             if (result.IsSuccessful)
             {

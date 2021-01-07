@@ -1,23 +1,28 @@
 namespace Services.Core
 {
-    using System;
+    using System.ServiceModel;
     using System.Threading.Tasks;
     using Model;
 
+    [ServiceContract]
     public interface ICourierDispatcher
     {
-        Task<Result<Courier>> Confirm(Guid courierId);
+        [OperationContract]
+        Task<Result<Courier>> Confirm(CourierStatusChangeRequest request);
         
-        Task<Result<Courier>> Decline(Guid courierId);
+        [OperationContract]
+        Task<Result<Courier>> Decline(CourierStatusChangeRequest request);
         
-        Task<Result<Courier>> EnRouteToRestaurant(Guid courierId);
+        [OperationContract]
+        Task<Result<Courier>> EnRoute(CourierStatusChangeRequest request);
         
-        Task<Result<Courier>> EnRouteToCustomer(Guid courierId);
+        [OperationContract]
+        Task<Result<Order>> PickUpOrder(OrderPickUpRequest request);
         
-        Task<Result<Order>> PickUpOrder(OrderPickUpCriteria criteria);
+        [OperationContract]
+        Task<Result<Order>> Deliver(OrderDeliveryRequest request);
         
-        Task<Result<Order>> Deliver(OrderDeliveryCriteria criteria);
-        
-        Task<Result<Courier>> Dispatch(CourierDispatchCriteria criteria);
+        [OperationContract]
+        Task<Result<Courier>> Dispatch(CourierDispatchRequest request);
     }
 }

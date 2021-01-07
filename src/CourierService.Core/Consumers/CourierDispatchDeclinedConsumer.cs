@@ -20,7 +20,7 @@ namespace CourierService.Core.Consumers
         {
             Log.Information($"Consumer - {nameof(CourierDispatchDeclinedConsumer)}");
             
-            var result = await _dispatcher.Decline(context.Message.CourierId);
+            var result = await _dispatcher.Decline(new () {CourierId = context.Message.CourierId});
             
             if (result.IsSuccessful)
             {

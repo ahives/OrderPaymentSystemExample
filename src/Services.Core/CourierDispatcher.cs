@@ -18,12 +18,12 @@ namespace Services.Core
             _db = db;
         }
 
-        public async Task<Result<Courier>> Confirm(Guid courierId)
+        public async Task<Result<Courier>> Confirm(CourierStatusChangeRequest request)
         {
             var target = await (
                     from courier in _db.Couriers
                     from address in _db.Addresses
-                    where courier.CourierId == courierId
+                    where courier.CourierId == request.CourierId
                     select new
                     {
                         Courier = courier,
@@ -55,12 +55,12 @@ namespace Services.Core
             return new Result<Courier> {ChangeCount = changes, Value = mapped, IsSuccessful = true};
         }
 
-        public async Task<Result<Courier>> Decline(Guid courierId)
+        public async Task<Result<Courier>> Decline(CourierStatusChangeRequest request)
         {
             var target = await (
                     from courier in _db.Couriers
                     from address in _db.Addresses
-                    where courier.CourierId == courierId
+                    where courier.CourierId == request.CourierId
                     select new
                     {
                         Courier = courier,
@@ -86,13 +86,40 @@ namespace Services.Core
             return new Result<Courier> {ChangeCount = changes, Value = mapped, IsSuccessful = true};
         }
 
-        public async Task<Result<Courier>> EnRouteToRestaurant(Guid courierId) => await EnRouteTo(courierId, CourierStatus.EnRouteToRestaurant);
-
-        public async Task<Result<Courier>> EnRouteToCustomer(Guid courierId) => await EnRouteTo(courierId, CourierStatus.EnRouteToCustomer);
-
-        public async Task<Result<Order>> PickUpOrder(OrderPickUpCriteria criteria)
+        public async Task<Result<Courier>> EnRoute(CourierStatusChangeRequest request)
         {
-            var restaurant = await _db.Restaurants.FindAsync(criteria.RestaurantId);
+            var target = await (
+                    from courier in _db.Couriers
+                    from address in _db.Addresses
+                    where courier.CourierId == request.CourierId
+                    select new
+                    {
+                        Courier = courier,
+                        Address = address
+                    })
+                .FirstOrDefaultAsync();
+
+            if (target == null)
+                return new Result<Courier> {Reason = ReasonType.CourierNotFound, IsSuccessful = false};
+
+            target.Courier.Status = (int)request.Status;
+            target.Courier.StatusTimestamp = DateTime.Now;
+            
+            _db.Update(target.Courier);
+            
+            var changes = await _db.SaveChangesAsync();
+            
+            if (changes <= 0)
+                return new Result<Courier> {ChangeCount = changes, IsSuccessful = false};
+            
+            var mapped = MapEntity(target.Courier, target.Address);
+            
+            return new Result<Courier> {ChangeCount = changes, Value = mapped, IsSuccessful = true};
+        }
+
+        public async Task<Result<Order>> PickUpOrder(OrderPickUpRequest request)
+        {
+            var restaurant = await _db.Restaurants.FindAsync(request.RestaurantId);
             
             if (restaurant == null || !restaurant.IsActive)
                 return new Result<Order> {Reason = ReasonType.RestaurantNotActive, IsSuccessful = false};
@@ -103,7 +130,7 @@ namespace Services.Core
             var target = await (
                     from courier in _db.Couriers
                     from address in _db.Addresses
-                    where courier.CourierId == criteria.CourierId
+                    where courier.CourierId == request.CourierId
                     select new
                     {
                         Courier = courier,
@@ -119,7 +146,7 @@ namespace Services.Core
             
             _db.Update(target.Courier);
             
-            var order = await _db.Orders.FindAsync(criteria.OrderId);
+            var order = await _db.Orders.FindAsync(request.OrderId);
             
             if (order == null)
                 return new Result<Order> {ChangeCount = 0, IsSuccessful = false};
@@ -140,12 +167,12 @@ namespace Services.Core
             return new Result<Order> {ChangeCount = changes, Value = mapped, IsSuccessful = true};
         }
 
-        public async Task<Result<Order>> Deliver(OrderDeliveryCriteria criteria)
+        public async Task<Result<Order>> Deliver(OrderDeliveryRequest request)
         {
             var target = await (
                     from courier in _db.Couriers
                     from address in _db.Addresses
-                    where courier.CourierId == criteria.CourierId
+                    where courier.CourierId == request.CourierId
                     select new
                     {
                         Courier = courier,
@@ -161,7 +188,7 @@ namespace Services.Core
             
             _db.Update(target.Courier);
             
-            var order = await _db.Orders.FindAsync(criteria.OrderId);
+            var order = await _db.Orders.FindAsync(request.OrderId);
             
             if (order == null)
                 return new Result<Order> {ChangeCount = 0, IsSuccessful = false};
@@ -182,14 +209,14 @@ namespace Services.Core
             return new Result<Order> {ChangeCount = changes, Value = mapped, IsSuccessful = true};
         }
 
-        public async Task<Result<Courier>> Dispatch(CourierDispatchCriteria criteria)
+        public async Task<Result<Courier>> Dispatch(CourierDispatchRequest request)
         {
             var target = await (
                     from courier in _db.Couriers
                     from address in _db.Addresses
                     where courier.AddressId == address.AddressId
-                        && address.RegionId == criteria.RegionId
-                        && address.City == criteria.City
+                        && address.RegionId == request.RegionId
+                        && address.City == request.City
                         && courier.IsActive
                         && courier.Status == (int)CourierStatus.Idle
                     select new
@@ -212,37 +239,6 @@ namespace Services.Core
             if (changes <= 0)
                 return new Result<Courier> {ChangeCount = changes, IsSuccessful = false};
 
-            var mapped = MapEntity(target.Courier, target.Address);
-            
-            return new Result<Courier> {ChangeCount = changes, Value = mapped, IsSuccessful = true};
-        }
-
-        async Task<Result<Courier>> EnRouteTo(Guid courierId, CourierStatus status)
-        {
-            var target = await (
-                    from courier in _db.Couriers
-                    from address in _db.Addresses
-                    where courier.CourierId == courierId
-                    select new
-                    {
-                        Courier = courier,
-                        Address = address
-                    })
-                .FirstOrDefaultAsync();
-
-            if (target == null)
-                return new Result<Courier> {Reason = ReasonType.CourierNotFound, IsSuccessful = false};
-
-            target.Courier.Status = (int)CourierStatus.EnRouteToRestaurant;
-            target.Courier.StatusTimestamp = DateTime.Now;
-            
-            _db.Update(target.Courier);
-            
-            var changes = await _db.SaveChangesAsync();
-            
-            if (changes <= 0)
-                return new Result<Courier> {ChangeCount = changes, IsSuccessful = false};
-            
             var mapped = MapEntity(target.Courier, target.Address);
             
             return new Result<Courier> {ChangeCount = changes, Value = mapped, IsSuccessful = true};

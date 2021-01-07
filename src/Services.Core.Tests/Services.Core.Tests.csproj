@@ -10,6 +10,7 @@
 
     <ItemGroup>
       <PackageReference Include="Bogus" Version="32.0.2" />
+      <PackageReference Include="Grpc.Net.Client" Version="2.34.0" />
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.1" />
       <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
       <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
@@ -18,6 +19,7 @@
       <PackageReference Include="NewId" Version="3.0.3" />
       <PackageReference Include="NUnit" Version="3.12.0" />
       <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
+      <PackageReference Include="protobuf-net.Grpc" Version="1.0.140" />
     </ItemGroup>
 
     <ItemGroup>
