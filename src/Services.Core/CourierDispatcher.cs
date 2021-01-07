@@ -18,7 +18,7 @@ namespace Services.Core
             _db = db;
         }
 
-        public async Task<Result<Courier>> Confirm(CourierStatusChangeRequest request)
+        public async Task<Result<Courier>> Confirm(CourierDispatchRequest request)
         {
             var target = await (
                     from courier in _db.Couriers
@@ -55,7 +55,7 @@ namespace Services.Core
             return new Result<Courier> {ChangeCount = changes, Value = mapped, IsSuccessful = true};
         }
 
-        public async Task<Result<Courier>> Decline(CourierStatusChangeRequest request)
+        public async Task<Result<Courier>> Decline(CourierDispatchRequest request)
         {
             var target = await (
                     from courier in _db.Couriers
@@ -86,7 +86,7 @@ namespace Services.Core
             return new Result<Courier> {ChangeCount = changes, Value = mapped, IsSuccessful = true};
         }
 
-        public async Task<Result<Courier>> EnRoute(CourierStatusChangeRequest request)
+        public async Task<Result<Courier>> EnRoute(CourierDispatchRequest request)
         {
             var target = await (
                     from courier in _db.Couriers
@@ -117,7 +117,7 @@ namespace Services.Core
             return new Result<Courier> {ChangeCount = changes, Value = mapped, IsSuccessful = true};
         }
 
-        public async Task<Result<Order>> PickUpOrder(OrderPickUpRequest request)
+        public async Task<Result<Order>> PickUpOrder(CourierDispatchRequest request)
         {
             var restaurant = await _db.Restaurants.FindAsync(request.RestaurantId);
             
@@ -167,7 +167,7 @@ namespace Services.Core
             return new Result<Order> {ChangeCount = changes, Value = mapped, IsSuccessful = true};
         }
 
-        public async Task<Result<Order>> Deliver(OrderDeliveryRequest request)
+        public async Task<Result<Order>> Deliver(CourierDispatchRequest request)
         {
             var target = await (
                     from courier in _db.Couriers

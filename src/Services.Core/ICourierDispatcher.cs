@@ -8,19 +8,19 @@ namespace Services.Core
     public interface ICourierDispatcher
     {
         [OperationContract]
-        Task<Result<Courier>> Confirm(CourierStatusChangeRequest request);
+        Task<Result<Courier>> Confirm(CourierDispatchRequest request);
         
         [OperationContract]
-        Task<Result<Courier>> Decline(CourierStatusChangeRequest request);
+        Task<Result<Courier>> Decline(CourierDispatchRequest request);
         
         [OperationContract]
-        Task<Result<Courier>> EnRoute(CourierStatusChangeRequest request);
+        Task<Result<Courier>> EnRoute(CourierDispatchRequest request);
         
         [OperationContract]
-        Task<Result<Order>> PickUpOrder(OrderPickUpRequest request);
+        Task<Result<Order>> PickUpOrder(CourierDispatchRequest request);
         
         [OperationContract]
-        Task<Result<Order>> Deliver(OrderDeliveryRequest request);
+        Task<Result<Order>> Deliver(CourierDispatchRequest request);
         
         [OperationContract]
         Task<Result<Courier>> Dispatch(CourierDispatchRequest request);

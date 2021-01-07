@@ -129,7 +129,7 @@ namespace Services.Core.Tests
             using var channel = GrpcChannel.ForAddress("http://localhost:5001");
             var client = channel.CreateGrpcService<ICourierDispatcher>();
 
-            var result = await client.EnRoute(new CourierStatusChangeRequest()
+            var result = await client.EnRoute(new CourierDispatchRequest()
             {
                 CourierId = Guid.Parse("11220000-4800-acde-d916-08d8b0f69e93"),
                 Status = CourierStatus.EnRouteToCustomer
@@ -148,7 +148,7 @@ namespace Services.Core.Tests
             var target = await db.Couriers.FirstOrDefaultAsync();
             
             // Result<Courier> result = await dispatcher.Confirm(target.CourierId);
-            Result<Courier> result = await dispatcher.Confirm(new CourierStatusChangeRequest()
+            Result<Courier> result = await dispatcher.Confirm(new CourierDispatchRequest()
             {
                 CourierId = _courierId
             });
@@ -163,7 +163,7 @@ namespace Services.Core.Tests
 
             // var db = _provider.GetService<OrdersDbContext>();
             
-            var result = await dispatcher.PickUpOrder(new OrderPickUpRequest
+            var result = await dispatcher.PickUpOrder(new CourierDispatchRequest
             {
                 OrderId = _orderId,
                 CourierId = _courierId
@@ -178,7 +178,7 @@ namespace Services.Core.Tests
         {
             var dispatcher = _provider.GetService<ICourierDispatcher>();
 
-            var result = await dispatcher.Deliver(new OrderDeliveryRequest
+            var result = await dispatcher.Deliver(new CourierDispatchRequest
             {
                 OrderId = _orderId,
                 CourierId = _courierId
@@ -192,7 +192,7 @@ namespace Services.Core.Tests
         {
             var dispatcher = _provider.GetService<ICourierDispatcher>();
 
-            var result = await dispatcher.Dispatch(new CourierDispatchRequest
+            var result = await dispatcher.Dispatch(new ()
             {
                 Street = "99 California St.",
                 City = Addresses[0].City,
