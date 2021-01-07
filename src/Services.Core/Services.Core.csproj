@@ -19,8 +19,4 @@
       <Compile Remove="OrderDeliveryRequest.cs" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Compile Remove="CourierDispatchRequest.cs" />
-    </ItemGroup>
-
 </Project>
