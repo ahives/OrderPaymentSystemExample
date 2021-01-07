@@ -14,9 +14,4 @@
       <PackageReference Include="protobuf-net.Grpc" Version="1.0.140" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Compile Remove="OrderPickUpRequest.cs" />
-      <Compile Remove="OrderDeliveryRequest.cs" />
-    </ItemGroup>
-
 </Project>
