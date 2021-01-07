@@ -25,7 +25,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\CurationService.Core\CurationService.Core.csproj" />
-      <ProjectReference Include="..\Restaurant.Core\Restaurant.Core.csproj" />
     </ItemGroup>
 
     <ItemGroup>

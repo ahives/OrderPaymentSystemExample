@@ -15,12 +15,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Data.Core\Data.Core.csproj" />
-      <ProjectReference Include="..\Restaurant.Core\Restaurant.Core.csproj" />
       <ProjectReference Include="..\Services.Core\Services.Core.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Compile Remove="RestaurantJobFactory.cs" />
     </ItemGroup>
 
 </Project>

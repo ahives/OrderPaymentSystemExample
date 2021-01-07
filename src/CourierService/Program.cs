@@ -29,7 +29,7 @@
             Host.CreateDefaultBuilder()
                 .UseSerilog((host, log) =>
                 {
-                    string? appBin = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                    string appBin = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
                     log.MinimumLevel.Information();
                     log.WriteTo.File($"{appBin}/log/log-{DateTime.Now:yyMMdd_HHmmss}.txt");

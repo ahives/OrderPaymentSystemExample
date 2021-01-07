@@ -12,7 +12,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Restaurant.Core\Restaurant.Core.csproj" />
       <ProjectReference Include="..\Services.Core\Services.Core.csproj" />
     </ItemGroup>
 
