@@ -45,7 +45,7 @@
                 .ConfigureServices((host, services) =>
                 {
                     services.AddScoped<IOrderValidator, OrderValidator>();
-                    services.AddScoped<IKitchenManager, KitchenManager>();
+                    services.AddScoped<IShelfManager, ShelfManager>();
                     services.AddScoped<IPrepareOrder, PrepareOrder>();
                     services.AddScoped<ILowInventoryDetector, LowInventoryDetector>();
 

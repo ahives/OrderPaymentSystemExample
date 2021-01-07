@@ -36,6 +36,8 @@ namespace CourierService.Core.Consumers
                     context.Message.CustomerId,
                     context.Message.RestaurantId
                 });
+                
+                Log.Information($"Courier {result.Value.CourierId} picked up order {result.Value.OrderId}");
             }
             else
             {
@@ -48,6 +50,8 @@ namespace CourierService.Core.Consumers
                         context.Message.CustomerId,
                         context.Message.RestaurantId
                     });
+                    
+                    Log.Information($"Courier {result.Value.CourierId} Restaurant {result.Value.RestaurantId} was not opened.");
                 }
             }
         }

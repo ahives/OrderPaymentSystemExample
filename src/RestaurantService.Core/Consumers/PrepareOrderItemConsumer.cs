@@ -10,9 +10,9 @@ namespace RestaurantService.Core.Consumers
         IConsumer<PrepareOrderItem>
     {
         readonly IPrepareOrder _prepareOrder;
-        readonly IKitchenManager _manager;
+        readonly IShelfManager _manager;
 
-        public PrepareOrderItemConsumer(IPrepareOrder prepareOrder, IKitchenManager manager)
+        public PrepareOrderItemConsumer(IPrepareOrder prepareOrder, IShelfManager manager)
         {
             _prepareOrder = prepareOrder;
             _manager = manager;
@@ -46,7 +46,7 @@ namespace RestaurantService.Core.Consumers
 
         async Task MoveToShelf(ConsumeContext<PrepareOrderItem> context, OrderItem orderItem)
         {
-            var result = await _manager.MoveToShelf(new ShelfMoveCriteria
+            var result = await _manager.MoveToShelf(new ShelfManagerRequest
             {
                 OrderItemId = orderItem.OrderItemId,
                 RestaurantId = context.Message.RestaurantId,
@@ -72,7 +72,7 @@ namespace RestaurantService.Core.Consumers
 
         async Task MoveToOverflow(ConsumeContext<PrepareOrderItem> context, OrderItem orderItem)
         {
-            var result = await _manager.MoveToOverflow(new ShelfMoveCriteria
+            var result = await _manager.MoveToOverflow(new ShelfManagerRequest
             {
                 OrderItemId = orderItem.OrderItemId,
                 MenuItemId = context.Message.MenuItemId

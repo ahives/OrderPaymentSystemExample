@@ -39,7 +39,7 @@ namespace CourierService.Core.Consumers
                     context.Message.RestaurantId
                 });
                 
-                Log.Information($"Courier {result.Value.CourierId} was dispatched.");
+                Log.Information($"Courier {result.Value.CourierId} was successfully dispatched.");
             }
         }
     }

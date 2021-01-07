@@ -31,6 +31,8 @@ namespace CourierService.Core.Consumers
                     context.Message.CustomerId,
                     context.Message.RestaurantId
                 });
+                
+                Log.Information($"Courier {result.Value.CourierId} ({result.Value.FirstName} {result.Value.LastName}) declined dispatch.");
             }
         }
     }

@@ -45,6 +45,7 @@
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGrpcService<CourierDispatcher>();
+                endpoints.MapGrpcService<ShelfManager>();
 
                 endpoints.MapGet("/",
                     async context =>
