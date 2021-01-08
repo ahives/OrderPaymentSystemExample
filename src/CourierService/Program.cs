@@ -7,7 +7,6 @@
     using Core.Consumers;
     using Core.StateMachines;
     using Core.StateMachines.Sagas;
-    using Data.Core;
     using MassTransit;
     using MassTransit.EntityFrameworkCoreIntegration;
     using Microsoft.EntityFrameworkCore;
@@ -17,7 +16,6 @@
     using Serilog;
     using Serilog.Events;
     using Service.Grpc.Core;
-    using Services.Core;
 
     class Program
     {
@@ -43,9 +41,6 @@
                 })
                 .ConfigureServices((host, services) =>
                 {
-                    services.AddDbContext<OrdersDbContext>(x =>
-                        x.UseNpgsql(host.Configuration.GetConnectionString("OrdersConnection")));
-
                     services.AddGrpcClient<ICourierDispatcher>(o =>
                     {
                         string uri = host.Configuration
@@ -66,6 +61,10 @@
                         x.AddConsumer<CourierStatusUpdateConsumer>();
                         
                         x.SetKebabCaseEndpointNameFormatter();
+
+                        Uri schedulerEndpoint = new Uri("queue:scheduler");
+                        
+                        x.AddMessageScheduler(schedulerEndpoint);
                         
                         x.UsingRabbitMq((context, cfg) =>
                         {
@@ -78,6 +77,8 @@
                                 h.Username("guest");
                                 h.Password("guest");
                             });
+                            
+                            cfg.UseMessageScheduler(schedulerEndpoint);
                             
                             cfg.ConfigureEndpoints(context);
                             // cfg.UseMessageRetry(x => x.SetRetryPolicy(new RetryPolicyFactory()));
