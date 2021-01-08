@@ -16,6 +16,7 @@ namespace CourierService.Core.StateMachines.Sagas
             entity.Property(x => x.RestaurantId).IsRequired();
             entity.Property(x => x.HasCourierArrived).IsRequired();
             entity.Property(x => x.IsOrderReady).IsRequired();
+            entity.Property(x => x.OrderCompletionTimeoutTokenId);
             entity.Property(x => x.Timestamp).IsRequired();
             entity.Property(x => x.RowVersion).IsRowVersion();
         }

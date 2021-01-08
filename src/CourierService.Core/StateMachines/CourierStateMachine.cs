@@ -1,7 +1,9 @@
 namespace CourierService.Core.StateMachines
 {
+    using System;
     using Activities;
     using Automatonymous;
+    using MassTransit;
     using Sagas;
     using Services.Core.Events;
 
@@ -10,6 +12,12 @@ namespace CourierService.Core.StateMachines
     {
         public CourierStateMachine()
         {
+            Schedule(() => OrderCompletionTimeout, instance => instance.OrderCompletionTimeoutTokenId, s =>
+            {
+                s.Delay = TimeSpan.FromMinutes(1);
+                s.Received = r => r.CorrelateById(context => context.Message.OrderId);
+            });
+            
             InstanceState(x => x.CurrentState, Dispatched, DispatchConfirmed, EnRouteToRestaurant, OrderPickUp,
                 EnRouteToCustomer, DeliveringOrder, OrderDelivered, DispatchCanceled, DispatchDeclined);
 
@@ -56,6 +64,13 @@ namespace CourierService.Core.StateMachines
                     .Activity(x => x.OfType<OrderReadyForDeliveryActivity>())
                     .TransitionTo(EnRouteToRestaurant),
                 When(CourierArrivedAtRestaurantEvent)
+                    .Schedule(OrderCompletionTimeout, context => context.Init<OrderCompletionTimeoutExpired>(new
+                    {
+                        context.Instance.OrderId,
+                        context.Instance.RestaurantId,
+                        context.Instance.CourierId,
+                        context.Instance.CustomerId
+                    }))
                     .Activity(x => x.OfType<CourierArrivedAtRestaurantActivity>())
                     .TransitionTo(OrderPickUp),
                 When(CourierDispatchDeclinedEvent)
@@ -106,10 +121,18 @@ namespace CourierService.Core.StateMachines
                 Ignore(CourierDispatchedEvent));
             
             During(DispatchCanceled,
+                Ignore(DeliveringOrderEvent),
+                Ignore(CourierEnRouteToCustomerEvent),
+                Ignore(CourierArrivedAtRestaurantEvent),
                 Ignore(OrderCanceledEvent),
+                Ignore(OrderReadyForDeliveryEvent),
                 Ignore(CourierDispatchedEvent),
                 Ignore(CourierDispatchDeclinedEvent),
                 Ignore(OrderPickedUpEvent));
+            
+            DuringAny(When(OrderCompletionTimeout.Received)
+                .Activity(x => x.OfType<OrderCompletionTimeoutActivity>())
+                .TransitionTo(DispatchDeclined));
         }
         
         public State Dispatched { get; }
@@ -133,5 +156,7 @@ namespace CourierService.Core.StateMachines
         public Event<OrderReadyForDelivery> OrderReadyForDeliveryEvent { get; }
         public Event<CourierArrivedAtRestaurant> CourierArrivedAtRestaurantEvent { get; }
         public Event<DeliveringOrder> DeliveringOrderEvent { get; }
+        
+        public Schedule<CourierState, OrderCompletionTimeoutExpired> OrderCompletionTimeout { get; }
     }
 }
