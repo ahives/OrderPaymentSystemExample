@@ -16,14 +16,14 @@ namespace Service.Grpc.Core
             _db = db;
         }
 
-        public async Task<Result<OrderItem>> Prepare(OrderPrepCriteria criteria)
+        public async Task<Result<OrderItem>> Prepare(OrderPrepRequest request)
         {
-            var target = await _db.OrderItems.FindAsync(criteria.OrderItemId);
+            var target = await _db.OrderItems.FindAsync(request.OrderItemId);
 
             if (target != null)
                 return new Result<OrderItem> {Value = null, ChangeCount = 0, IsSuccessful = false};
             
-            var entity = MapRequest(criteria);
+            var entity = MapRequest(request);
                 
             await _db.OrderItems.AddAsync(entity);
 
@@ -34,12 +34,7 @@ namespace Service.Grpc.Core
 
             var mapped = MapEntity(entity);
                 
-            return new Result<OrderItem>
-            {
-                Value = mapped,
-                ChangeCount = changes,
-                IsSuccessful = true
-            };
+            return new Result<OrderItem> {Value = mapped, ChangeCount = changes, IsSuccessful = true};
         }
 
         OrderItem MapEntity(OrderItemEntity entity) =>
@@ -58,13 +53,13 @@ namespace Service.Grpc.Core
                 CreationTimestamp = entity.CreationTimestamp
             };
 
-        OrderItemEntity MapRequest(OrderPrepCriteria criteria) =>
+        OrderItemEntity MapRequest(OrderPrepRequest request) =>
             new()
             {
-                OrderItemId = criteria.OrderItemId,
-                OrderId = criteria.OrderId,
-                MenuItemId = criteria.MenuItemId,
-                SpecialInstructions = criteria.SpecialInstructions,
+                OrderItemId = request.OrderItemId,
+                OrderId = request.OrderId,
+                MenuItemId = request.MenuItemId,
+                SpecialInstructions = request.SpecialInstructions,
                 Status = (int)OrderItemStatus.Prepared,
                 StatusTimestamp = DateTime.Now,
                 TimePrepared = DateTime.Now,

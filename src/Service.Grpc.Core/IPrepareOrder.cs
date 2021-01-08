@@ -1,10 +1,13 @@
 namespace Service.Grpc.Core
 {
+    using System.ServiceModel;
     using System.Threading.Tasks;
     using Model;
 
+    [ServiceContract]
     public interface IPrepareOrder
     {
-        Task<Result<OrderItem>> Prepare(OrderPrepCriteria criteria);
+        [OperationContract]
+        Task<Result<OrderItem>> Prepare(OrderPrepRequest request);
     }
 }

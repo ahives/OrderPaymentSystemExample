@@ -131,7 +131,7 @@ namespace Services.Core.Tests
             // var db = _provider.GetService<OrdersDbContext>();
 
             Guid orderItemId = NewId.NextGuid();
-            var result = await cook.Prepare(new OrderPrepCriteria
+            var result = await cook.Prepare(new OrderPrepRequest
             {
                 OrderId = _orderId,
                 OrderItemId = orderItemId,

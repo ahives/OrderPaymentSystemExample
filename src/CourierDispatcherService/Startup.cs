@@ -13,11 +13,11 @@
 
     public class Startup
     {
-        readonly IConfiguration _configuration;
+        public IConfiguration Configuration { get; }
 
         public Startup(IConfiguration configuration)
         {
-            _configuration = configuration;
+            Configuration = configuration;
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -29,7 +29,7 @@
             services.AddCodeFirstGrpc();
             
             services.AddDbContext<OrdersDbContext>(x =>
-                x.UseNpgsql(_configuration.GetConnectionString("OrdersConnection")));
+                x.UseNpgsql(Configuration.GetConnectionString("OrdersConnection")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
