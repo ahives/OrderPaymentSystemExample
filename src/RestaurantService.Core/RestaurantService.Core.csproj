@@ -15,6 +15,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Data.Core\Data.Core.csproj" />
+      <ProjectReference Include="..\Service.Grpc.Core\Service.Grpc.Core.csproj" />
       <ProjectReference Include="..\Services.Core\Services.Core.csproj" />
     </ItemGroup>
 

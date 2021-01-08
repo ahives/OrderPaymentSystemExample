@@ -2,11 +2,10 @@ namespace RestaurantService.Core
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Data.Core;
     using Quartz;
     using Serilog;
-    using Services.Core;
-    using Services.Core.Model;
+    using Service.Grpc.Core;
+    using Service.Grpc.Core.Model;
 
     public class LowInventoryDetectorJob :
         IJob

@@ -7,6 +7,7 @@ namespace Services.Core.Tests
     using MassTransit;
     using Microsoft.Extensions.DependencyInjection;
     using NUnit.Framework;
+    using Service.Grpc.Core;
 
     [TestFixture]
     public class CookTests :

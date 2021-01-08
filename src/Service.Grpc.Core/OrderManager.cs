@@ -1,4 +1,4 @@
-namespace Services.Core
+namespace Service.Grpc.Core
 {
     using System;
     using System.Collections.Generic;
@@ -6,7 +6,6 @@ namespace Services.Core
     using System.Threading.Tasks;
     using Data.Core;
     using Data.Core.Model;
-    using Events;
     using MassTransit;
     using Model;
 
@@ -54,47 +53,47 @@ namespace Services.Core
             await _db.SaveChangesAsync();
         }
 
-        public async Task<Result> Receive(OrderReceiptConfirmed data)
-        {
-            await _db.Orders.AddAsync(new OrderEntity
-            {
-                OrderId = data.OrderId,
-                CustomerId = data.CustomerId,
-                RestaurantId = data.RestaurantId,
-                CourierId = null,
-                // TODO: may need to change this to data.Status
-                Status = (int)OrderStatus.Receipt,
-                StatusTimestamp = DateTime.Now,
-                // Street = data.Street,
-                // City = data.City,
-                // RegionId = data.RegionId,
-                // ZipCode = data.ZipCode,
-                CreationTimestamp = DateTime.Now
-            });
-
-            for (int i = 0; i < data.Items.Length; i++)
-            {
-                var entityEntry = await _db.OrderItems.AddAsync(new OrderItemEntity
-                {
-                    OrderItemId = NewId.NextGuid(),
-                    OrderId = data.OrderId,
-                    MenuItemId = data.Items[i].Id,
-                    SpecialInstructions = data.Items[i].SpecialInstructions,
-                    Status = data.Items[i].Status,
-                    StatusTimestamp = DateTime.Now,
-                    CreationTimestamp = DateTime.Now
-                });
-            }
-
-            int changes = await _db.SaveChangesAsync();
-            
-            return new Result
-            {
-                ChangeCount = changes,
-                IsSuccessful = changes > 0,
-                Reason = ReasonType.Receipt
-            };
-        }
+        // public async Task<Result> Receive(OrderReceiptConfirmed data)
+        // {
+        //     await _db.Orders.AddAsync(new OrderEntity
+        //     {
+        //         OrderId = data.OrderId,
+        //         CustomerId = data.CustomerId,
+        //         RestaurantId = data.RestaurantId,
+        //         CourierId = null,
+        //         // TODO: may need to change this to data.Status
+        //         Status = (int)OrderStatus.Receipt,
+        //         StatusTimestamp = DateTime.Now,
+        //         // Street = data.Street,
+        //         // City = data.City,
+        //         // RegionId = data.RegionId,
+        //         // ZipCode = data.ZipCode,
+        //         CreationTimestamp = DateTime.Now
+        //     });
+        //
+        //     for (int i = 0; i < data.Items.Length; i++)
+        //     {
+        //         var entityEntry = await _db.OrderItems.AddAsync(new OrderItemEntity
+        //         {
+        //             OrderItemId = NewId.NextGuid(),
+        //             OrderId = data.OrderId,
+        //             MenuItemId = data.Items[i].Id,
+        //             SpecialInstructions = data.Items[i].SpecialInstructions,
+        //             Status = data.Items[i].Status,
+        //             StatusTimestamp = DateTime.Now,
+        //             CreationTimestamp = DateTime.Now
+        //         });
+        //     }
+        //
+        //     int changes = await _db.SaveChangesAsync();
+        //     
+        //     return new Result
+        //     {
+        //         ChangeCount = changes,
+        //         IsSuccessful = changes > 0,
+        //         Reason = ReasonType.Receipt
+        //     };
+        // }
 
         // public async Task<Result> Prepare(PrepareOrderItem data)
         // {

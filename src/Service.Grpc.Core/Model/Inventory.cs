@@ -1,4 +1,4 @@
-namespace Services.Core.Model
+namespace Service.Grpc.Core.Model
 {
     using System;
     using System.Collections.Generic;

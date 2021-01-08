@@ -5,12 +5,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Data.Core\Data.Core.csproj" />
+      <PackageReference Include="protobuf-net.Grpc" Version="1.0.140" />
+      <PackageReference Include="Serilog" Version="2.10.0" />
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="MassTransit" Version="7.1.1" />
-      <PackageReference Include="NewId" Version="3.0.3" />
+      <ProjectReference Include="..\Data.Core\Data.Core.csproj" />
     </ItemGroup>
 
 </Project>

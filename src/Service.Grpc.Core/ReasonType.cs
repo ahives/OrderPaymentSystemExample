@@ -1,4 +1,4 @@
-namespace Services.Core
+namespace Service.Grpc.Core
 {
     public enum ReasonType
     {

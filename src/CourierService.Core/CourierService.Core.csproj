@@ -12,6 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Service.Grpc.Core\Service.Grpc.Core.csproj" />
       <ProjectReference Include="..\Services.Core\Services.Core.csproj" />
     </ItemGroup>
 

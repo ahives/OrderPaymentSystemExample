@@ -2,6 +2,8 @@ namespace RestaurantService.Core.Consumers
 {
     using System.Threading.Tasks;
     using MassTransit;
+    using Service.Grpc.Core;
+    using Service.Grpc.Core.Model;
     using Services.Core;
     using Services.Core.Events;
     using Services.Core.Model;

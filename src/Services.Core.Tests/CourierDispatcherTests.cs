@@ -12,6 +12,8 @@ namespace Services.Core.Tests
     using Model;
     using NUnit.Framework;
     using ProtoBuf.Grpc.Client;
+    using Service.Grpc.Core;
+    using Service.Grpc.Core.Model;
 
     [TestFixture]
     public class CourierDispatcherTests :
@@ -135,7 +137,7 @@ namespace Services.Core.Tests
         {
             var client = _provider.GetService<ICourierDispatcher>();
             
-            var result = await client.EnRoute(new CourierDispatchRequest()
+            var result = await client.EnRoute(new ()
             {
                 CourierId = Guid.Parse("11220000-4800-acde-d916-08d8b0f69e93"),
                 Status = CourierStatus.EnRouteToRestaurant

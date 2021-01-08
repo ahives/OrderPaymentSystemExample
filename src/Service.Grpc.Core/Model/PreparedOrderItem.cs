@@ -1,4 +1,4 @@
-namespace Services.Core.Model
+namespace Service.Grpc.Core.Model
 {
     public record PreparedOrderItem
     {

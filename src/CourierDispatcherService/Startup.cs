@@ -9,7 +9,7 @@
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using ProtoBuf.Grpc.Server;
-    using Services.Core;
+    using Service.Grpc.Core;
 
     public class Startup
     {
@@ -45,7 +45,6 @@
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGrpcService<CourierDispatcher>();
-                endpoints.MapGrpcService<ShelfManager>();
 
                 endpoints.MapGet("/",
                     async context =>

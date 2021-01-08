@@ -11,6 +11,7 @@ namespace CourierService.Core.Tests
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using NUnit.Framework;
+    using Service.Grpc.Core;
     using Services.Core;
     using Services.Core.Events;
     using Services.Core.Tests;

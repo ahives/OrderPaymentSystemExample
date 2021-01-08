@@ -16,6 +16,7 @@
     using Microsoft.Extensions.Hosting;
     using Serilog;
     using Serilog.Events;
+    using Service.Grpc.Core;
     using Services.Core;
 
     class Program

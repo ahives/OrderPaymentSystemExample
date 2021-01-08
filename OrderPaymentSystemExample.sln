@@ -26,6 +26,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourierService.Core.Tests",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourierDispatcherService", "src\CourierDispatcherService\CourierDispatcherService.csproj", "{54EF6047-5C49-431C-94A0-A13B92F16604}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service.Grpc.Core", "src\Service.Grpc.Core\Service.Grpc.Core.csproj", "{3C792A0A-D46F-4233-A694-56E00C9A899A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -84,5 +86,9 @@ Global
 		{54EF6047-5C49-431C-94A0-A13B92F16604}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{54EF6047-5C49-431C-94A0-A13B92F16604}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{54EF6047-5C49-431C-94A0-A13B92F16604}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C792A0A-D46F-4233-A694-56E00C9A899A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C792A0A-D46F-4233-A694-56E00C9A899A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C792A0A-D46F-4233-A694-56E00C9A899A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C792A0A-D46F-4233-A694-56E00C9A899A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

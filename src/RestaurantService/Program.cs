@@ -18,6 +18,7 @@
     using Quartz;
     using Serilog;
     using Serilog.Events;
+    using Service.Grpc.Core;
     using Services.Core;
 
     class Program

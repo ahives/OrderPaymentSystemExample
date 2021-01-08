@@ -1,4 +1,4 @@
-namespace Services.Core
+namespace Service.Grpc.Core
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -18,11 +18,9 @@ namespace Services.Core
 
         public async IAsyncEnumerable<Result<Inventory>> FindAll()
         {
-            var inventories = _db.InventoryItems
-                .Where(x => x.QuantityOnHand <= x.ReplenishmentThreshold)
-                .ToList()
-                .GroupJoin(
-                    _db.InventoryItems,
+            var inventories = Enumerable.GroupJoin(_db.InventoryItems
+                        .Where(x => x.QuantityOnHand <= x.ReplenishmentThreshold)
+                        .ToList(), _db.InventoryItems,
                     inventory => inventory.RestaurantId,
                     menuItem => menuItem.IngredientId,
                     MapInventory);
