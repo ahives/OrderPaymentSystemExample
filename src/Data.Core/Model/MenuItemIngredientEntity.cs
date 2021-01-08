@@ -14,7 +14,7 @@ namespace Data.Core.Model
         public Guid MenuItemId { get; init; }
         public MenuItemEntity MenuItem { get; init; }
         
-        [Column("IngredientId"), Required]
+        [ForeignKey("IngredientId"), Required]
         public Guid IngredientId { get; init; }
         public IngredientEntity Ingredient { get; init; }
 

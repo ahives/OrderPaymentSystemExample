@@ -2,6 +2,7 @@
 {
     using System.Threading.Tasks;
     using Data.Core;
+    using Data.Generation;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
@@ -14,11 +15,11 @@
                 .AddJsonFile("appsettings.json", false)
                 .Build();
             var services = new ServiceCollection();
-
+            
             services.AddSingleton<IOrdersDataGenerator, OrdersDataGenerator>();
             services.AddDbContext<OrdersDbContext>(x =>
                 x.UseNpgsql(configuration.GetConnectionString("OrdersConnection")));
-
+            
             var provider = services.BuildServiceProvider();
             
             var generator = provider.GetService<IOrdersDataGenerator>();
@@ -39,7 +40,7 @@
                 context.Ingredients.RemoveRange(context.Ingredients);
                 context.InventoryItems.RemoveRange(context.InventoryItems);
                 context.MenuItemIngredients.RemoveRange(context.MenuItemIngredients);
-
+                
                 await context.SaveChangesAsync();
                 
                 await context.Addresses.AddRangeAsync(generator.Addresses);
@@ -56,7 +57,7 @@
                 await context.Ingredients.AddRangeAsync(generator.Ingredients);
                 await context.InventoryItems.AddRangeAsync(generator.InventoryItems);
                 await context.MenuItemIngredients.AddRangeAsync(generator.MenuItemIngredients);
-
+                
                 await context.SaveChangesAsync();
             }
         }
