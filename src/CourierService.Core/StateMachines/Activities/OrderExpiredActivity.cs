@@ -12,13 +12,6 @@ namespace CourierService.Core.StateMachines.Activities
     public class OrderExpiredActivity :
         Activity<CourierState, OrderExpired>
     {
-        readonly ConsumeContext _context;
-
-        public OrderExpiredActivity(ConsumeContext context)
-        {
-            _context = context;
-        }
-
         public void Probe(ProbeContext context)
         {
             context.CreateScope("");
@@ -35,6 +28,7 @@ namespace CourierService.Core.StateMachines.Activities
             Log.Information($"Courier State Machine - {nameof(OrderExpiredActivity)}");
             
             context.Instance.Timestamp = DateTime.Now;
+            context.Instance.CourierId = null;
 
             await next.Execute(context).ConfigureAwait(false);
         }

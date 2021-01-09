@@ -4,7 +4,6 @@ namespace CourierService.Core.StateMachines.Activities
     using System.Threading.Tasks;
     using Automatonymous;
     using GreenPipes;
-    using MassTransit;
     using Sagas;
     using Serilog;
     using Services.Core.Events;
@@ -12,13 +11,6 @@ namespace CourierService.Core.StateMachines.Activities
     public class CourierDispatchConfirmationActivity :
         Activity<CourierState, CourierDispatchConfirmed>
     {
-        readonly ConsumeContext _context;
-
-        public CourierDispatchConfirmationActivity(ConsumeContext context)
-        {
-            _context = context;
-        }
-
         public void Probe(ProbeContext context)
         {
             context.CreateScope("");
@@ -35,13 +27,6 @@ namespace CourierService.Core.StateMachines.Activities
             Log.Information($"Courier State Machine - {nameof(CourierDispatchConfirmationActivity)}");
             
             context.Instance.Timestamp = DateTime.Now;
-            
-            // await _context.Send<PickUpOrder>(new
-            // {
-            //     context.Data.OrderId,
-            //     context.Data.CustomerId,
-            //     context.Data.RestaurantId
-            // });
 
             await next.Execute(context).ConfigureAwait(false);
         }

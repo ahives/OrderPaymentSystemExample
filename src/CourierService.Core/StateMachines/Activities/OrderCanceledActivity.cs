@@ -35,6 +35,8 @@ namespace CourierService.Core.StateMachines.Activities
             Log.Information($"Courier State Machine - {nameof(OrderCanceledActivity)}");
             
             context.Instance.Timestamp = DateTime.Now;
+            context.Instance.CourierId = null;
+            context.Instance.IsOrderReady = false;
 
             await _context.Publish<CourierDispatchCanceled>(new
             {
