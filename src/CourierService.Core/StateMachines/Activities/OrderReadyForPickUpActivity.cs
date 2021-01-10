@@ -9,12 +9,12 @@ namespace CourierService.Core.StateMachines.Activities
     using Serilog;
     using Services.Core.Events;
 
-    public class OrderPickReadyActivity :
+    public class OrderReadyForPickUpActivity :
         Activity<CourierState, OrderReadyForDelivery>
     {
         readonly ConsumeContext _context;
 
-        public OrderPickReadyActivity(ConsumeContext context)
+        public OrderReadyForPickUpActivity(ConsumeContext context)
         {
             _context = context;
         }

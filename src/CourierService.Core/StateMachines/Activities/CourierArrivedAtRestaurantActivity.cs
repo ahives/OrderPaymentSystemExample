@@ -34,18 +34,28 @@ namespace CourierService.Core.StateMachines.Activities
             Behavior<CourierState, CourierArrivedAtRestaurant> next)
         {
             Log.Information($"Courier State Machine - {nameof(OrderExpiredActivity)}");
-            
+
             context.Instance.Timestamp = DateTime.Now;
             context.Instance.HasCourierArrived = true;
 
-            await _context.Send<UpdateCourierStatus>(new()
+            // await _context.Send<UpdateCourierStatus>(new()
+            // {
+            //     CourierId = context.Data.CourierId,
+            //     RestaurantId = context.Data.RestaurantId,
+            //     CustomerId = context.Data.CustomerId,
+            //     OrderId = context.Data.OrderId,
+            //     Status = (int)CourierStatus.EnRouteToRestaurant
+            // });
+            if (context.Instance.IsOrderReady)
             {
-                CourierId = context.Data.CourierId,
-                RestaurantId = context.Data.RestaurantId,
-                CustomerId = context.Data.CustomerId,
-                OrderId = context.Data.OrderId,
-                Status = (int)CourierStatus.EnRouteToRestaurant
-            });
+                await _context.Send<PickUpOrder>(new()
+                {
+                    CourierId = context.Data.CourierId,
+                    RestaurantId = context.Data.RestaurantId,
+                    CustomerId = context.Data.CustomerId,
+                    OrderId = context.Data.OrderId
+                });
+            }
 
             await next.Execute(context).ConfigureAwait(false);
         }

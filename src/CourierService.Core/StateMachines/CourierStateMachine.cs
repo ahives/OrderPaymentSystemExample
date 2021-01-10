@@ -17,8 +17,8 @@ namespace CourierService.Core.StateMachines
                 s.Delay = TimeSpan.FromMinutes(1);
                 s.Received = r => r.CorrelateById(context => context.Message.OrderId);
             });
-            
-            InstanceState(x => x.CurrentState, Dispatched, DispatchConfirmed, EnRouteToRestaurant, OrderPickUp,
+
+            InstanceState(x => x.CurrentState, Dispatched, DispatchConfirmed, EnRouteToRestaurant, ArrivedAtRestaurant,
                 EnRouteToCustomer, DeliveringOrder, OrderDelivered, DispatchCanceled, DispatchDeclined);
 
             Initially(When(CourierDispatchedEvent)
@@ -38,7 +38,7 @@ namespace CourierService.Core.StateMachines
                     .TransitionTo(DispatchDeclined),
                 When(OrderExpiredEvent)
                     .Activity(x => x.OfType<OrderExpiredActivity>())
-                    .TransitionTo(Dispatched),
+                    .TransitionTo(DispatchCanceled),
                 When(OrderCanceledEvent)
                     .Activity(x => x.OfType<OrderCanceledActivity>())
                     .TransitionTo(DispatchCanceled),
@@ -60,45 +60,56 @@ namespace CourierService.Core.StateMachines
                 Ignore(CourierDispatchedEvent));
 
             During(EnRouteToRestaurant,
+                When(CourierArrivedAtRestaurantEvent)
+                    .If(context => !context.Instance.IsOrderReady,
+                        binder =>
+                            binder.Schedule(OrderCompletionTimeout, context =>
+                                context.Init<OrderCompletionTimeoutExpired>(new
+                                {
+                                    context.Instance.OrderId,
+                                    context.Instance.RestaurantId,
+                                    context.Instance.CourierId,
+                                    context.Instance.CustomerId
+                                })))
+                    .Activity(x => x.OfType<CourierArrivedAtRestaurantActivity>())
+                    .TransitionTo(ArrivedAtRestaurant),
                 When(OrderReadyForDeliveryEvent)
                     .Activity(x => x.OfType<OrderReadyForDeliveryActivity>())
+                    .Unschedule(OrderCompletionTimeout)
                     .TransitionTo(EnRouteToRestaurant),
-                When(CourierArrivedAtRestaurantEvent)
-                    .Schedule(OrderCompletionTimeout, context => context.Init<OrderCompletionTimeoutExpired>(new
-                    {
-                        context.Instance.OrderId,
-                        context.Instance.RestaurantId,
-                        context.Instance.CourierId,
-                        context.Instance.CustomerId
-                    }))
-                    .Activity(x => x.OfType<CourierArrivedAtRestaurantActivity>())
-                    .TransitionTo(OrderPickUp),
+                When(OrderCompletionTimeout.Received)
+                    .Activity(x => x.OfType<OrderCompletionTimeoutActivity>())
+                    .TransitionTo(DispatchDeclined),
                 When(CourierDispatchDeclinedEvent)
                     .Activity(x => x.OfType<CourierDeclinedActivity>())
                     .TransitionTo(DispatchDeclined),
                 When(OrderExpiredEvent)
                     .Activity(x => x.OfType<OrderExpiredActivity>())
-                    .TransitionTo(EnRouteToRestaurant),
+                    .TransitionTo(DispatchCanceled),
                 When(OrderCanceledEvent)
                     .Activity(x => x.OfType<OrderCanceledActivity>())
                     .TransitionTo(DispatchCanceled));
-            
-            During(OrderPickUp,
+
+            During(ArrivedAtRestaurant,
                 When(OrderReadyForDeliveryEvent)
-                    .Activity(x => x.OfType<OrderPickReadyActivity>())
-                    .TransitionTo(EnRouteToCustomer),
+                    .Activity(x => x.OfType<OrderReadyForPickUpActivity>())
+                    .Unschedule(OrderCompletionTimeout)
+                    .TransitionTo(ArrivedAtRestaurant),
                 When(OrderPickedUpEvent)
                     .Activity(x => x.OfType<CourierPickedUpOrderActivity>())
+                    .Unschedule(OrderCompletionTimeout)
                     .TransitionTo(EnRouteToCustomer),
-                When(CourierDispatchDeclinedEvent)
-                    .Activity(x => x.OfType<CourierDeclinedActivity>())
+                When(OrderCompletionTimeout.Received)
+                    .Activity(x => x.OfType<OrderCompletionTimeoutActivity>())
                     .TransitionTo(DispatchDeclined),
                 When(OrderCanceledEvent)
                     .Activity(x => x.OfType<OrderCanceledActivity>())
+                    .Unschedule(OrderCompletionTimeout)
                     .TransitionTo(DispatchCanceled),
                 When(OrderExpiredEvent)
                     .Activity(x => x.OfType<OrderExpiredActivity>())
-                    .TransitionTo(OrderPickUp),
+                    .Unschedule(OrderCompletionTimeout)
+                    .TransitionTo(DispatchCanceled),
                 Ignore(CourierEnRouteRestaurantEvent),
                 Ignore(CourierDispatchedEvent));
 
@@ -129,21 +140,17 @@ namespace CourierService.Core.StateMachines
                 Ignore(CourierDispatchedEvent),
                 Ignore(CourierDispatchDeclinedEvent),
                 Ignore(OrderPickedUpEvent));
-            
-            DuringAny(When(OrderCompletionTimeout.Received)
-                .Activity(x => x.OfType<OrderCompletionTimeoutActivity>())
-                .TransitionTo(DispatchDeclined));
         }
         
         public State Dispatched { get; }
         public State DispatchConfirmed { get; }
-        public State OrderPickUp { get; }
         public State OrderDelivered { get; }
         public State DispatchCanceled { get; }
         public State DispatchDeclined { get; }
         public State EnRouteToRestaurant { get; }
         public State EnRouteToCustomer { get; }
         public State DeliveringOrder { get; }
+        public State ArrivedAtRestaurant { get; }
         
         public Event<CourierDispatched> CourierDispatchedEvent { get; }
         public Event<OrderPickedUp> OrderPickedUpEvent { get; }

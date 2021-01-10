@@ -4,7 +4,6 @@ namespace CourierService.Core.Consumers
     using MassTransit;
     using Serilog;
     using Service.Grpc.Core;
-    using Services.Core;
     using Services.Core.Events;
 
     public class PickUpOrderConsumer :
@@ -51,6 +50,8 @@ namespace CourierService.Core.Consumers
                         context.Message.CustomerId,
                         context.Message.RestaurantId
                     });
+                    
+                    // TODO: courier status should be arrived at restaurant
                     
                     Log.Information($"Courier {result.Value.CourierId} Restaurant {result.Value.RestaurantId} was not opened.");
                 }
