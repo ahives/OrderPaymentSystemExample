@@ -9,18 +9,18 @@ namespace CourierService.Core.Consumers
     public class PickUpOrderConsumer :
         IConsumer<PickUpOrder>
     {
-        readonly ICourierDispatcher _dispatcher;
+        readonly ICourierDispatcherClient _client;
 
-        public PickUpOrderConsumer(ICourierDispatcher dispatcher)
+        public PickUpOrderConsumer(ICourierDispatcherClient client)
         {
-            _dispatcher = dispatcher;
+            _client = client;
         }
 
         public async Task Consume(ConsumeContext<PickUpOrder> context)
         {
             Log.Information($"Courier State Machine - {nameof(PickUpOrderConsumer)}");
             
-            var result = await _dispatcher.PickUpOrder(new ()
+            var result = await _client.Client.PickUpOrder(new ()
             {
                 CourierId = context.Message.CourierId,
                 RestaurantId = context.Message.RestaurantId,

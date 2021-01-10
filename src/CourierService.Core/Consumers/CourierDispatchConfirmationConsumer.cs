@@ -9,18 +9,18 @@ namespace CourierService.Core.Consumers
     public class CourierDispatchConfirmationConsumer :
         IConsumer<ConfirmCourierDispatch>
     {
-        readonly ICourierDispatcher _dispatcher;
+        readonly ICourierDispatcherClient _client;
 
-        public CourierDispatchConfirmationConsumer(ICourierDispatcher dispatcher)
+        public CourierDispatchConfirmationConsumer(ICourierDispatcherClient client)
         {
-            _dispatcher = dispatcher;
+            _client = client;
         }
 
         public async Task Consume(ConsumeContext<ConfirmCourierDispatch> context)
         {
             Log.Information($"Consumer - {nameof(CourierDispatchConfirmationConsumer)}");
             
-            var result = await _dispatcher.Confirm(new () {CourierId = context.Message.CourierId});
+            var result = await _client.Client.Confirm(new () {CourierId = context.Message.CourierId});
             
             if (result.IsSuccessful)
             {

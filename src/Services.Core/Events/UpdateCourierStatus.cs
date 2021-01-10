@@ -2,6 +2,7 @@ namespace Services.Core.Events
 {
     using System;
     using System.Runtime.CompilerServices;
+    using Data.Core;
     using MassTransit;
     using MassTransit.Topology.Topologies;
 
@@ -29,7 +30,7 @@ namespace Services.Core.Events
         
         public Guid RestaurantId { get; init; }
         
-        public int Status { get; init; }
+        public CourierStatus Status { get; init; }
         
         public DateTime Timestamp { get; }
     }

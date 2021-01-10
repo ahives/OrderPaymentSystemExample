@@ -41,14 +41,7 @@
                 })
                 .ConfigureServices((host, services) =>
                 {
-                    services.AddGrpcClient<ICourierDispatcher>(o =>
-                    {
-                        string uri = host.Configuration
-                            .GetSection("Application")
-                            .GetValue<string>("GrpcChannelUri");
-
-                        o.Address = new Uri(uri);
-                    });
+                    services.AddSingleton<ICourierDispatcherClient, CourierDispatcherClient>();
                     
                     services.AddMassTransit(x =>
                     {
@@ -58,7 +51,7 @@
                         x.AddConsumer<PickUpOrderConsumer>();
                         x.AddConsumer<CourierEnRouteToRestaurantConsumer>();
                         x.AddConsumer<CourierDispatchDeclinedConsumer>();
-                        x.AddConsumer<CourierStatusUpdateConsumer>();
+                        x.AddConsumer<UpdateCourierStatusConsumer>();
                         
                         x.SetKebabCaseEndpointNameFormatter();
 

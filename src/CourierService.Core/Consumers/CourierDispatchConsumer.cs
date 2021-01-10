@@ -5,25 +5,23 @@ namespace CourierService.Core.Consumers
     using Serilog;
     using Service.Grpc.Core;
     using Service.Grpc.Core.Model;
-    using Services.Core;
     using Services.Core.Events;
-    using Services.Core.Model;
 
     public class CourierDispatchConsumer :
         IConsumer<DispatchCourier>
     {
-        readonly ICourierDispatcher _dispatcher;
+        readonly ICourierDispatcherClient _client;
 
-        public CourierDispatchConsumer(ICourierDispatcher dispatcher)
+        public CourierDispatchConsumer(ICourierDispatcherClient client)
         {
-            _dispatcher = dispatcher;
+            _client = client;
         }
 
         public async Task Consume(ConsumeContext<DispatchCourier> context)
         {
             Log.Information($"Consumer - {nameof(CourierDispatchConsumer)}");
             
-            Result<Courier> result = await _dispatcher.Dispatch(new ()
+            Result<Courier> result = await _client.Client.Dispatch(new ()
             {
                 Street = context.Message.Street,
                 City = context.Message.City,

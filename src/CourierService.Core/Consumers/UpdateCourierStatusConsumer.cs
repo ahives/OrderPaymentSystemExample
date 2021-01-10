@@ -5,12 +5,12 @@ namespace CourierService.Core.Consumers
     using Serilog;
     using Services.Core.Events;
 
-    public class CourierStatusUpdateConsumer :
+    public class UpdateCourierStatusConsumer :
         IConsumer<UpdateCourierStatus>
     {
         public async Task Consume(ConsumeContext<UpdateCourierStatus> context)
         {
-            Log.Information($"Consumer - {nameof(CourierStatusUpdateConsumer)}");
+            Log.Information($"Consumer - {nameof(UpdateCourierStatusConsumer)}");
         }
     }
 }

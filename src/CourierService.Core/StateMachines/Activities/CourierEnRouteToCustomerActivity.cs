@@ -33,17 +33,17 @@ namespace CourierService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<CourierState, CourierEnRouteToCustomer> context,
             Behavior<CourierState, CourierEnRouteToCustomer> next)
         {
-            Log.Information($"Courier State Machine - {nameof(CourierEnRouteToRestaurantActivity)}");
+            Log.Information($"Courier State Machine - {nameof(CourierEnRouteToCustomerActivity)}");
             
             context.Instance.Timestamp = DateTime.Now;
 
-            await _context.Send<UpdateCourierStatus>(new()
+            await _context.Publish<UpdateCourierStatus>(new()
             {
                 CourierId = context.Data.CourierId,
                 RestaurantId = context.Data.RestaurantId,
                 CustomerId = context.Data.CustomerId,
                 OrderId = context.Data.OrderId,
-                Status = (int)CourierStatus.EnRouteToCustomer
+                Status = CourierStatus.EnRouteToCustomer
             });
 
             await next.Execute(context).ConfigureAwait(false);

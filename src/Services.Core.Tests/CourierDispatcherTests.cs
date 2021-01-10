@@ -25,14 +25,10 @@ namespace Services.Core.Tests
 
         public CourierDispatcherTests()
         {
-            _services
-                .AddGrpcClient<ICourierDispatcher>(o =>
-                {
-                    o.Address = new Uri("http://localhost:5001");
-                });
+            _services.AddSingleton<ICourierDispatcherClient, CourierDispatcherClient>();
             
             _provider = _services
-                .AddSingleton<ICourierDispatcher, CourierDispatcher>()
+                // .AddSingleton<ICourierDispatcher, CourierDispatcher>()
                 .BuildServiceProvider();
         }
 
@@ -135,11 +131,14 @@ namespace Services.Core.Tests
         [Test]
         public async Task Test()
         {
-            var client = _provider.GetService<ICourierDispatcher>();
+            var client = _provider.GetService<ICourierDispatcherClient>();
             
-            var result = await client.EnRoute(new ()
+            var result = await client.Client.Confirm(new ()
             {
-                CourierId = Guid.Parse("11220000-4800-acde-d916-08d8b0f69e93"),
+                // CourierId = Guid.Parse("11220000-4800-acde-d916-08d8b0f69e93"),
+                CourierId = Guid.Parse("11220000-4800-acde-50fa-08d8b42ba8ff"),
+                OrderId = Guid.Parse("11220000-4800-acde-3288-08d8b42ba903"),
+                // RestaurantId = Guid.Parse(""),
                 Status = CourierStatus.EnRouteToRestaurant
             });
             

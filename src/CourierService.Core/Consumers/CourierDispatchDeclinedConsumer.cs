@@ -4,24 +4,23 @@ namespace CourierService.Core.Consumers
     using MassTransit;
     using Serilog;
     using Service.Grpc.Core;
-    using Services.Core;
     using Services.Core.Events;
 
     public class CourierDispatchDeclinedConsumer :
         IConsumer<DeclineCourierDispatch>
     {
-        readonly ICourierDispatcher _dispatcher;
+        readonly ICourierDispatcherClient _client;
 
-        public CourierDispatchDeclinedConsumer(ICourierDispatcher dispatcher)
+        public CourierDispatchDeclinedConsumer(ICourierDispatcherClient client)
         {
-            _dispatcher = dispatcher;
+            _client = client;
         }
 
         public async Task Consume(ConsumeContext<DeclineCourierDispatch> context)
         {
             Log.Information($"Consumer - {nameof(CourierDispatchDeclinedConsumer)}");
             
-            var result = await _dispatcher.Decline(new () {CourierId = context.Message.CourierId});
+            var result = await _client.Client.Decline(new () {CourierId = context.Message.CourierId});
             
             if (result.IsSuccessful)
             {

@@ -3,7 +3,6 @@ namespace CourierService.Core.StateMachines.Activities
     using System;
     using System.Threading.Tasks;
     using Automatonymous;
-    using Data.Core;
     using GreenPipes;
     using MassTransit;
     using Sagas;
@@ -38,14 +37,6 @@ namespace CourierService.Core.StateMachines.Activities
             context.Instance.Timestamp = DateTime.Now;
             context.Instance.HasCourierArrived = true;
 
-            // await _context.Send<UpdateCourierStatus>(new()
-            // {
-            //     CourierId = context.Data.CourierId,
-            //     RestaurantId = context.Data.RestaurantId,
-            //     CustomerId = context.Data.CustomerId,
-            //     OrderId = context.Data.OrderId,
-            //     Status = (int)CourierStatus.EnRouteToRestaurant
-            // });
             if (context.Instance.IsOrderReady)
             {
                 await _context.Publish<PickUpOrder>(new()
