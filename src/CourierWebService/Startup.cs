@@ -1,8 +1,10 @@
 namespace CourierWebService
 {
+    using Data.Core;
     using MassTransit;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
@@ -26,6 +28,9 @@ namespace CourierWebService
             {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "CourierWebService", Version = "v1"});
             });
+            
+            services.AddDbContext<OrdersDbContext>(x =>
+                x.UseNpgsql(Configuration.GetConnectionString("OrdersConnection")));
 
             services.AddMassTransit(x =>
             {

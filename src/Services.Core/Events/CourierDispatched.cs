@@ -16,7 +16,7 @@ namespace Services.Core.Events
         [ModuleInitializer]
         internal static void Init()
         {
-            GlobalTopology.Send.UseCorrelationId<CourierDispatchConfirmed>(x => x.OrderId);
+            GlobalTopology.Send.UseCorrelationId<CourierDispatched>(x => x.OrderId);
         }
 
         public Guid EventId { get; }

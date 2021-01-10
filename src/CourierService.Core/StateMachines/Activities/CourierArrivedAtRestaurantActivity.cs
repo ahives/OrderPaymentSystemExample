@@ -48,13 +48,15 @@ namespace CourierService.Core.StateMachines.Activities
             // });
             if (context.Instance.IsOrderReady)
             {
-                await _context.Send<PickUpOrder>(new()
+                await _context.Publish<PickUpOrder>(new()
                 {
                     CourierId = context.Data.CourierId,
                     RestaurantId = context.Data.RestaurantId,
                     CustomerId = context.Data.CustomerId,
                     OrderId = context.Data.OrderId
                 });
+                
+                Log.Information($"Courier State Machine - {nameof(PickUpOrder)} event published");
             }
 
             await next.Execute(context).ConfigureAwait(false);

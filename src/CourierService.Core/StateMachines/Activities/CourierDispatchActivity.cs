@@ -42,7 +42,7 @@ namespace CourierService.Core.StateMachines.Activities
             context.Instance.IsOrderReady = false;
             context.Instance.HasCourierArrived = false;
             
-            await _context.Send<ConfirmCourierDispatch>(new
+            await _context.Publish<ConfirmCourierDispatch>(new
             {
                 context.Data.CourierId,
                 context.Data.OrderId,

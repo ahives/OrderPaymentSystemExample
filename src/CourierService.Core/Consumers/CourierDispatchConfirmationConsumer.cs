@@ -4,7 +4,6 @@ namespace CourierService.Core.Consumers
     using MassTransit;
     using Serilog;
     using Service.Grpc.Core;
-    using Services.Core;
     using Services.Core.Events;
 
     public class CourierDispatchConfirmationConsumer :

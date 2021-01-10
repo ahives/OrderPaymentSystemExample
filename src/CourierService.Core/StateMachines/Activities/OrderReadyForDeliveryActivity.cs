@@ -24,7 +24,7 @@ namespace CourierService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<CourierState, OrderReadyForDelivery> context,
             Behavior<CourierState, OrderReadyForDelivery> next)
         {
-            Log.Information($"Courier State Machine - {nameof(OrderExpiredActivity)}");
+            Log.Information($"Courier State Machine - {nameof(OrderReadyForDelivery)}");
             
             context.Instance.Timestamp = DateTime.Now;
             context.Instance.IsOrderReady = true;

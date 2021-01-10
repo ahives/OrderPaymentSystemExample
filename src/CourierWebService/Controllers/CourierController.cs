@@ -12,47 +12,121 @@ namespace CourierWebService.Controllers
     public class CourierController :
         ControllerBase
     {
-        readonly ISendEndpoint _endpoint;
+        readonly IPublishEndpoint _endpoint;
         readonly OrdersDbContext _db;
-        Guid _courierId;
-        Guid _orderId;
-        Guid _customerId;
-        Guid _restaurantId;
 
-        public CourierController(ISendEndpoint endpoint, OrdersDbContext db)
+        public CourierController(IPublishEndpoint endpoint, OrdersDbContext db)
         {
             _endpoint = endpoint;
             _db = db;
         }
 
-        [HttpPost("EnRouteToRestaurant")]
-        public async Task EnRouteToRestaurant()
+        [HttpPost("DispatchCourier")]
+        public async Task<IActionResult> DispatchCourier(CourierRequest request)
         {
-            await _endpoint.Send<CourierArrivedAtRestaurant>(new()
+            await _endpoint.Publish<CourierDispatched>(new()
             {
-                CourierId = _courierId,
-                OrderId = _orderId,
-                CustomerId = _customerId,
-                RestaurantId = _restaurantId
+                CourierId = request.CourierId,
+                OrderId = request.OrderId,
+                CustomerId = request.CustomerId,
+                RestaurantId = request.RestaurantId
             });
+
+            return Ok();
+        }
+
+        [HttpPost("DeliveringOrder")]
+        public async Task<IActionResult> DeliveringOrder(CourierRequest request)
+        {
+            await _endpoint.Publish<DeliveringOrder>(new()
+            {
+                CourierId = request.CourierId,
+                OrderId = request.OrderId,
+                CustomerId = request.CustomerId,
+                RestaurantId = request.RestaurantId
+            });
+
+            return Ok();
+        }
+
+        [HttpPost("ArrivedAtRestaurant")]
+        public async Task<IActionResult> ArrivedAtRestaurant(CourierRequest request)
+        {
+            await _endpoint.Publish<CourierArrivedAtRestaurant>(new()
+            {
+                CourierId = request.CourierId,
+                OrderId = request.OrderId,
+                CustomerId = request.CustomerId,
+                RestaurantId = request.RestaurantId
+            });
+
+            return Ok();
+        }
+
+        [HttpPost("OrderReadyForDelivery")]
+        public async Task<IActionResult> OrderReadyForDelivery(CourierRequest request)
+        {
+            await _endpoint.Publish<OrderReadyForDelivery>(new()
+            {
+                OrderId = request.OrderId,
+                CustomerId = request.CustomerId,
+                RestaurantId = request.RestaurantId
+            });
+
+            return Ok();
+        }
+
+        [HttpPost("DispatchConfirmed")]
+        public async Task<IActionResult> DispatchConfirmed(CourierRequest request)
+        {
+            await _endpoint.Publish<CourierDispatchConfirmed>(new()
+            {
+                CourierId = request.CourierId,
+                OrderId = request.OrderId,
+                CustomerId = request.CustomerId,
+                RestaurantId = request.RestaurantId
+            });
+
+            return Ok();
+        }
+
+        [HttpPost("EnRouteToRestaurant")]
+        public async Task<IActionResult> EnRouteToRestaurant(CourierRequest request)
+        {
+            await _endpoint.Publish<CourierEnRouteToRestaurant>(new()
+            {
+                CourierId = request.CourierId,
+                OrderId = request.OrderId,
+                CustomerId = request.CustomerId,
+                RestaurantId = request.RestaurantId
+            });
+
+            return Ok();
         }
 
         [HttpPost("EnRouteToCustomer")]
-        public async Task EnRouteToCustomer()
+        public async Task<IActionResult> EnRouteToCustomer(CourierRequest request)
         {
-            await _endpoint.Send<CourierEnRouteToCustomer>(new()
+            await _endpoint.Publish<CourierEnRouteToCustomer>(new()
             {
-                CourierId = _courierId,
-                OrderId = _orderId,
-                CustomerId = _customerId,
-                RestaurantId = _restaurantId
+                CourierId = request.CourierId,
+                OrderId = request.OrderId,
+                CustomerId = request.CustomerId,
+                RestaurantId = request.RestaurantId
             });
+
+            return Ok();
         }
+    }
+
+    public record CourierRequest
+    {
+        public Guid CourierId { get; init; }
         
-        // GET
-        // public IActionResult Index()
-        // {
-        //     return View();
-        // }
+        public Guid OrderId { get; init; }
+        
+        public Guid CustomerId { get; init; }
+        
+        public Guid RestaurantId { get; init; }
     }
 }

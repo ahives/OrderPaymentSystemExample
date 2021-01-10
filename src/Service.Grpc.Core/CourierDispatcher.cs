@@ -7,6 +7,7 @@ namespace Service.Grpc.Core
     using Data.Core.Model;
     using Microsoft.EntityFrameworkCore;
     using Model;
+    using Serilog;
 
     public class CourierDispatcher :
         ICourierDispatcher
@@ -32,13 +33,25 @@ namespace Service.Grpc.Core
                 .FirstOrDefaultAsync();
 
             if (target == null)
+            {
+                Log.Information($"Courier {request.CourierId} could not be found.");
+                
                 return new Result<Courier> {Reason = ReasonType.CourierNotFound, IsSuccessful = false};
+            }
             
             if (!target.Courier.IsActive)
+            {
+                Log.Information($"Courier {request.CourierId} could be chosen because he/she is not active.");
+                
                 return new Result<Courier> {Reason = ReasonType.CourierNotActive, IsSuccessful = false};
+            }
             
             if (target.Courier.Status != (int)CourierStatus.Idle)
+            {
+                Log.Information($"Courier {request.CourierId} could be chosen because he/she status is not IDLE.");
+                
                 return new Result<Courier> {Reason = ReasonType.CourierNotAvailable, IsSuccessful = false};
+            }
 
             target.Courier.Status = (int)CourierStatus.Confirmed;
             target.Courier.StatusTimestamp = DateTime.Now;
@@ -48,10 +61,16 @@ namespace Service.Grpc.Core
             var changes = await _db.SaveChangesAsync();
             
             if (changes <= 0)
+            {
+                Log.Information($"Courier {request.CourierId} status was not updated to CONFIRMED.");
+                
                 return new Result<Courier> {ChangeCount = changes, IsSuccessful = false};
+            }
             
             var mapped = MapEntity(target.Courier, target.Address);
             
+            Log.Information($"Courier {request.CourierId} status was updated to CONFIRMED.");
+                
             return new Result<Courier> {ChangeCount = changes, Value = mapped, IsSuccessful = true};
         }
 
