@@ -45,13 +45,13 @@
                     
                     services.AddMassTransit(x =>
                     {
-                        x.AddConsumer<CourierDispatchConsumer>();
-                        x.AddConsumer<CourierDispatchConfirmationConsumer>();
+                        x.AddConsumer<DispatchConsumer>();
+                        x.AddConsumer<DispatchConfirmationConsumer>();
                         x.AddConsumer<OrderDeliveryConsumer>();
                         x.AddConsumer<PickUpOrderConsumer>();
-                        x.AddConsumer<CourierEnRouteToRestaurantConsumer>();
-                        x.AddConsumer<CourierDispatchDeclinedConsumer>();
-                        x.AddConsumer<UpdateCourierStatusConsumer>();
+                        x.AddConsumer<EnRouteToRestaurantConsumer>();
+                        x.AddConsumer<DispatchDeclinedConsumer>();
+                        x.AddConsumer<EnRouteToCustomerConsumer>();
                         
                         x.SetKebabCaseEndpointNameFormatter();
 

@@ -1,6 +1,5 @@
 namespace CourierWebService.Controllers
 {
-    using System;
     using System.Threading.Tasks;
     using Data.Core;
     using MassTransit;
@@ -25,34 +24,6 @@ namespace CourierWebService.Controllers
         public async Task<IActionResult> DispatchCourier(CourierRequest request)
         {
             await _endpoint.Publish<CourierDispatched>(new()
-            {
-                CourierId = request.CourierId,
-                OrderId = request.OrderId,
-                CustomerId = request.CustomerId,
-                RestaurantId = request.RestaurantId
-            });
-
-            return Ok();
-        }
-
-        [HttpPost("DeliveringOrder")]
-        public async Task<IActionResult> DeliveringOrder(CourierRequest request)
-        {
-            await _endpoint.Publish<DeliveringOrder>(new()
-            {
-                CourierId = request.CourierId,
-                OrderId = request.OrderId,
-                CustomerId = request.CustomerId,
-                RestaurantId = request.RestaurantId
-            });
-
-            return Ok();
-        }
-
-        [HttpPost("ArrivedAtRestaurant")]
-        public async Task<IActionResult> ArrivedAtRestaurant(CourierRequest request)
-        {
-            await _endpoint.Publish<CourierArrivedAtRestaurant>(new()
             {
                 CourierId = request.CourierId,
                 OrderId = request.OrderId,
@@ -104,6 +75,20 @@ namespace CourierWebService.Controllers
             return Ok();
         }
 
+        [HttpPost("ArrivedAtRestaurant")]
+        public async Task<IActionResult> ArrivedAtRestaurant(CourierRequest request)
+        {
+            await _endpoint.Publish<CourierArrivedAtRestaurant>(new()
+            {
+                CourierId = request.CourierId,
+                OrderId = request.OrderId,
+                CustomerId = request.CustomerId,
+                RestaurantId = request.RestaurantId
+            });
+
+            return Ok();
+        }
+
         [HttpPost("EnRouteToCustomer")]
         public async Task<IActionResult> EnRouteToCustomer(CourierRequest request)
         {
@@ -117,16 +102,33 @@ namespace CourierWebService.Controllers
 
             return Ok();
         }
-    }
 
-    public record CourierRequest
-    {
-        public Guid CourierId { get; init; }
-        
-        public Guid OrderId { get; init; }
-        
-        public Guid CustomerId { get; init; }
-        
-        public Guid RestaurantId { get; init; }
+        [HttpPost("ArrivedAtCustomer")]
+        public async Task<IActionResult> ArrivedAtCustomer(CourierRequest request)
+        {
+            await _endpoint.Publish<CourierArrivedAtCustomer>(new()
+            {
+                CourierId = request.CourierId,
+                OrderId = request.OrderId,
+                CustomerId = request.CustomerId,
+                RestaurantId = request.RestaurantId
+            });
+
+            return Ok();
+        }
+
+        [HttpPost("DeliveringOrder")]
+        public async Task<IActionResult> DeliveringOrder(CourierRequest request)
+        {
+            await _endpoint.Publish<DeliveringOrder>(new()
+            {
+                CourierId = request.CourierId,
+                OrderId = request.OrderId,
+                CustomerId = request.CustomerId,
+                RestaurantId = request.RestaurantId
+            });
+
+            return Ok();
+        }
     }
 }

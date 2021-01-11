@@ -6,19 +6,19 @@ namespace CourierService.Core.Consumers
     using Service.Grpc.Core;
     using Services.Core.Events;
 
-    public class CourierDispatchDeclinedConsumer :
+    public class DispatchDeclinedConsumer :
         IConsumer<DeclineCourierDispatch>
     {
         readonly ICourierDispatcherClient _client;
 
-        public CourierDispatchDeclinedConsumer(ICourierDispatcherClient client)
+        public DispatchDeclinedConsumer(ICourierDispatcherClient client)
         {
             _client = client;
         }
 
         public async Task Consume(ConsumeContext<DeclineCourierDispatch> context)
         {
-            Log.Information($"Consumer - {nameof(CourierDispatchDeclinedConsumer)}");
+            Log.Information($"Consumer - {nameof(DispatchDeclinedConsumer)}");
             
             var result = await _client.Client.Decline(new () {CourierId = context.Message.CourierId});
             

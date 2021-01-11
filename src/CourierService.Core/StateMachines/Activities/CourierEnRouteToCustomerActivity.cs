@@ -3,9 +3,7 @@ namespace CourierService.Core.StateMachines.Activities
     using System;
     using System.Threading.Tasks;
     using Automatonymous;
-    using Data.Core;
     using GreenPipes;
-    using MassTransit;
     using Sagas;
     using Serilog;
     using Services.Core.Events;
@@ -13,13 +11,6 @@ namespace CourierService.Core.StateMachines.Activities
     public class CourierEnRouteToCustomerActivity :
         Activity<CourierState, CourierEnRouteToCustomer>
     {
-        readonly ConsumeContext _context;
-
-        public CourierEnRouteToCustomerActivity(ConsumeContext context)
-        {
-            _context = context;
-        }
-
         public void Probe(ProbeContext context)
         {
             context.CreateScope("");
@@ -36,15 +27,6 @@ namespace CourierService.Core.StateMachines.Activities
             Log.Information($"Courier State Machine - {nameof(CourierEnRouteToCustomerActivity)}");
             
             context.Instance.Timestamp = DateTime.Now;
-
-            await _context.Publish<UpdateCourierStatus>(new()
-            {
-                CourierId = context.Data.CourierId,
-                RestaurantId = context.Data.RestaurantId,
-                CustomerId = context.Data.CustomerId,
-                OrderId = context.Data.OrderId,
-                Status = CourierStatus.EnRouteToCustomer
-            });
 
             await next.Execute(context).ConfigureAwait(false);
         }

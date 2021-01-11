@@ -35,7 +35,7 @@ namespace CourierService.Core.Tests
                 .AddSingleton<ICourierDispatcher, CourierDispatcher>()
                 .AddMassTransitInMemoryTestHarness(x =>
                 {
-                    x.AddConsumer<CourierDispatchConfirmationConsumer>();
+                    x.AddConsumer<DispatchConfirmationConsumer>();
                 })
                 .AddDbContext<OrdersDbContext>(x =>
                     x.UseNpgsql(configuration.GetConnectionString("OrdersConnection")))
@@ -130,7 +130,7 @@ namespace CourierService.Core.Tests
         public async Task Test()
         {
             var harness = _provider.GetRequiredService<InMemoryTestHarness>();
-            var consumer = harness.Consumer(() => _provider.GetRequiredService<CourierDispatchConfirmationConsumer>());
+            var consumer = harness.Consumer(() => _provider.GetRequiredService<DispatchConfirmationConsumer>());
             
             await harness.Start();
 
@@ -162,7 +162,7 @@ namespace CourierService.Core.Tests
         public async Task Test2()
         {
             var harness = _provider.GetRequiredService<InMemoryTestHarness>();
-            var consumer = harness.Consumer(() => _provider.GetRequiredService<CourierDispatchConfirmationConsumer>());
+            var consumer = harness.Consumer(() => _provider.GetRequiredService<DispatchConfirmationConsumer>());
             
             await harness.Start();
 

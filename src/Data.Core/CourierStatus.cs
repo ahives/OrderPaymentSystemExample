@@ -8,7 +8,9 @@ namespace Data.Core
         PickedUpOrder = 3,
         DeliveredOrder = 4,
         EnRouteToRestaurant = 5,
-        EnRouteToCustomer = 6,
-        Declined = 7
+        ArrivedAtRestaurant = 6,
+        EnRouteToCustomer = 7,
+        ArrivedAtCustomer = 8,
+        Declined = 9
     }
 }

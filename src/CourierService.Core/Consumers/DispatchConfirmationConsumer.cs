@@ -6,19 +6,19 @@ namespace CourierService.Core.Consumers
     using Service.Grpc.Core;
     using Services.Core.Events;
 
-    public class CourierDispatchConfirmationConsumer :
+    public class DispatchConfirmationConsumer :
         IConsumer<ConfirmCourierDispatch>
     {
         readonly ICourierDispatcherClient _client;
 
-        public CourierDispatchConfirmationConsumer(ICourierDispatcherClient client)
+        public DispatchConfirmationConsumer(ICourierDispatcherClient client)
         {
             _client = client;
         }
 
         public async Task Consume(ConsumeContext<ConfirmCourierDispatch> context)
         {
-            Log.Information($"Consumer - {nameof(CourierDispatchConfirmationConsumer)}");
+            Log.Information($"Consumer - {nameof(DispatchConfirmationConsumer)}");
             
             var result = await _client.Client.Confirm(new () {CourierId = context.Message.CourierId});
             

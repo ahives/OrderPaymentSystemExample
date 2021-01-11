@@ -12,9 +12,9 @@ namespace Service.Grpc.Core
         
         [OperationContract]
         Task<Result<Courier>> Decline(CourierDispatchRequest request);
-        
+
         [OperationContract]
-        Task<Result<Courier>> EnRoute(CourierDispatchRequest request);
+        Task<Result<Courier>> ChangeStatus(CourierStatusChangeRequest request);
         
         [OperationContract]
         Task<Result<Order>> PickUpOrder(CourierDispatchRequest request);

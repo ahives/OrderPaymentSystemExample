@@ -105,37 +105,6 @@ namespace Service.Grpc.Core
             return new Result<Courier> {ChangeCount = changes, Value = mapped, IsSuccessful = true};
         }
 
-        public async Task<Result<Courier>> EnRoute(CourierDispatchRequest request)
-        {
-            var target = await (
-                    from courier in _db.Couriers
-                    from address in _db.Addresses
-                    where courier.CourierId == request.CourierId
-                    select new
-                    {
-                        Courier = courier,
-                        Address = address
-                    })
-                .FirstOrDefaultAsync();
-
-            if (target == null)
-                return new Result<Courier> {Reason = ReasonType.CourierNotFound, IsSuccessful = false};
-
-            target.Courier.Status = (int)request.Status;
-            target.Courier.StatusTimestamp = DateTime.Now;
-            
-            _db.Update(target.Courier);
-            
-            var changes = await _db.SaveChangesAsync();
-            
-            if (changes <= 0)
-                return new Result<Courier> {ChangeCount = changes, IsSuccessful = false};
-            
-            var mapped = MapEntity(target.Courier, target.Address);
-            
-            return new Result<Courier> {ChangeCount = changes, Value = mapped, IsSuccessful = true};
-        }
-
         public async Task<Result<Order>> PickUpOrder(CourierDispatchRequest request)
         {
             var restaurant = await _db.Restaurants.FindAsync(request.RestaurantId);
@@ -260,6 +229,47 @@ namespace Service.Grpc.Core
 
             var mapped = MapEntity(target.Courier, target.Address);
             
+            return new Result<Courier> {ChangeCount = changes, Value = mapped, IsSuccessful = true};
+        }
+
+        public async Task<Result<Courier>> ChangeStatus(CourierStatusChangeRequest request)
+        {
+            var target = await (
+                    from courier in _db.Couriers
+                    from address in _db.Addresses
+                    where courier.CourierId == request.CourierId
+                    select new
+                    {
+                        Courier = courier,
+                        Address = address
+                    })
+                .FirstOrDefaultAsync();
+
+            if (target == null)
+            {
+                Log.Information($"Courier {request.CourierId} could not be found.");
+                
+                return new Result<Courier> {Reason = ReasonType.CourierNotFound, IsSuccessful = false};
+            }
+
+            target.Courier.Status = (int)request.Status;
+            target.Courier.StatusTimestamp = DateTime.Now;
+            
+            _db.Update(target.Courier);
+            
+            var changes = await _db.SaveChangesAsync();
+            
+            if (changes <= 0)
+            {
+                Log.Information($"Courier {request.CourierId} status was not updated.");
+                
+                return new Result<Courier> {ChangeCount = changes, IsSuccessful = false};
+            }
+            
+            var mapped = MapEntity(target.Courier, target.Address);
+            
+            Log.Information($"Courier {request.CourierId} status was updated.");
+                
             return new Result<Courier> {ChangeCount = changes, Value = mapped, IsSuccessful = true};
         }
 

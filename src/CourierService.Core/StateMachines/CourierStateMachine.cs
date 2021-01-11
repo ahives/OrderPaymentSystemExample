@@ -12,18 +12,20 @@ namespace CourierService.Core.StateMachines
     {
         public CourierStateMachine()
         {
-            Event(() => CourierDispatchedEvent, x => x.CorrelateById(context => context.Message.OrderId));
-            Event(() => OrderPickedUpEvent, x => x.CorrelateById(context => context.Message.OrderId));
-            Event(() => CourierDispatchConfirmedEvent, x => x.CorrelateById(context => context.Message.OrderId));
-            Event(() => OrderCanceledEvent, x => x.CorrelateById(context => context.Message.OrderId));
-            Event(() => OrderExpiredEvent, x => x.CorrelateById(context => context.Message.OrderId));
-            Event(() => CourierDispatchDeclinedEvent, x => x.CorrelateById(context => context.Message.OrderId));
-            Event(() => CourierEnRouteRestaurantEvent, x => x.CorrelateById(context => context.Message.OrderId));
-            Event(() => CourierEnRouteToCustomerEvent, x => x.CorrelateById(context => context.Message.OrderId));
-            Event(() => OrderReadyForDeliveryEvent, x => x.CorrelateById(context => context.Message.OrderId));
-            Event(() => CourierArrivedAtRestaurantEvent, x => x.CorrelateById(context => context.Message.OrderId));
-            Event(() => DeliveringOrderEvent, x => x.CorrelateById(context => context.Message.OrderId));
-            
+            // Event(() => CourierDispatchedEvent, x => x.CorrelateById(context => context.Message.OrderId));
+            // Event(() => OrderPickedUpEvent, x => x.CorrelateById(context => context.Message.OrderId));
+            // Event(() => CourierDispatchConfirmedEvent, x => x.CorrelateById(context => context.Message.OrderId));
+            // Event(() => OrderCanceledEvent, x => x.CorrelateById(context => context.Message.OrderId));
+            // Event(() => OrderExpiredEvent, x => x.CorrelateById(context => context.Message.OrderId));
+            // Event(() => CourierDispatchDeclinedEvent, x => x.CorrelateById(context => context.Message.OrderId));
+            // Event(() => CourierEnRouteRestaurantEvent, x => x.CorrelateById(context => context.Message.OrderId));
+            // Event(() => CourierEnRouteToCustomerEvent, x => x.CorrelateById(context => context.Message.OrderId));
+            // Event(() => OrderReadyForDeliveryEvent, x => x.CorrelateById(context => context.Message.OrderId));
+            // Event(() => CourierArrivedAtRestaurantEvent, x => x.CorrelateById(context => context.Message.OrderId));
+            // Event(() => DeliveringOrderEvent, x => x.CorrelateById(context => context.Message.OrderId));
+            // Event(() => CourierArrivedAtCustomerEvent, x => x.CorrelateById(context => context.Message.OrderId));
+            // Event(() => OrderDeliveredEvent, x => x.CorrelateById(context => context.Message.OrderId));
+
             Schedule(() => OrderCompletionTimeout, instance => instance.OrderCompletionTimeoutTokenId, s =>
             {
                 s.Delay = TimeSpan.FromMinutes(1);
@@ -31,7 +33,7 @@ namespace CourierService.Core.StateMachines
             });
 
             InstanceState(x => x.CurrentState, Dispatched, DispatchConfirmed, EnRouteToRestaurant, ArrivedAtRestaurant,
-                EnRouteToCustomer, DeliveringOrder, OrderDelivered, DispatchCanceled, DispatchDeclined);
+                OrderPickedUp, EnRouteToCustomer, ArrivedAtCustomer, OrderDelivered, DispatchCanceled, DispatchDeclined);
 
             Initially(When(CourierDispatchedEvent)
                     .Activity(x => x.OfType<CourierDispatchActivity>())
@@ -112,7 +114,7 @@ namespace CourierService.Core.StateMachines
                 When(OrderPickedUpEvent)
                     .Activity(x => x.OfType<CourierPickedUpOrderActivity>())
                     .Unschedule(OrderCompletionTimeout)
-                    .TransitionTo(EnRouteToCustomer),
+                    .TransitionTo(OrderPickedUp),
                 When(OrderCompletionTimeout.Received)
                     .Activity(x => x.OfType<OrderCompletionTimeoutActivity>())
                     .TransitionTo(DispatchDeclined),
@@ -125,21 +127,33 @@ namespace CourierService.Core.StateMachines
                     .Unschedule(OrderCompletionTimeout)
                     .TransitionTo(DispatchCanceled),
                 Ignore(CourierEnRouteRestaurantEvent),
+                Ignore(CourierEnRouteToCustomerEvent),
                 Ignore(CourierDispatchedEvent));
 
-            During(EnRouteToCustomer,
+            During(OrderPickedUp,
                 When(CourierEnRouteToCustomerEvent)
                     .Activity(x => x.OfType<CourierEnRouteToCustomerActivity>())
-                    .TransitionTo(DeliveringOrder),
+                    .TransitionTo(EnRouteToCustomer),
+                Ignore(CourierEnRouteRestaurantEvent),
+                Ignore(CourierDispatchedEvent));
+            
+            During(EnRouteToCustomer,
+                When(CourierArrivedAtCustomerEvent)
+                    .Activity(x => x.OfType<CourierArrivedAtCustomerActivity>())
+                    .TransitionTo(ArrivedAtCustomer),
+                Ignore(CourierEnRouteToCustomerEvent),
                 Ignore(CourierDispatchedEvent),
                 Ignore(OrderCanceledEvent));
             
-            During(DeliveringOrder,
+            During(ArrivedAtCustomer,
                 When(DeliveringOrderEvent)
                     .Activity(x => x.OfType<DeliveringOrderActivity>())
-                    .TransitionTo(OrderDelivered));
+                    .TransitionTo(OrderDelivered),
+                Ignore(CourierEnRouteToCustomerEvent));
             
             During(OrderDelivered,
+                When(OrderDeliveredEvent)
+                    .TransitionTo(OrderDelivered),
                 Ignore(OrderExpiredEvent),
                 Ignore(OrderCanceledEvent),
                 Ignore(CourierDispatchDeclinedEvent),
@@ -163,8 +177,9 @@ namespace CourierService.Core.StateMachines
         public State DispatchDeclined { get; }
         public State EnRouteToRestaurant { get; }
         public State EnRouteToCustomer { get; }
-        public State DeliveringOrder { get; }
+        public State ArrivedAtCustomer { get; }
         public State ArrivedAtRestaurant { get; }
+        public State OrderPickedUp { get; }
         
         public Event<CourierDispatched> CourierDispatchedEvent { get; }
         public Event<OrderPickedUp> OrderPickedUpEvent { get; }
@@ -176,7 +191,9 @@ namespace CourierService.Core.StateMachines
         public Event<CourierEnRouteToCustomer> CourierEnRouteToCustomerEvent { get; }
         public Event<OrderReadyForDelivery> OrderReadyForDeliveryEvent { get; }
         public Event<CourierArrivedAtRestaurant> CourierArrivedAtRestaurantEvent { get; }
+        public Event<CourierArrivedAtCustomer> CourierArrivedAtCustomerEvent { get; }
         public Event<DeliveringOrder> DeliveringOrderEvent { get; }
+        public Event<OrderDelivered> OrderDeliveredEvent { get; }
         
         public Schedule<CourierState, OrderCompletionTimeoutExpired> OrderCompletionTimeout { get; }
     }

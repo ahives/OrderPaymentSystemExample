@@ -2,13 +2,12 @@ namespace Services.Core.Events
 {
     using System;
     using System.Runtime.CompilerServices;
-    using Data.Core;
     using MassTransit;
     using MassTransit.Topology.Topologies;
 
-    public record UpdateCourierStatus
+    public record CourierArrivedAtCustomer
     {
-        public UpdateCourierStatus()
+        public CourierArrivedAtCustomer()
         {
             EventId = NewId.NextGuid();
             Timestamp = DateTime.Now;
@@ -17,7 +16,7 @@ namespace Services.Core.Events
         [ModuleInitializer]
         internal static void Init()
         {
-            GlobalTopology.Send.UseCorrelationId<UpdateCourierStatus>(x => x.OrderId);
+            GlobalTopology.Send.UseCorrelationId<CourierArrivedAtCustomer>(x => x.OrderId);
         }
 
         public Guid EventId { get; }
@@ -29,8 +28,6 @@ namespace Services.Core.Events
         public Guid CustomerId { get; init; }
         
         public Guid RestaurantId { get; init; }
-        
-        public CourierStatus Status { get; init; }
         
         public DateTime Timestamp { get; }
     }
