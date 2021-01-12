@@ -26,7 +26,7 @@ namespace Services.Core.Tests
         public CourierDispatcherTests()
         {
             _services.AddSingleton<ICourierDispatcherClient, CourierDispatcherClient>();
-            
+
             _provider = _services
                 // .AddSingleton<ICourierDispatcher, CourierDispatcher>()
                 .BuildServiceProvider();
@@ -133,13 +133,26 @@ namespace Services.Core.Tests
         {
             var client = _provider.GetService<ICourierDispatcherClient>();
             
-            var result = await client.Client.Confirm(new ()
+            var result = await client.Client.ChangeStatus(new ()
             {
                 // CourierId = Guid.Parse("11220000-4800-acde-d916-08d8b0f69e93"),
                 CourierId = Guid.Parse("11220000-4800-acde-50fa-08d8b42ba8ff"),
-                OrderId = Guid.Parse("11220000-4800-acde-3288-08d8b42ba903"),
+                // OrderId = Guid.Parse("11220000-4800-acde-3288-08d8b42ba903"),
                 // RestaurantId = Guid.Parse(""),
                 Status = CourierStatus.EnRouteToRestaurant
+            });
+            
+            Assert.IsTrue(result.IsSuccessful);
+        }
+
+        [Test]
+        public async Task Test2()
+        {
+            var client = _provider.GetService<ICourierDispatcherClient>();
+            
+            var result = await client.Client.Identify(new ()
+            {
+                CustomerId = Guid.Parse("11220000-4800-acde-1760-08d8b42ba8e2"),
             });
             
             Assert.IsTrue(result.IsSuccessful);
@@ -155,9 +168,10 @@ namespace Services.Core.Tests
             var target = await db.Couriers.FirstOrDefaultAsync();
             
             // Result<Courier> result = await dispatcher.Confirm(target.CourierId);
-            Result<Courier> result = await dispatcher.Confirm(new CourierDispatchRequest()
+            Result<Courier> result = await dispatcher.ChangeStatus(new ()
             {
-                CourierId = _courierId
+                CourierId = _courierId,
+                Status = CourierStatus.Confirmed
             });
 
             Assert.AreEqual((int)CourierStatus.Confirmed, result.Value.Status);
@@ -199,12 +213,10 @@ namespace Services.Core.Tests
         {
             var dispatcher = _provider.GetService<ICourierDispatcher>();
 
-            var result = await dispatcher.Dispatch(new ()
+            var result = await dispatcher.ChangeStatus(new ()
             {
-                Street = "99 California St.",
-                City = Addresses[0].City,
-                RegionId = Addresses[0].RegionId,
-                ZipCode = "69843"
+                // CourierId = ,
+                Status = CourierStatus.Dispatched
             });
             
             Assert.AreEqual(_courierId, result.Value.CourierId);

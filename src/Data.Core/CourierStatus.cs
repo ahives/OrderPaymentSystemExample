@@ -3,14 +3,15 @@ namespace Data.Core
     public enum CourierStatus
     {
         Idle = 0,
-        Dispatched = 1,
-        Confirmed = 2,
-        PickedUpOrder = 3,
-        DeliveredOrder = 4,
+        Requested = 1,
+        Dispatched = 2,
+        Confirmed = 3,
+        Declined = 4,
         EnRouteToRestaurant = 5,
         ArrivedAtRestaurant = 6,
-        EnRouteToCustomer = 7,
-        ArrivedAtCustomer = 8,
-        Declined = 9
+        PickedUpOrder = 7,
+        EnRouteToCustomer = 8,
+        ArrivedAtCustomer = 9,
+        DeliveredOrder = 10
     }
 }

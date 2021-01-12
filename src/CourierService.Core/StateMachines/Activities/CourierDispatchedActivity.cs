@@ -9,16 +9,9 @@ namespace CourierService.Core.StateMachines.Activities
     using Serilog;
     using Services.Core.Events;
 
-    public class CourierDispatchActivity :
+    public class CourierDispatchedActivity :
         Activity<CourierState, CourierDispatched>
     {
-        readonly ConsumeContext _context;
-
-        public CourierDispatchActivity(ConsumeContext context)
-        {
-            _context = context;
-        }
-
         public void Probe(ProbeContext context)
         {
             context.CreateScope("");
@@ -32,7 +25,7 @@ namespace CourierService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<CourierState, CourierDispatched> context,
             Behavior<CourierState, CourierDispatched> next)
         {
-            Log.Information($"Courier State Machine - {nameof(CourierDispatchActivity)}");
+            Log.Information($"Courier State Machine - {nameof(CourierDispatchedActivity)}");
             
             context.Instance.Timestamp = DateTime.Now;
             context.Instance.RestaurantId = context.Data.RestaurantId;
@@ -41,16 +34,8 @@ namespace CourierService.Core.StateMachines.Activities
             context.Instance.CourierId = context.Data.CourierId;
             context.Instance.IsOrderReady = false;
             context.Instance.HasCourierArrived = false;
-            
-            await _context.Publish<ConfirmCourierDispatch>(new
-            {
-                context.Data.CourierId,
-                context.Data.OrderId,
-                context.Data.CustomerId,
-                context.Data.RestaurantId
-            });
 
-            Log.Information($"Sent {nameof(ConfirmCourierDispatch)}");
+            Log.Information($"Sent - {nameof(ConfirmCourierDispatch)}");
 
             await next.Execute(context).ConfigureAwait(false);
         }

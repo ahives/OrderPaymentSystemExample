@@ -9,12 +9,12 @@ namespace CourierService.Core.StateMachines.Activities
     using Serilog;
     using Services.Core.Events;
 
-    public class OrderCompletionTimeoutActivity :
-        Activity<CourierState, OrderCompletionTimeoutExpired>
+    public class CourierIdentifiedForDispatchActivity :
+        Activity<CourierState, CourierIdentifiedForDispatch>
     {
         readonly ConsumeContext _context;
 
-        public OrderCompletionTimeoutActivity(ConsumeContext context)
+        public CourierIdentifiedForDispatchActivity(ConsumeContext context)
         {
             _context = context;
         }
@@ -29,15 +29,14 @@ namespace CourierService.Core.StateMachines.Activities
             visitor.Visit(this);
         }
 
-        public async Task Execute(BehaviorContext<CourierState, OrderCompletionTimeoutExpired> context,
-            Behavior<CourierState, OrderCompletionTimeoutExpired> next)
+        public async Task Execute(BehaviorContext<CourierState, CourierIdentifiedForDispatch> context,
+            Behavior<CourierState, CourierIdentifiedForDispatch> next)
         {
-            Log.Information($"Courier State Machine - {nameof(CourierDispatchedActivity)}");
+            Log.Information($"Courier State Machine - {nameof(CourierIdentifiedForDispatchActivity)}");
             
             context.Instance.Timestamp = DateTime.Now;
-            context.Instance.IsOrderReady = false;
-
-            await _context.Send<CourierDispatchDeclined>(new
+            
+            await _context.Publish<DispatchCourier>(new
             {
                 context.Data.CourierId,
                 context.Data.OrderId,
@@ -45,12 +44,12 @@ namespace CourierService.Core.StateMachines.Activities
                 context.Data.RestaurantId
             });
 
-            await next.Execute(context).ConfigureAwait(false);
+            Log.Information($"Sent - {nameof(DispatchCourier)}");
         }
 
         public async Task Faulted<TException>(
-            BehaviorExceptionContext<CourierState, OrderCompletionTimeoutExpired, TException> context,
-            Behavior<CourierState, OrderCompletionTimeoutExpired> next)
+            BehaviorExceptionContext<CourierState, CourierIdentifiedForDispatch, TException> context,
+            Behavior<CourierState, CourierIdentifiedForDispatch> next)
             where TException : Exception
         {
             await next.Faulted(context);

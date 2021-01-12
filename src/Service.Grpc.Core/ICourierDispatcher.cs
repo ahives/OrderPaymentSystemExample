@@ -8,7 +8,7 @@ namespace Service.Grpc.Core
     public interface ICourierDispatcher
     {
         [OperationContract]
-        Task<Result<Courier>> Confirm(CourierDispatchRequest request);
+        Task<Result<Courier>> Identify(CourierIdentificationRequest request);
         
         [OperationContract]
         Task<Result<Courier>> Decline(CourierDispatchRequest request);
@@ -21,8 +21,5 @@ namespace Service.Grpc.Core
         
         [OperationContract]
         Task<Result<Order>> Deliver(CourierDispatchRequest request);
-        
-        [OperationContract]
-        Task<Result<Courier>> Dispatch(CourierDispatchRequest request);
     }
 }

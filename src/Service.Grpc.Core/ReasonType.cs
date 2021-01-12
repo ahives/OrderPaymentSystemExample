@@ -10,6 +10,7 @@ namespace Service.Grpc.Core
         MovedToShelf,
         Receipt,
         ExpiredOrder,
+        CustomerNotFound,
         None
     }
 }

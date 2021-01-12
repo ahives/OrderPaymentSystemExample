@@ -19,59 +19,40 @@ namespace Service.Grpc.Core
             _db = db;
         }
 
-        public async Task<Result<Courier>> Confirm(CourierDispatchRequest request)
+        public async Task<Result<Courier>> Identify(CourierIdentificationRequest request)
         {
-            var target = await (
-                    from courier in _db.Couriers
-                    from address in _db.Addresses
-                    where courier.CourierId == request.CourierId
-                    select new
-                    {
-                        Courier = courier,
-                        Address = address
-                    })
-                .FirstOrDefaultAsync();
+            var customer = await _db.Customers.FindAsync(request.CustomerId);
+            
+            if (customer == null)
+            {
+                Log.Information("Customer not found.");
 
-            if (target == null)
-            {
-                Log.Information($"Courier {request.CourierId} could not be found.");
-                
-                return new Result<Courier> {Reason = ReasonType.CourierNotFound, IsSuccessful = false};
+                return new Result<Courier> {Reason = ReasonType.CustomerNotFound, IsSuccessful = false};
             }
             
-            if (!target.Courier.IsActive)
-            {
-                Log.Information($"Courier {request.CourierId} could be chosen because he/she is not active.");
-                
-                return new Result<Courier> {Reason = ReasonType.CourierNotActive, IsSuccessful = false};
-            }
+            var customerAddress = await _db.Addresses.FindAsync(customer.AddressId);
             
-            if (target.Courier.Status != (int)CourierStatus.Idle)
+            foreach (var courier in (from courier in _db.Couriers select courier).ToList())
             {
-                Log.Information($"Courier {request.CourierId} could be chosen because he/she status is not IDLE.");
-                
-                return new Result<Courier> {Reason = ReasonType.CourierNotAvailable, IsSuccessful = false};
-            }
+                var address = await _db.Addresses.FindAsync(courier.AddressId);
 
-            target.Courier.Status = (int)CourierStatus.Confirmed;
-            target.Courier.StatusTimestamp = DateTime.Now;
+                if (address == null || address.RegionId != customerAddress.RegionId || address.City != customerAddress.City)
+                    continue;
+
+                if (!courier.IsActive || courier.Status != (int)CourierStatus.Idle)
+                {
+                    Log.Information($"Courier {courier.CourierId} could be chosen because he/she status is not available.");
+                    continue;
+                }
             
-            _db.Update(target.Courier);
-            
-            var changes = await _db.SaveChangesAsync();
-            
-            if (changes <= 0)
-            {
-                Log.Information($"Courier {request.CourierId} status was not updated to CONFIRMED.");
+                Log.Information($"Courier {courier.CourierId} was identified for dispatch.");
                 
-                return new Result<Courier> {ChangeCount = changes, IsSuccessful = false};
+                return new Result<Courier> {Value = MapEntity(courier, address), IsSuccessful = true};
             }
             
-            var mapped = MapEntity(target.Courier, target.Address);
+            Log.Information("No couriers currently available in the area.");
             
-            Log.Information($"Courier {request.CourierId} status was updated to CONFIRMED.");
-                
-            return new Result<Courier> {ChangeCount = changes, Value = mapped, IsSuccessful = true};
+            return new Result<Courier> {Reason = ReasonType.CourierNotAvailable, IsSuccessful = false};
         }
 
         public async Task<Result<Courier>> Decline(CourierDispatchRequest request)
@@ -197,65 +178,23 @@ namespace Service.Grpc.Core
             return new Result<Order> {ChangeCount = changes, Value = mapped, IsSuccessful = true};
         }
 
-        public async Task<Result<Courier>> Dispatch(CourierDispatchRequest request)
-        {
-            var target = await (
-                    from courier in _db.Couriers
-                    from address in _db.Addresses
-                    where courier.AddressId == address.AddressId
-                        && address.RegionId == request.RegionId
-                        && address.City == request.City
-                        && courier.IsActive
-                        && courier.Status == (int)CourierStatus.Idle
-                    select new
-                    {
-                        Courier = courier,
-                        Address = address
-                    })
-                .FirstOrDefaultAsync();
-
-            if (target == null)
-                return new Result<Courier> {ChangeCount = 0, IsSuccessful = false};
-            
-            target.Courier.Status = (int)CourierStatus.Dispatched;
-            target.Courier.StatusTimestamp = DateTime.Now;
-            
-            _db.Update(target.Courier);
-            
-            var changes = await _db.SaveChangesAsync();
-            
-            if (changes <= 0)
-                return new Result<Courier> {ChangeCount = changes, IsSuccessful = false};
-
-            var mapped = MapEntity(target.Courier, target.Address);
-            
-            return new Result<Courier> {ChangeCount = changes, Value = mapped, IsSuccessful = true};
-        }
-
         public async Task<Result<Courier>> ChangeStatus(CourierStatusChangeRequest request)
         {
-            var target = await (
-                    from courier in _db.Couriers
-                    from address in _db.Addresses
-                    where courier.CourierId == request.CourierId
-                    select new
-                    {
-                        Courier = courier,
-                        Address = address
-                    })
-                .FirstOrDefaultAsync();
-
-            if (target == null)
+            var courier = await _db.Couriers.FindAsync(request.CourierId);
+            
+            if (courier == null)
             {
                 Log.Information($"Courier {request.CourierId} could not be found.");
                 
                 return new Result<Courier> {Reason = ReasonType.CourierNotFound, IsSuccessful = false};
             }
-
-            target.Courier.Status = (int)request.Status;
-            target.Courier.StatusTimestamp = DateTime.Now;
             
-            _db.Update(target.Courier);
+            var address = await _db.Addresses.FindAsync(courier.AddressId);
+
+            courier.Status = (int)request.Status;
+            courier.StatusTimestamp = DateTime.Now;
+            
+            _db.Update(courier);
             
             var changes = await _db.SaveChangesAsync();
             
@@ -266,11 +205,9 @@ namespace Service.Grpc.Core
                 return new Result<Courier> {ChangeCount = changes, IsSuccessful = false};
             }
             
-            var mapped = MapEntity(target.Courier, target.Address);
-            
             Log.Information($"Courier {request.CourierId} status was updated.");
                 
-            return new Result<Courier> {ChangeCount = changes, Value = mapped, IsSuccessful = true};
+            return new Result<Courier> {ChangeCount = changes, Value = MapEntity(courier, address), IsSuccessful = true};
         }
 
         Order MapEntity(CourierEntity courier, OrderEntity order) =>

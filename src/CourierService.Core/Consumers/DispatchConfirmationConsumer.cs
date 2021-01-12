@@ -1,6 +1,7 @@
 namespace CourierService.Core.Consumers
 {
     using System.Threading.Tasks;
+    using Data.Core;
     using MassTransit;
     using Serilog;
     using Service.Grpc.Core;
@@ -20,7 +21,11 @@ namespace CourierService.Core.Consumers
         {
             Log.Information($"Consumer - {nameof(DispatchConfirmationConsumer)}");
             
-            var result = await _client.Client.Confirm(new () {CourierId = context.Message.CourierId});
+            var result = await _client.Client.ChangeStatus(new ()
+            {
+                CourierId = context.Message.CourierId,
+                Status = CourierStatus.Confirmed
+            });
             
             if (result.IsSuccessful)
             {
@@ -32,7 +37,7 @@ namespace CourierService.Core.Consumers
                     context.Message.RestaurantId
                 });
                 
-                Log.Information($"Courier {result.Value.CourierId} ({result.Value.FirstName} {result.Value.LastName}) declined dispatch.");
+                Log.Information($"Sent - {nameof(CourierDispatchConfirmed)}");
             }
             else
             {
@@ -44,7 +49,7 @@ namespace CourierService.Core.Consumers
                     context.Message.RestaurantId
                 });
                 
-                Log.Information($"Courier {result.Value.CourierId} ({result.Value.FirstName} {result.Value.LastName}) was declined.");
+                Log.Information($"Sent - {nameof(CourierDispatchDeclined)}");
             }
         }
     }

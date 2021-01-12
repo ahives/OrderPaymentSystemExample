@@ -9,12 +9,12 @@ namespace CourierService.Core.StateMachines.Activities
     using Serilog;
     using Services.Core.Events;
 
-    public class OrderCompletionTimeoutActivity :
-        Activity<CourierState, OrderCompletionTimeoutExpired>
+    public class RequestCourierDispatchActivity :
+        Activity<CourierState, RequestCourierDispatch>
     {
         readonly ConsumeContext _context;
 
-        public OrderCompletionTimeoutActivity(ConsumeContext context)
+        public RequestCourierDispatchActivity(ConsumeContext context)
         {
             _context = context;
         }
@@ -29,28 +29,34 @@ namespace CourierService.Core.StateMachines.Activities
             visitor.Visit(this);
         }
 
-        public async Task Execute(BehaviorContext<CourierState, OrderCompletionTimeoutExpired> context,
-            Behavior<CourierState, OrderCompletionTimeoutExpired> next)
+        public async Task Execute(BehaviorContext<CourierState, RequestCourierDispatch> context,
+            Behavior<CourierState, RequestCourierDispatch> next)
         {
-            Log.Information($"Courier State Machine - {nameof(CourierDispatchedActivity)}");
+            Log.Information($"Courier State Machine - {nameof(RequestCourierDispatchActivity)}");
             
             context.Instance.Timestamp = DateTime.Now;
+            context.Instance.RestaurantId = context.Data.RestaurantId;
+            context.Instance.CustomerId = context.Data.CustomerId;
+            context.Instance.OrderId = context.Data.OrderId;
+            context.Instance.CourierId = null;
             context.Instance.IsOrderReady = false;
-
-            await _context.Send<CourierDispatchDeclined>(new
+            context.Instance.HasCourierArrived = false;
+            
+            await _context.Publish<IdentifyCourierForDispatch>(new
             {
-                context.Data.CourierId,
                 context.Data.OrderId,
                 context.Data.CustomerId,
                 context.Data.RestaurantId
             });
 
+            Log.Information($"Sent {nameof(IdentifyCourierForDispatch)}");
+
             await next.Execute(context).ConfigureAwait(false);
         }
 
         public async Task Faulted<TException>(
-            BehaviorExceptionContext<CourierState, OrderCompletionTimeoutExpired, TException> context,
-            Behavior<CourierState, OrderCompletionTimeoutExpired> next)
+            BehaviorExceptionContext<CourierState, RequestCourierDispatch, TException> context,
+            Behavior<CourierState, RequestCourierDispatch> next)
             where TException : Exception
         {
             await next.Faulted(context);

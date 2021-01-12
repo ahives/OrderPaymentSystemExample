@@ -20,12 +20,11 @@ namespace CourierWebService.Controllers
             _db = db;
         }
 
-        [HttpPost("DispatchCourier")]
-        public async Task<IActionResult> DispatchCourier(CourierRequest request)
+        [HttpPost("RequestCourierDispatch")]
+        public async Task<IActionResult> RequestCourierDispatch(CourierRequest request)
         {
-            await _endpoint.Publish<CourierDispatched>(new()
+            await _endpoint.Publish<RequestCourierDispatch>(new()
             {
-                CourierId = request.CourierId,
                 OrderId = request.OrderId,
                 CustomerId = request.CustomerId,
                 RestaurantId = request.RestaurantId
@@ -50,7 +49,7 @@ namespace CourierWebService.Controllers
         [HttpPost("DispatchConfirmed")]
         public async Task<IActionResult> DispatchConfirmed(CourierRequest request)
         {
-            await _endpoint.Publish<CourierDispatchConfirmed>(new()
+            await _endpoint.Publish<ConfirmCourierDispatch>(new()
             {
                 CourierId = request.CourierId,
                 OrderId = request.OrderId,

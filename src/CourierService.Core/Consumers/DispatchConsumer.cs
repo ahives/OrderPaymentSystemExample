@@ -1,6 +1,7 @@
 namespace CourierService.Core.Consumers
 {
     using System.Threading.Tasks;
+    using Data.Core;
     using MassTransit;
     using Serilog;
     using Service.Grpc.Core;
@@ -20,12 +21,10 @@ namespace CourierService.Core.Consumers
         {
             Log.Information($"Consumer - {nameof(DispatchConsumer)}");
             
-            var result = await _client.Client.Dispatch(new ()
+            var result = await _client.Client.ChangeStatus(new ()
             {
-                Street = context.Message.Street,
-                City = context.Message.City,
-                RegionId = context.Message.RegionId,
-                ZipCode = context.Message.ZipCode
+                CourierId = context.Message.CourierId,
+                Status = CourierStatus.Dispatched
             });
             
             if (result.IsSuccessful)
@@ -38,7 +37,19 @@ namespace CourierService.Core.Consumers
                     context.Message.RestaurantId
                 });
                 
-                Log.Information($"Courier {result.Value.CourierId} was successfully dispatched.");
+                Log.Information($"Sent - {nameof(CourierDispatched)}");
+            }
+            else
+            {
+                await context.Publish<CourierNotDispatched>(new
+                {
+                    result.Value.CourierId,
+                    context.Message.OrderId,
+                    context.Message.CustomerId,
+                    context.Message.RestaurantId
+                });
+                
+                Log.Information($"Sent - {nameof(CourierNotDispatched)}");
             }
         }
     }
