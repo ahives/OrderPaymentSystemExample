@@ -18,7 +18,7 @@ namespace CourierService.Core.Consumers
 
         public async Task Consume(ConsumeContext<IdentifyCourierForDispatch> context)
         {
-            Log.Information($"Consumer - {nameof(DispatchIdentificationConsumer)}");
+            Log.Information($"Consumer - {nameof(DispatchIdentificationConsumer)} => consumed {nameof(IdentifyCourierForDispatch)} event");
 
             var result = await _client.Client.Identify(new () {CustomerId = context.Message.CustomerId});
 
@@ -33,7 +33,7 @@ namespace CourierService.Core.Consumers
                 });
                 
                 Log.Information($"Identified courier - {result.Value.CourierId}");
-                Log.Information($"Sent - {nameof(CourierIdentifiedForDispatch)}");
+                Log.Information($"Published - {nameof(CourierIdentifiedForDispatch)}");
             }
             else
             {
@@ -44,7 +44,7 @@ namespace CourierService.Core.Consumers
                     CustomerId = context.Message.CustomerId
                 });
                 
-                Log.Information($"Sent - {nameof(CourierNotIdentifiedForDispatch)}");
+                Log.Information($"Published - {nameof(CourierNotIdentifiedForDispatch)}");
             }
         }
     }

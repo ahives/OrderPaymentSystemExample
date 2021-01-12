@@ -4,7 +4,6 @@ namespace CourierService.Core.StateMachines.Activities
     using System.Threading.Tasks;
     using Automatonymous;
     using GreenPipes;
-    using MassTransit;
     using Sagas;
     using Serilog;
     using Services.Core.Events;
@@ -12,13 +11,6 @@ namespace CourierService.Core.StateMachines.Activities
     public class CourierPickedUpOrderActivity :
         Activity<CourierState, OrderPickedUp>
     {
-        readonly ConsumeContext _context;
-
-        public CourierPickedUpOrderActivity(ConsumeContext context)
-        {
-            _context = context;
-        }
-
         public void Probe(ProbeContext context)
         {
             context.CreateScope("");

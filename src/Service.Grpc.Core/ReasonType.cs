@@ -11,6 +11,9 @@ namespace Service.Grpc.Core
         Receipt,
         ExpiredOrder,
         CustomerNotFound,
+        OrderNotFound,
+        RestaurantNotFound,
+        DatabaseError,
         None
     }
 }

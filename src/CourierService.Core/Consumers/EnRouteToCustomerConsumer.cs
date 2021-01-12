@@ -19,7 +19,7 @@ namespace CourierService.Core.Consumers
 
         public async Task Consume(ConsumeContext<CourierEnRouteToCustomer> context)
         {
-            Log.Information($"Consumer - {nameof(EnRouteToCustomerConsumer)}");
+            Log.Information($"Consumer - {nameof(EnRouteToCustomerConsumer)} => consumed {nameof(CourierEnRouteToCustomer)} event");
 
             var result = await _client.Client.ChangeStatus(new ()
             {

@@ -19,7 +19,7 @@ namespace CourierService.Core.Consumers
 
         public async Task Consume(ConsumeContext<DispatchCourier> context)
         {
-            Log.Information($"Consumer - {nameof(DispatchConsumer)}");
+            Log.Information($"Consumer - {nameof(DispatchConsumer)} => consumed {nameof(DispatchCourier)} event");
             
             var result = await _client.Client.ChangeStatus(new ()
             {
@@ -37,7 +37,7 @@ namespace CourierService.Core.Consumers
                     context.Message.RestaurantId
                 });
                 
-                Log.Information($"Sent - {nameof(CourierDispatched)}");
+                Log.Information($"Published - {nameof(CourierDispatched)}");
             }
             else
             {
@@ -49,7 +49,7 @@ namespace CourierService.Core.Consumers
                     context.Message.RestaurantId
                 });
                 
-                Log.Information($"Sent - {nameof(CourierNotDispatched)}");
+                Log.Information($"Published - {nameof(CourierNotDispatched)}");
             }
         }
     }

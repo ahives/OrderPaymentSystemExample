@@ -44,7 +44,7 @@ namespace CourierService.Core.StateMachines.Activities
                 context.Data.RestaurantId
             });
 
-            Log.Information($"Sent - {nameof(DispatchCourier)}");
+            Log.Information($"Published - {nameof(DispatchCourier)}");
         }
 
         public async Task Faulted<TException>(

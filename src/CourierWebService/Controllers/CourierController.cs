@@ -21,7 +21,7 @@ namespace CourierWebService.Controllers
         }
 
         [HttpPost("RequestCourierDispatch")]
-        public async Task<IActionResult> RequestCourierDispatch(CourierRequest request)
+        public async Task<IActionResult> RequestCourierDispatch(DispatchRequest request)
         {
             await _endpoint.Publish<RequestCourierDispatch>(new()
             {
@@ -34,7 +34,7 @@ namespace CourierWebService.Controllers
         }
 
         [HttpPost("OrderReadyForDelivery")]
-        public async Task<IActionResult> OrderReadyForDelivery(CourierRequest request)
+        public async Task<IActionResult> OrderReadyForDelivery(OrderReadyRequest request)
         {
             await _endpoint.Publish<OrderReadyForDelivery>(new()
             {
@@ -47,7 +47,7 @@ namespace CourierWebService.Controllers
         }
 
         [HttpPost("DispatchConfirmed")]
-        public async Task<IActionResult> DispatchConfirmed(CourierRequest request)
+        public async Task<IActionResult> DispatchConfirmed(ChangeStatusRequest request)
         {
             await _endpoint.Publish<ConfirmCourierDispatch>(new()
             {
@@ -61,7 +61,7 @@ namespace CourierWebService.Controllers
         }
 
         [HttpPost("EnRouteToRestaurant")]
-        public async Task<IActionResult> EnRouteToRestaurant(CourierRequest request)
+        public async Task<IActionResult> EnRouteToRestaurant(ChangeStatusRequest request)
         {
             await _endpoint.Publish<CourierEnRouteToRestaurant>(new()
             {
@@ -75,7 +75,7 @@ namespace CourierWebService.Controllers
         }
 
         [HttpPost("ArrivedAtRestaurant")]
-        public async Task<IActionResult> ArrivedAtRestaurant(CourierRequest request)
+        public async Task<IActionResult> ArrivedAtRestaurant(ChangeStatusRequest request)
         {
             await _endpoint.Publish<CourierArrivedAtRestaurant>(new()
             {
@@ -89,7 +89,7 @@ namespace CourierWebService.Controllers
         }
 
         [HttpPost("EnRouteToCustomer")]
-        public async Task<IActionResult> EnRouteToCustomer(CourierRequest request)
+        public async Task<IActionResult> EnRouteToCustomer(ChangeStatusRequest request)
         {
             await _endpoint.Publish<CourierEnRouteToCustomer>(new()
             {
@@ -103,7 +103,7 @@ namespace CourierWebService.Controllers
         }
 
         [HttpPost("ArrivedAtCustomer")]
-        public async Task<IActionResult> ArrivedAtCustomer(CourierRequest request)
+        public async Task<IActionResult> ArrivedAtCustomer(ChangeStatusRequest request)
         {
             await _endpoint.Publish<CourierArrivedAtCustomer>(new()
             {
@@ -117,7 +117,7 @@ namespace CourierWebService.Controllers
         }
 
         [HttpPost("DeliveringOrder")]
-        public async Task<IActionResult> DeliveringOrder(CourierRequest request)
+        public async Task<IActionResult> DeliveringOrder(ChangeStatusRequest request)
         {
             await _endpoint.Publish<DeliveringOrder>(new()
             {

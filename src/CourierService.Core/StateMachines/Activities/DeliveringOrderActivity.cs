@@ -6,6 +6,7 @@ namespace CourierService.Core.StateMachines.Activities
     using GreenPipes;
     using MassTransit;
     using Sagas;
+    using Serilog;
     using Services.Core.Events;
 
     public class DeliveringOrderActivity :
@@ -31,6 +32,8 @@ namespace CourierService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<CourierState, DeliveringOrder> context,
             Behavior<CourierState, DeliveringOrder> next)
         {
+            Log.Information($"Courier State Machine - {nameof(DeliveringOrderActivity)}");
+            
             context.Instance.Timestamp = DateTime.Now;
             
             await _context.Publish<DeliverOrder>(new
@@ -40,6 +43,8 @@ namespace CourierService.Core.StateMachines.Activities
                 context.Data.CustomerId,
                 context.Data.RestaurantId
             });
+            
+            Log.Information($"Published - {nameof(DeliverOrder)}");
             
             await next.Execute(context).ConfigureAwait(false);
         }

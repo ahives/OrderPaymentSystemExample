@@ -47,7 +47,7 @@ namespace CourierService.Core.StateMachines.Activities
                     OrderId = context.Data.OrderId
                 });
                 
-                Log.Information($"Courier State Machine - {nameof(PickUpOrder)} event published");
+                Log.Information($"Published - {nameof(PickUpOrder)}");
             }
 
             await next.Execute(context).ConfigureAwait(false);

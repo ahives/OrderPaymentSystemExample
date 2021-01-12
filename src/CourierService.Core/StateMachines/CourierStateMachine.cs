@@ -12,20 +12,6 @@ namespace CourierService.Core.StateMachines
     {
         public CourierStateMachine()
         {
-            // Event(() => CourierDispatchedEvent, x => x.CorrelateById(context => context.Message.OrderId));
-            // Event(() => OrderPickedUpEvent, x => x.CorrelateById(context => context.Message.OrderId));
-            // Event(() => CourierDispatchConfirmedEvent, x => x.CorrelateById(context => context.Message.OrderId));
-            // Event(() => OrderCanceledEvent, x => x.CorrelateById(context => context.Message.OrderId));
-            // Event(() => OrderExpiredEvent, x => x.CorrelateById(context => context.Message.OrderId));
-            // Event(() => CourierDispatchDeclinedEvent, x => x.CorrelateById(context => context.Message.OrderId));
-            // Event(() => CourierEnRouteRestaurantEvent, x => x.CorrelateById(context => context.Message.OrderId));
-            // Event(() => CourierEnRouteToCustomerEvent, x => x.CorrelateById(context => context.Message.OrderId));
-            // Event(() => OrderReadyForDeliveryEvent, x => x.CorrelateById(context => context.Message.OrderId));
-            // Event(() => CourierArrivedAtRestaurantEvent, x => x.CorrelateById(context => context.Message.OrderId));
-            // Event(() => DeliveringOrderEvent, x => x.CorrelateById(context => context.Message.OrderId));
-            // Event(() => CourierArrivedAtCustomerEvent, x => x.CorrelateById(context => context.Message.OrderId));
-            // Event(() => OrderDeliveredEvent, x => x.CorrelateById(context => context.Message.OrderId));
-
             Schedule(() => OrderCompletionTimeout, instance => instance.OrderCompletionTimeoutTokenId, s =>
             {
                 s.Delay = TimeSpan.FromMinutes(1);
@@ -167,6 +153,7 @@ namespace CourierService.Core.StateMachines
             
             During(OrderDelivered,
                 When(OrderDeliveredEvent)
+                    .Activity(x => x.OfType<OrderDeliveredActivity>())
                     .TransitionTo(OrderDelivered),
                 Ignore(OrderExpiredEvent),
                 Ignore(OrderCanceledEvent),

@@ -18,7 +18,7 @@ namespace CourierService.Core.Consumers
 
         public async Task Consume(ConsumeContext<PickUpOrder> context)
         {
-            Log.Information($"Courier State Machine - {nameof(PickUpOrderConsumer)}");
+            Log.Information($"Courier State Machine - {nameof(PickUpOrderConsumer)} => consumed {nameof(PickUpOrder)} event");
             
             var result = await _client.Client.PickUpOrder(new ()
             {
@@ -37,7 +37,7 @@ namespace CourierService.Core.Consumers
                     context.Message.RestaurantId
                 });
                 
-                Log.Information($"Courier {result.Value.CourierId} picked up order {result.Value.OrderId}");
+                Log.Information($"Published - {nameof(OrderPickedUp)}");
             }
             else
             {
@@ -53,7 +53,7 @@ namespace CourierService.Core.Consumers
                     
                     // TODO: courier status should be arrived at restaurant
                     
-                    Log.Information($"Courier {result.Value.CourierId} Restaurant {result.Value.RestaurantId} was not opened.");
+                    Log.Information($"Published - {nameof(CancelOrderRequest)}");
                 }
             }
         }

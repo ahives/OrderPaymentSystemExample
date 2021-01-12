@@ -19,7 +19,7 @@ namespace CourierService.Core.Consumers
 
         public async Task Consume(ConsumeContext<DeliverOrder> context)
         {
-            Log.Information($"Consumer - {nameof(OrderDeliveryConsumer)}");
+            Log.Information($"Consumer - {nameof(OrderDeliveryConsumer)} => consumed {nameof(DeliverOrder)} event");
 
             var result = await _client.Client.Deliver(new CourierDispatchRequest()
             {
@@ -36,7 +36,7 @@ namespace CourierService.Core.Consumers
                     context.Message.RestaurantId
                 });
                 
-                Log.Information($"Courier {result.Value.CourierId} delivered order ({result.Value.OrderId} to customer {result.Value.CustomerId}).");
+                Log.Information($"Published - {nameof(OrderDelivered)}");
             }
             else
             {

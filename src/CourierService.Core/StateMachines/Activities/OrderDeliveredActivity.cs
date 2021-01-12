@@ -8,7 +8,7 @@ namespace CourierService.Core.StateMachines.Activities
     using Serilog;
     using Services.Core.Events;
 
-    public class OrderDeliveryActivity :
+    public class OrderDeliveredActivity :
         Activity<CourierState, OrderDelivered>
     {
         public void Probe(ProbeContext context)
@@ -24,7 +24,7 @@ namespace CourierService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<CourierState, OrderDelivered> context,
             Behavior<CourierState, OrderDelivered> next)
         {
-            Log.Information($"Courier State Machine - {nameof(OrderDeliveryActivity)}");
+            Log.Information($"Courier State Machine - {nameof(OrderDeliveredActivity)}");
             
             context.Instance.Timestamp = DateTime.Now;
 

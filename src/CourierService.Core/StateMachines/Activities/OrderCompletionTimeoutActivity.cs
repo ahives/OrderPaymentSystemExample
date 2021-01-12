@@ -32,7 +32,7 @@ namespace CourierService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<CourierState, OrderCompletionTimeoutExpired> context,
             Behavior<CourierState, OrderCompletionTimeoutExpired> next)
         {
-            Log.Information($"Courier State Machine - {nameof(CourierDispatchedActivity)}");
+            Log.Information($"Courier State Machine - {nameof(OrderCompletionTimeoutActivity)}");
             
             context.Instance.Timestamp = DateTime.Now;
             context.Instance.IsOrderReady = false;
@@ -44,6 +44,8 @@ namespace CourierService.Core.StateMachines.Activities
                 context.Data.CustomerId,
                 context.Data.RestaurantId
             });
+            
+            Log.Information($"Published - {nameof(CourierDispatchDeclined)}");
 
             await next.Execute(context).ConfigureAwait(false);
         }

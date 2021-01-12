@@ -49,7 +49,7 @@ namespace CourierService.Core.StateMachines.Activities
                 context.Data.RestaurantId
             });
 
-            Log.Information($"Sent {nameof(IdentifyCourierForDispatch)}");
+            Log.Information($"Published - {nameof(IdentifyCourierForDispatch)}");
 
             await next.Execute(context).ConfigureAwait(false);
         }

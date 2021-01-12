@@ -32,7 +32,7 @@ namespace CourierService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<CourierState, OrderReadyForDelivery> context,
             Behavior<CourierState, OrderReadyForDelivery> next)
         {
-            Log.Information($"Courier State Machine - {nameof(OrderExpiredActivity)}");
+            Log.Information($"Courier State Machine - {nameof(OrderReadyForPickUpActivity)}");
             
             context.Instance.Timestamp = DateTime.Now;
 
@@ -49,6 +49,8 @@ namespace CourierService.Core.StateMachines.Activities
                     CustomerId = context.Data.CustomerId,
                     OrderId = context.Data.OrderId
                 });
+            
+                Log.Information($"Published - {nameof(PickUpOrder)}");
             }
             else
             {

@@ -35,8 +35,6 @@ namespace CourierService.Core.StateMachines.Activities
             context.Instance.IsOrderReady = false;
             context.Instance.HasCourierArrived = false;
 
-            Log.Information($"Sent - {nameof(ConfirmCourierDispatch)}");
-
             await next.Execute(context).ConfigureAwait(false);
         }
 

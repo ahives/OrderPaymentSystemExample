@@ -18,7 +18,7 @@ namespace CourierService.Core.Consumers
 
         public async Task Consume(ConsumeContext<DeclineCourierDispatch> context)
         {
-            Log.Information($"Consumer - {nameof(DispatchDeclinedConsumer)}");
+            Log.Information($"Consumer - {nameof(DispatchDeclinedConsumer)} => consumed {nameof(DeclineCourierDispatch)} event");
             
             var result = await _client.Client.Decline(new () {CourierId = context.Message.CourierId});
             
@@ -32,7 +32,7 @@ namespace CourierService.Core.Consumers
                     context.Message.RestaurantId
                 });
                 
-                Log.Information($"Courier {result.Value.CourierId} ({result.Value.FirstName} {result.Value.LastName}) declined dispatch.");
+                Log.Information($"Published - {nameof(CourierDispatchDeclined)}");
             }
         }
     }

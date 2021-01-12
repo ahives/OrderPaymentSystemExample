@@ -2,7 +2,7 @@ namespace CourierWebService
 {
     using System;
 
-    public record CourierRequest
+    public record ChangeStatusRequest
     {
         public Guid CourierId { get; init; }
         
