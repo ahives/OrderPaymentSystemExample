@@ -32,7 +32,7 @@ namespace CourierService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<CourierState, CourierArrivedAtRestaurant> context,
             Behavior<CourierState, CourierArrivedAtRestaurant> next)
         {
-            Log.Information($"Courier State Machine - {nameof(OrderExpiredActivity)}");
+            Log.Information($"Courier State Machine - {nameof(CourierArrivedAtRestaurantActivity)}");
 
             context.Instance.Timestamp = DateTime.Now;
             context.Instance.HasCourierArrived = true;
