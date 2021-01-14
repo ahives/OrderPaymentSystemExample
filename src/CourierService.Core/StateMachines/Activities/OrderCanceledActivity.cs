@@ -46,7 +46,7 @@ namespace CourierService.Core.StateMachines.Activities
                 context.Instance.RestaurantId
             });
 
-            Log.Information($"Published {nameof(CourierDispatchCanceled)}");
+            Log.Information($"Published - {nameof(CourierDispatchCanceled)}");
 
             await next.Execute(context).ConfigureAwait(false);
         }

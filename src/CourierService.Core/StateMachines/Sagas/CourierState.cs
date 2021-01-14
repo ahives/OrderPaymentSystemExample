@@ -22,6 +22,10 @@ namespace CourierService.Core.StateMachines.Sagas
         
         public bool IsOrderReady { get; set; }
         
+        public int DispatchAttempts { get; set; }
+        
+        public int MaxDispatchAttempts { get; set; }
+        
         public Guid? OrderCompletionTimeoutTokenId { get; set; }
         
         public DateTime Timestamp { get; set; }

@@ -13,6 +13,8 @@ namespace CourierService.Core.StateMachines.Sagas
             entity.Property(x => x.CustomerId).IsRequired();
             entity.Property(x => x.CourierId);
             entity.Property(x => x.OrderId).IsRequired();
+            entity.Property(x => x.DispatchAttempts).IsRequired();
+            entity.Property(x => x.MaxDispatchAttempts).IsRequired();
             entity.Property(x => x.RestaurantId).IsRequired();
             entity.Property(x => x.HasCourierArrived).IsRequired();
             entity.Property(x => x.IsOrderReady).IsRequired();

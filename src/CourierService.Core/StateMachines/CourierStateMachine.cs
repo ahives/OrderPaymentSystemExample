@@ -14,7 +14,8 @@ namespace CourierService.Core.StateMachines
         {
             Schedule(() => OrderCompletionTimeout, instance => instance.OrderCompletionTimeoutTokenId, s =>
             {
-                s.Delay = TimeSpan.FromMinutes(1);
+                // s.Delay = TimeSpan.FromMinutes(1);
+                s.Delay = TimeSpan.FromSeconds(15);
                 s.Received = r => r.CorrelateById(context => context.Message.OrderId);
             });
 
@@ -48,7 +49,7 @@ namespace CourierService.Core.StateMachines
                     .Activity(x => x.OfType<CourierDispatchConfirmationActivity>())
                     .TransitionTo(DispatchConfirmed),
                 When(CourierDispatchDeclinedEvent)
-                    .Activity(x => x.OfType<CourierDeclinedActivity>())
+                    .Activity(x => x.OfType<CourierDispatchDeclinedActivity>())
                     .TransitionTo(DispatchDeclined),
                 When(OrderExpiredEvent)
                     .Activity(x => x.OfType<OrderExpiredActivity>())
@@ -66,7 +67,7 @@ namespace CourierService.Core.StateMachines
                     .Activity(x => x.OfType<CourierEnRouteToRestaurantActivity>())
                     .TransitionTo(EnRouteToRestaurant),
                 When(CourierDispatchDeclinedEvent)
-                    .Activity(x => x.OfType<CourierDeclinedActivity>())
+                    .Activity(x => x.OfType<CourierDispatchDeclinedActivity>())
                     .TransitionTo(DispatchDeclined),
                 When(OrderCanceledEvent)
                     .Activity(x => x.OfType<OrderCanceledActivity>())
@@ -97,7 +98,7 @@ namespace CourierService.Core.StateMachines
                     .Activity(x => x.OfType<OrderCompletionTimeoutActivity>())
                     .TransitionTo(DispatchDeclined),
                 When(CourierDispatchDeclinedEvent)
-                    .Activity(x => x.OfType<CourierDeclinedActivity>())
+                    .Activity(x => x.OfType<CourierDispatchDeclinedActivity>())
                     .TransitionTo(DispatchDeclined),
                 When(OrderExpiredEvent)
                     .Activity(x => x.OfType<OrderExpiredActivity>())
@@ -159,6 +160,11 @@ namespace CourierService.Core.StateMachines
                 Ignore(OrderCanceledEvent),
                 Ignore(CourierDispatchDeclinedEvent),
                 Ignore(CourierDispatchedEvent));
+
+            During(DispatchDeclined,
+                When(CourierDispatchDeclinedEvent)
+                    .Activity(x => x.OfType<CourierDispatchDeclinedActivity>())
+                    .TransitionTo(DispatchDeclined));
             
             During(DispatchCanceled,
                 Ignore(DeliveringOrderEvent),

@@ -37,7 +37,7 @@ namespace CourierService.Core.StateMachines.Activities
             context.Instance.Timestamp = DateTime.Now;
             context.Instance.IsOrderReady = false;
 
-            await _context.Send<CourierDispatchDeclined>(new
+            await _context.Publish<DeclineCourierDispatch>(new
             {
                 context.Data.CourierId,
                 context.Data.OrderId,
@@ -45,7 +45,7 @@ namespace CourierService.Core.StateMachines.Activities
                 context.Data.RestaurantId
             });
             
-            Log.Information($"Published - {nameof(CourierDispatchDeclined)}");
+            Log.Information($"Published - {nameof(DeclineCourierDispatch)}");
 
             await next.Execute(context).ConfigureAwait(false);
         }

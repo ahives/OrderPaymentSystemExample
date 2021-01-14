@@ -5,6 +5,7 @@ namespace CourierService.Core.StateMachines.Activities
     using Automatonymous;
     using GreenPipes;
     using MassTransit;
+    using Microsoft.Extensions.Configuration;
     using Sagas;
     using Serilog;
     using Services.Core.Events;
@@ -13,10 +14,12 @@ namespace CourierService.Core.StateMachines.Activities
         Activity<CourierState, RequestCourierDispatch>
     {
         readonly ConsumeContext _context;
+        readonly IConfiguration _configuration;
 
-        public RequestCourierDispatchActivity(ConsumeContext context)
+        public RequestCourierDispatchActivity(ConsumeContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         public void Probe(ProbeContext context)
@@ -41,6 +44,13 @@ namespace CourierService.Core.StateMachines.Activities
             context.Instance.CourierId = null;
             context.Instance.IsOrderReady = false;
             context.Instance.HasCourierArrived = false;
+            context.Instance.DispatchAttempts = 1;
+
+            int maxDispatchAttempts = _configuration
+                ?.GetSection("Application")
+                ?.GetValue<int>("MaxDispatchAttempts") ?? 3;
+            
+            context.Instance.MaxDispatchAttempts = maxDispatchAttempts;
             
             await _context.Publish<IdentifyCourierForDispatch>(new
             {

@@ -36,15 +36,18 @@ namespace CourierService.Core.StateMachines.Activities
             
             context.Instance.Timestamp = DateTime.Now;
             
-            await _context.Publish<DispatchCourier>(new
+            if (context.Instance.DispatchAttempts < context.Instance.MaxDispatchAttempts)
             {
-                context.Data.CourierId,
-                context.Data.OrderId,
-                context.Data.CustomerId,
-                context.Data.RestaurantId
-            });
+                await _context.Publish<DispatchCourier>(new
+                {
+                    context.Data.CourierId,
+                    context.Data.OrderId,
+                    context.Data.CustomerId,
+                    context.Data.RestaurantId
+                });
 
-            Log.Information($"Published - {nameof(DispatchCourier)}");
+                Log.Information($"Published - {nameof(DispatchCourier)}");
+            }
         }
 
         public async Task Faulted<TException>(
