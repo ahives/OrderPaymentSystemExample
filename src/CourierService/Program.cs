@@ -56,7 +56,7 @@
                         
                         x.SetKebabCaseEndpointNameFormatter();
 
-                        Uri schedulerEndpoint = new Uri("queue:scheduler");
+                        Uri schedulerEndpoint = new Uri("queue:quartz");
                         
                         x.AddMessageScheduler(schedulerEndpoint);
                         
