@@ -4,18 +4,21 @@ namespace CourierService.Core.StateMachines
     using Activities;
     using Automatonymous;
     using MassTransit;
+    using Microsoft.Extensions.Configuration;
     using Sagas;
     using Services.Core.Events;
 
     public class CourierStateMachine :
         MassTransitStateMachine<CourierState>
     {
-        public CourierStateMachine()
+        public CourierStateMachine(IConfiguration configuration)
         {
             Schedule(() => OrderCompletionTimeout, instance => instance.OrderCompletionTimeoutTokenId, s =>
             {
-                // s.Delay = TimeSpan.FromMinutes(1);
-                s.Delay = TimeSpan.FromSeconds(15);
+                int seconds = configuration.GetSection("Application")
+                    .GetValue<int>("CourierWaitUponArrivalInSeconds");
+                
+                s.Delay = TimeSpan.FromSeconds(seconds > 0 ? seconds : 15);
                 s.Received = r => r.CorrelateById(context => context.Message.OrderId);
             });
 
@@ -136,6 +139,7 @@ namespace CourierService.Core.StateMachines
                     .Activity(x => x.OfType<CourierEnRouteToCustomerActivity>())
                     .TransitionTo(EnRouteToCustomer),
                 Ignore(CourierEnRouteRestaurantEvent),
+                Ignore(OrderCanceledEvent),
                 Ignore(CourierDispatchedEvent));
             
             During(EnRouteToCustomer,
@@ -150,6 +154,7 @@ namespace CourierService.Core.StateMachines
                 When(DeliveringOrderEvent)
                     .Activity(x => x.OfType<DeliveringOrderActivity>())
                     .TransitionTo(OrderDelivered),
+                Ignore(OrderCanceledEvent),
                 Ignore(CourierEnRouteToCustomerEvent));
             
             During(OrderDelivered,
