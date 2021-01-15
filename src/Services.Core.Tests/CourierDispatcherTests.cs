@@ -154,7 +154,7 @@ namespace Services.Core.Tests
         [Test]
         public async Task Test2()
         {
-            var client = _provider.GetService<ICourierDispatcherClient>();
+            var client = _provider.GetService<IGrpcClient<ICourierDispatcher>>();
             
             var result = await client.Client.Identify(new ()
             {

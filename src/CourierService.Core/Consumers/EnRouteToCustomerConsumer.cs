@@ -10,9 +10,9 @@ namespace CourierService.Core.Consumers
     public class EnRouteToCustomerConsumer :
         IConsumer<CourierEnRouteToCustomer>
     {
-        readonly ICourierDispatcherClient _client;
+        readonly IGrpcClient<ICourierDispatcher> _client;
 
-        public EnRouteToCustomerConsumer(ICourierDispatcherClient client)
+        public EnRouteToCustomerConsumer(IGrpcClient<ICourierDispatcher> client)
         {
             _client = client;
         }

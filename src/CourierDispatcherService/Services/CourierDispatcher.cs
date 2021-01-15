@@ -1,12 +1,13 @@
-namespace Service.Grpc.Core
+namespace CourierDispatcherService.Services
 {
     using System;
     using System.Linq;
     using System.Threading.Tasks;
     using Data.Core;
     using Data.Core.Model;
-    using Model;
     using Serilog;
+    using Service.Grpc.Core;
+    using Service.Grpc.Core.Model;
 
     public class CourierDispatcher :
         ICourierDispatcher

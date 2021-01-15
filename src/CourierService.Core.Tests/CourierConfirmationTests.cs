@@ -32,7 +32,8 @@ namespace CourierService.Core.Tests
                 .Build();
 
             _provider = new ServiceCollection()
-                .AddSingleton<ICourierDispatcher, CourierDispatcher>()
+                .AddSingleton<IGrpcClient<ICourierDispatcher>, CourierDispatcherClient>()
+                .AddScoped(_ => configuration)
                 .AddMassTransitInMemoryTestHarness(x =>
                 {
                     x.AddConsumer<DispatchConfirmationConsumer>();

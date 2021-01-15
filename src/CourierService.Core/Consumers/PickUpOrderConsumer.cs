@@ -9,9 +9,9 @@ namespace CourierService.Core.Consumers
     public class PickUpOrderConsumer :
         IConsumer<PickUpOrder>
     {
-        readonly ICourierDispatcherClient _client;
+        readonly IGrpcClient<ICourierDispatcher> _client;
 
-        public PickUpOrderConsumer(ICourierDispatcherClient client)
+        public PickUpOrderConsumer(IGrpcClient<ICourierDispatcher> client)
         {
             _client = client;
         }

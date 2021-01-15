@@ -10,9 +10,9 @@ namespace CourierService.Core.Consumers
     public class DispatchCancellationConsumer :
         IConsumer<CancelCourierDispatch>
     {
-        readonly ICourierDispatcherClient _client;
+        readonly IGrpcClient<ICourierDispatcher> _client;
 
-        public DispatchCancellationConsumer(ICourierDispatcherClient client)
+        public DispatchCancellationConsumer(IGrpcClient<ICourierDispatcher> client)
         {
             _client = client;
         }

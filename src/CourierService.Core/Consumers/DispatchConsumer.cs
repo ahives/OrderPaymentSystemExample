@@ -10,9 +10,9 @@ namespace CourierService.Core.Consumers
     public class DispatchConsumer :
         IConsumer<DispatchCourier>
     {
-        readonly ICourierDispatcherClient _client;
+        readonly IGrpcClient<ICourierDispatcher> _client;
 
-        public DispatchConsumer(ICourierDispatcherClient client)
+        public DispatchConsumer(IGrpcClient<ICourierDispatcher> client)
         {
             _client = client;
         }
