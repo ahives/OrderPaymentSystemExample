@@ -41,7 +41,7 @@
                 })
                 .ConfigureServices((host, services) =>
                 {
-                    services.AddSingleton<ICourierDispatcherClient, CourierDispatcherClient>();
+                    services.AddSingleton<IGrpcClient<ICourierDispatcher>, CourierDispatcherClient>();
                     
                     services.AddMassTransit(x =>
                     {

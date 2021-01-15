@@ -1,5 +1,6 @@
 namespace Service.Grpc.Core
 {
+    using System;
     using System.Linq;
     using System.Threading.Tasks;
     using Data.Core;
@@ -80,6 +81,24 @@ namespace Service.Grpc.Core
                 TemperatureId = entity.TemperatureId,
                 Capacity = entity.Capacity
             };
+
+        Shelf GetShelf(Guid menuItemId)
+        {
+            Shelf result = (from menuItem in _db.MenuItems
+                    from shelf in _db.Shelves
+                    where menuItem.MenuItemId == menuItemId &&
+                        menuItem.TemperatureId == shelf.TemperatureId
+                    select new Shelf
+                    {
+                        ShelfId = shelf.ShelfId,
+                        Name = shelf.Name,
+                        TemperatureId = shelf.TemperatureId,
+                        Capacity = shelf.Capacity
+                    })
+                .FirstOrDefault();
+
+            return result;
+        }
 
         bool IsShelfAvailable(Shelf shelf)
         {

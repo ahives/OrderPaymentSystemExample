@@ -25,8 +25,13 @@ namespace Services.Core.Tests
 
         public CourierDispatcherTests()
         {
-            _services.AddSingleton<ICourierDispatcherClient, CourierDispatcherClient>();
+            _services.AddSingleton<IGrpcClient<ICourierDispatcher>, CourierDispatcherClient>();
 
+            IConfigurationRoot configuration = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", false)
+                .Build();
+            _services.AddScoped<IConfiguration>(_ => configuration);
+            
             _provider = _services
                 // .AddSingleton<ICourierDispatcher, CourierDispatcher>()
                 .BuildServiceProvider();
@@ -131,15 +136,16 @@ namespace Services.Core.Tests
         [Test]
         public async Task Test()
         {
-            var client = _provider.GetService<ICourierDispatcherClient>();
+            var client = _provider.GetService<IGrpcClient<ICourierDispatcher>>();
             
             var result = await client.Client.ChangeStatus(new ()
             {
                 // CourierId = Guid.Parse("11220000-4800-acde-d916-08d8b0f69e93"),
+                // CourierId = Guid.Parse("11220000-4800-acde-50fa-08d8b42ba8ff"),
                 CourierId = Guid.Parse("11220000-4800-acde-50fa-08d8b42ba8ff"),
                 // OrderId = Guid.Parse("11220000-4800-acde-3288-08d8b42ba903"),
                 // RestaurantId = Guid.Parse(""),
-                Status = CourierStatus.EnRouteToRestaurant
+                Status = CourierStatus.Dispatched
             });
             
             Assert.IsTrue(result.IsSuccessful);

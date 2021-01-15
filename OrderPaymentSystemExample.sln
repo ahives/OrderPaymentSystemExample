@@ -44,6 +44,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MassTransitSchedulerService
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderProcessingService.Core", "src\OrderProcessingService.Core\OrderProcessingService.Core.csproj", "{0A5F713E-A213-46CB-A874-69C8D8DDF606}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderProcessingService", "src\OrderProcessingService\OrderProcessingService.csproj", "{822971C7-FD04-4CEF-94BF-608AFE5E69D7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -122,6 +124,10 @@ Global
 		{0A5F713E-A213-46CB-A874-69C8D8DDF606}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A5F713E-A213-46CB-A874-69C8D8DDF606}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0A5F713E-A213-46CB-A874-69C8D8DDF606}.Release|Any CPU.Build.0 = Release|Any CPU
+		{822971C7-FD04-4CEF-94BF-608AFE5E69D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{822971C7-FD04-4CEF-94BF-608AFE5E69D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{822971C7-FD04-4CEF-94BF-608AFE5E69D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{822971C7-FD04-4CEF-94BF-608AFE5E69D7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{54EF6047-5C49-431C-94A0-A13B92F16604} = {6E09AA84-34C8-4EB9-90BB-ED84B4667A6C}
@@ -142,5 +148,6 @@ Global
 		{6DD14B1D-8F79-48C1-AEED-E8F92C302E73} = {6E09AA84-34C8-4EB9-90BB-ED84B4667A6C}
 		{42D28562-A02D-4358-BB73-3311E85A28CF} = {6E09AA84-34C8-4EB9-90BB-ED84B4667A6C}
 		{0A5F713E-A213-46CB-A874-69C8D8DDF606} = {F3CD2D62-4EE1-4D26-8772-027F91FA1667}
+		{822971C7-FD04-4CEF-94BF-608AFE5E69D7} = {6E09AA84-34C8-4EB9-90BB-ED84B4667A6C}
 	EndGlobalSection
 EndGlobal

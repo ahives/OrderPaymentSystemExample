@@ -9,18 +9,18 @@ namespace OrderProcessingService.Core.Consumers
     public class PrepareOrderItemConsumer :
         IConsumer<PrepareOrderItem>
     {
-        readonly IPrepareOrder _prepareOrder;
+        readonly IGrpcClient<IOrderProcessor> _processorClient;
         readonly IShelfManager _manager;
 
-        public PrepareOrderItemConsumer(IPrepareOrder prepareOrder, IShelfManager manager)
+        public PrepareOrderItemConsumer(IGrpcClient<IOrderProcessor> processorClient, IShelfManager manager)
         {
-            _prepareOrder = prepareOrder;
+            _processorClient = processorClient;
             _manager = manager;
         }
 
         public async Task Consume(ConsumeContext<PrepareOrderItem> context)
         {
-            var result = await _prepareOrder.Prepare(new ()
+            var result = await _processorClient.Client.PrepareItem(new ()
             {
                 OrderId = context.Message.OrderId,
                 OrderItemId = NewId.NextGuid(),
