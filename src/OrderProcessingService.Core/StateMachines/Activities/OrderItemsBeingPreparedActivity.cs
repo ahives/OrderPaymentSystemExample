@@ -1,4 +1,4 @@
-namespace RestaurantService.Core.StateMachines.Activities
+namespace OrderProcessingService.Core.StateMachines.Activities
 {
     using System;
     using System.Linq;

@@ -1,14 +1,14 @@
-namespace RestaurantService.Core.StateMachines.Sagas
+namespace OrderProcessingService.Core.StateMachines.Sagas
 {
     using System.Collections.Generic;
     using MassTransit.EntityFrameworkCoreIntegration;
     using MassTransit.EntityFrameworkCoreIntegration.Mappings;
     using Microsoft.EntityFrameworkCore;
 
-    public class RestaurantServiceDbContext :
+    public class OrderProcessingServiceDbContext :
         SagaDbContext
     {
-        public RestaurantServiceDbContext(DbContextOptions<RestaurantServiceDbContext> options)
+        public OrderProcessingServiceDbContext(DbContextOptions options)
             : base(options)
         {
         }
@@ -17,7 +17,9 @@ namespace RestaurantService.Core.StateMachines.Sagas
         {
             get
             {
-                yield return new RestaurantStateMap();
+                yield return new OrderStateMap();
+                yield return new ExpectedOrderItemMap();
+                yield return new OrderItemStateMap();
             }
         }
     }

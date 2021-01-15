@@ -1,4 +1,4 @@
-namespace RestaurantService.Core.StateMachines
+namespace OrderProcessingService.Core.StateMachines
 {
     using Activities;
     using Automatonymous;
@@ -12,8 +12,7 @@ namespace RestaurantService.Core.StateMachines
         {
             InstanceState(x => x.CurrentState, Pending, Prepared, NotPrepared, Canceled);
 
-            Initially(
-                When(PrepareOrder)
+            Initially(When(PrepareOrder)
                     .Activity(x => x.OfType<PrepareOrderRequestedActivity>())
                     .TransitionTo(Pending));
 

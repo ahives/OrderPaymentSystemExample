@@ -1,4 +1,4 @@
-namespace RestaurantService.Core.StateMachines.Extensions
+namespace OrderProcessingService.Core.StateMachines
 {
     using System;
     using System.Collections.Generic;

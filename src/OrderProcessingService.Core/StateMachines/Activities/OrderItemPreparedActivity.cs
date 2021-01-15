@@ -1,4 +1,4 @@
-namespace RestaurantService.Core.StateMachines.Activities
+namespace OrderProcessingService.Core.StateMachines.Activities
 {
     using System;
     using System.Threading.Tasks;
@@ -7,8 +7,8 @@ namespace RestaurantService.Core.StateMachines.Activities
     using Sagas;
     using Services.Core.Events;
 
-    public class OrderItemNotPreparedActivity :
-        Activity<OrderItemState, OrderItemNotPrepared>
+    public class OrderItemPreparedActivity :
+        Activity<OrderItemState, OrderItemPrepared>
     {
         public void Probe(ProbeContext context)
         {
@@ -20,15 +20,16 @@ namespace RestaurantService.Core.StateMachines.Activities
             visitor.Visit(this);
         }
 
-        public async Task Execute(BehaviorContext<OrderItemState, OrderItemNotPrepared> context,
-            Behavior<OrderItemState, OrderItemNotPrepared> next)
+        public async Task Execute(BehaviorContext<OrderItemState, OrderItemPrepared> context,
+            Behavior<OrderItemState, OrderItemPrepared> next)
         {
             context.Instance.Timestamp = DateTime.Now;
         }
 
         public async Task Faulted<TException>(
-            BehaviorExceptionContext<OrderItemState, OrderItemNotPrepared, TException> context,
-            Behavior<OrderItemState, OrderItemNotPrepared> next) where TException : Exception
+            BehaviorExceptionContext<OrderItemState, OrderItemPrepared, TException> context,
+            Behavior<OrderItemState, OrderItemPrepared> next)
+            where TException : Exception
         {
             await next.Faulted(context);
         }

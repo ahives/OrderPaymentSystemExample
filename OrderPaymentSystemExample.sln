@@ -42,6 +42,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourierWebService", "src\Co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MassTransitSchedulerService", "src\MassTransitSchedulerService\MassTransitSchedulerService.csproj", "{42D28562-A02D-4358-BB73-3311E85A28CF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderProcessingService.Core", "src\OrderProcessingService.Core\OrderProcessingService.Core.csproj", "{0A5F713E-A213-46CB-A874-69C8D8DDF606}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -116,6 +118,10 @@ Global
 		{42D28562-A02D-4358-BB73-3311E85A28CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{42D28562-A02D-4358-BB73-3311E85A28CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{42D28562-A02D-4358-BB73-3311E85A28CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A5F713E-A213-46CB-A874-69C8D8DDF606}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A5F713E-A213-46CB-A874-69C8D8DDF606}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A5F713E-A213-46CB-A874-69C8D8DDF606}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A5F713E-A213-46CB-A874-69C8D8DDF606}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{54EF6047-5C49-431C-94A0-A13B92F16604} = {6E09AA84-34C8-4EB9-90BB-ED84B4667A6C}
@@ -135,5 +141,6 @@ Global
 		{F4E7B1D4-ABAD-4FCB-B0C2-B9E8BC317984} = {5C79BF9E-ECED-4AEB-BADD-14D64204C747}
 		{6DD14B1D-8F79-48C1-AEED-E8F92C302E73} = {6E09AA84-34C8-4EB9-90BB-ED84B4667A6C}
 		{42D28562-A02D-4358-BB73-3311E85A28CF} = {6E09AA84-34C8-4EB9-90BB-ED84B4667A6C}
+		{0A5F713E-A213-46CB-A874-69C8D8DDF606} = {F3CD2D62-4EE1-4D26-8772-027F91FA1667}
 	EndGlobalSection
 EndGlobal

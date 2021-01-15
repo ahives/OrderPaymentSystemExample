@@ -46,23 +46,6 @@ namespace RestaurantService.Core.StateMachines
                     .TransitionTo(Error),
                 When(KitchenMalfunction)
                     .TransitionTo(Error));
-            
-            Event(() => OrderReceived,
-                x => x.CorrelateById(cxt => cxt.Message.OrderId));
-            Event(() => OrderValidated,
-                x => x.CorrelateById(cxt => cxt.Message.OrderId));
-            Event(() => OrderPrepared,
-                x => x.CorrelateById(cxt => cxt.Message.OrderId));
-            Event(() => OrderDiscarded,
-                x => x.CorrelateById(cxt => cxt.Message.OrderId));
-            Event(() => OrderCanceled,
-                x => x.CorrelateById(cxt => cxt.Message.OrderId));
-            Event(() => OrderNotValidated,
-                x => x.CorrelateById(cxt => cxt.Message.OrderId));
-            Event(() => KitchenMalfunction,
-                x => x.CorrelateById(cxt => cxt.Message.OrderId));
-            Event(() => StorageCapacityExceeded,
-                x => x.CorrelateById(cxt => cxt.Message.OrderId));
         }
         
         public State Received { get; }

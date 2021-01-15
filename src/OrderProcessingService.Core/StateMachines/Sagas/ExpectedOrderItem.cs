@@ -1,16 +1,14 @@
-namespace RestaurantService.Core.StateMachines.Sagas
+namespace OrderProcessingService.Core.StateMachines.Sagas
 {
     using System;
     using Automatonymous;
 
-    public class OrderItemState :
+    public class ExpectedOrderItem :
         SagaStateMachineInstance
     {
         public Guid CorrelationId { get; set; }
         
-        public Guid OrderId { get; set; }
-        
-        public int CurrentState { get; set; }
+        public int Status { get; set; }
         
         public DateTime Timestamp { get; set; }
         

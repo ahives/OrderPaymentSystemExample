@@ -1,4 +1,4 @@
-namespace RestaurantService.Core.StateMachines.Activities
+namespace OrderProcessingService.Core.StateMachines.Activities
 {
     using System;
     using System.Threading.Tasks;
@@ -7,7 +7,7 @@ namespace RestaurantService.Core.StateMachines.Activities
     using Sagas;
     using Services.Core.Events;
 
-    public class OrderItemExpiredActivity :
+    public class OrderItemDiscardedActivity :
         Activity<OrderItemState, OrderItemExceededPreparationLimit>
     {
         public void Probe(ProbeContext context)

@@ -1,4 +1,4 @@
-namespace RestaurantService.Core.StateMachines.Sagas
+namespace OrderProcessingService.Core.StateMachines.Sagas
 {
     using MassTransit.EntityFrameworkCoreIntegration.Mappings;
     using Microsoft.EntityFrameworkCore;

@@ -63,7 +63,6 @@
                     services.AddMassTransit(x =>
                     {
                         x.AddConsumer<OrderValidationConsumer>();
-                        x.AddConsumer<PrepareOrderItemConsumer>();
                         x.AddConsumer<ReceiptConfirmationConsumer>();
                         x.AddConsumer<CancelOrderRequestConsumer>();
                         
@@ -93,21 +92,21 @@
                                 r.ExistingDbContext<RestaurantServiceDbContext>();
                             });
 
-                        x.AddSagaStateMachine<OrderStateMachine, OrderState>()
-                            .EntityFrameworkRepository(r =>
-                            {
-                                r.ConcurrencyMode = ConcurrencyMode.Optimistic;
-                                r.LockStatementProvider = new PostgresLockStatementProvider();
-                                r.ExistingDbContext<RestaurantServiceDbContext>();
-                            });
-
-                        x.AddSagaStateMachine<OrderItemStateMachine, OrderItemState>()
-                            .EntityFrameworkRepository(r =>
-                            {
-                                r.ConcurrencyMode = ConcurrencyMode.Optimistic;
-                                r.LockStatementProvider = new PostgresLockStatementProvider();
-                                r.ExistingDbContext<RestaurantServiceDbContext>();
-                            });
+                        // x.AddSagaStateMachine<OrderStateMachine, OrderState>()
+                        //     .EntityFrameworkRepository(r =>
+                        //     {
+                        //         r.ConcurrencyMode = ConcurrencyMode.Optimistic;
+                        //         r.LockStatementProvider = new PostgresLockStatementProvider();
+                        //         r.ExistingDbContext<RestaurantServiceDbContext>();
+                        //     });
+                        //
+                        // x.AddSagaStateMachine<OrderItemStateMachine, OrderItemState>()
+                        //     .EntityFrameworkRepository(r =>
+                        //     {
+                        //         r.ConcurrencyMode = ConcurrencyMode.Optimistic;
+                        //         r.LockStatementProvider = new PostgresLockStatementProvider();
+                        //         r.ExistingDbContext<RestaurantServiceDbContext>();
+                        //     });
                     });
 
                     services.AddMassTransitHostedService();

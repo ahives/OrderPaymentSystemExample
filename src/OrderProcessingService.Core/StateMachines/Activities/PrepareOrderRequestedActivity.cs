@@ -1,11 +1,9 @@
-namespace RestaurantService.Core.StateMachines.Activities
+namespace OrderProcessingService.Core.StateMachines.Activities
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using Automatonymous;
-    using Extensions;
     using GreenPipes;
     using MassTransit;
     using Sagas;
