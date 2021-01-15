@@ -24,7 +24,7 @@ namespace CourierService.Core.Consumers
             var result = await _client.Client.ChangeStatus(new ()
             {
                 CourierId = context.Message.CourierId,
-                Status = CourierStatus.Confirmed
+                Status = CourierStatus.DispatchConfirmed
             });
             
             if (result.IsSuccessful)

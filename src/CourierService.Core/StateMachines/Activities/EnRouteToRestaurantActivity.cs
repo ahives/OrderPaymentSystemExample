@@ -8,8 +8,8 @@ namespace CourierService.Core.StateMachines.Activities
     using Serilog;
     using Services.Core.Events;
 
-    public class CourierEnRouteToCustomerActivity :
-        Activity<CourierState, CourierEnRouteToCustomer>
+    public class EnRouteToRestaurantActivity :
+        Activity<CourierState, CourierEnRouteToRestaurant>
     {
         public void Probe(ProbeContext context)
         {
@@ -21,10 +21,10 @@ namespace CourierService.Core.StateMachines.Activities
             visitor.Visit(this);
         }
 
-        public async Task Execute(BehaviorContext<CourierState, CourierEnRouteToCustomer> context,
-            Behavior<CourierState, CourierEnRouteToCustomer> next)
+        public async Task Execute(BehaviorContext<CourierState, CourierEnRouteToRestaurant> context,
+            Behavior<CourierState, CourierEnRouteToRestaurant> next)
         {
-            Log.Information($"Courier State Machine - {nameof(CourierEnRouteToCustomerActivity)}");
+            Log.Information($"Courier State Machine - {nameof(EnRouteToRestaurantActivity)}");
             
             context.Instance.Timestamp = DateTime.Now;
 
@@ -32,9 +32,8 @@ namespace CourierService.Core.StateMachines.Activities
         }
 
         public async Task Faulted<TException>(
-            BehaviorExceptionContext<CourierState, CourierEnRouteToCustomer, TException> context,
-            Behavior<CourierState, CourierEnRouteToCustomer> next)
-            where TException : Exception
+            BehaviorExceptionContext<CourierState, CourierEnRouteToRestaurant, TException> context,
+            Behavior<CourierState, CourierEnRouteToRestaurant> next) where TException : Exception
         {
             await next.Faulted(context);
         }

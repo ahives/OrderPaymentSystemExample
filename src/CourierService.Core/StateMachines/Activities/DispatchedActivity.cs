@@ -9,7 +9,7 @@ namespace CourierService.Core.StateMachines.Activities
     using Serilog;
     using Services.Core.Events;
 
-    public class CourierDispatchedActivity :
+    public class DispatchedActivity :
         Activity<CourierState, CourierDispatched>
     {
         public void Probe(ProbeContext context)
@@ -25,7 +25,7 @@ namespace CourierService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<CourierState, CourierDispatched> context,
             Behavior<CourierState, CourierDispatched> next)
         {
-            Log.Information($"Courier State Machine - {nameof(CourierDispatchedActivity)}");
+            Log.Information($"Courier State Machine - {nameof(DispatchedActivity)}");
             
             context.Instance.Timestamp = DateTime.Now;
             context.Instance.RestaurantId = context.Data.RestaurantId;

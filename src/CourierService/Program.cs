@@ -53,6 +53,7 @@
                         x.AddConsumer<DispatchDeclinedConsumer>();
                         x.AddConsumer<EnRouteToCustomerConsumer>();
                         x.AddConsumer<DispatchIdentificationConsumer>();
+                        x.AddConsumer<DispatchCancellationConsumer>();
                         
                         x.SetKebabCaseEndpointNameFormatter();
 

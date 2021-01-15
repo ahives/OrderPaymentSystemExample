@@ -38,15 +38,15 @@ namespace CourierService.Core.StateMachines.Activities
             context.Instance.CourierId = null;
             context.Instance.IsOrderReady = false;
 
-            await _context.Publish<CourierDispatchCanceled>(new
+            await _context.Publish<CancelCourierDispatch>(new
             {
                 context.Instance.CourierId,
                 context.Instance.OrderId,
                 context.Instance.CustomerId,
                 context.Instance.RestaurantId
             });
-
-            Log.Information($"Published - {nameof(CourierDispatchCanceled)}");
+            
+            Log.Information($"Published - {nameof(CancelCourierDispatch)}");
 
             await next.Execute(context).ConfigureAwait(false);
         }

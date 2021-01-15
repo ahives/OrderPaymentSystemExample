@@ -171,10 +171,10 @@ namespace Services.Core.Tests
             Result<Courier> result = await dispatcher.ChangeStatus(new ()
             {
                 CourierId = _courierId,
-                Status = CourierStatus.Confirmed
+                Status = CourierStatus.DispatchConfirmed
             });
 
-            Assert.AreEqual((int)CourierStatus.Confirmed, result.Value.Status);
+            Assert.AreEqual((int)CourierStatus.DispatchConfirmed, result.Value.Status);
         }
         
         [Test]

@@ -9,12 +9,12 @@ namespace CourierService.Core.StateMachines.Activities
     using Serilog;
     using Services.Core.Events;
 
-    public class CourierArrivedAtRestaurantActivity :
+    public class ArrivedAtRestaurantActivity :
         Activity<CourierState, CourierArrivedAtRestaurant>
     {
         readonly ConsumeContext _context;
 
-        public CourierArrivedAtRestaurantActivity(ConsumeContext context)
+        public ArrivedAtRestaurantActivity(ConsumeContext context)
         {
             _context = context;
         }
@@ -32,7 +32,7 @@ namespace CourierService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<CourierState, CourierArrivedAtRestaurant> context,
             Behavior<CourierState, CourierArrivedAtRestaurant> next)
         {
-            Log.Information($"Courier State Machine - {nameof(CourierArrivedAtRestaurantActivity)}");
+            Log.Information($"Courier State Machine - {nameof(ArrivedAtRestaurantActivity)}");
 
             context.Instance.Timestamp = DateTime.Now;
             context.Instance.HasCourierArrived = true;

@@ -10,13 +10,13 @@ namespace CourierService.Core.StateMachines.Activities
     using Serilog;
     using Services.Core.Events;
 
-    public class RequestCourierDispatchActivity :
+    public class RequestDispatchActivity :
         Activity<CourierState, RequestCourierDispatch>
     {
         readonly ConsumeContext _context;
         readonly IConfiguration _configuration;
 
-        public RequestCourierDispatchActivity(ConsumeContext context, IConfiguration configuration)
+        public RequestDispatchActivity(ConsumeContext context, IConfiguration configuration)
         {
             _context = context;
             _configuration = configuration;
@@ -35,7 +35,7 @@ namespace CourierService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<CourierState, RequestCourierDispatch> context,
             Behavior<CourierState, RequestCourierDispatch> next)
         {
-            Log.Information($"Courier State Machine - {nameof(RequestCourierDispatchActivity)}");
+            Log.Information($"Courier State Machine - {nameof(RequestDispatchActivity)}");
             
             context.Instance.Timestamp = DateTime.Now;
             context.Instance.RestaurantId = context.Data.RestaurantId;

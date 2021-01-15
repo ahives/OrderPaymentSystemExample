@@ -65,7 +65,7 @@ namespace Service.Grpc.Core
                 return new Result<Courier> {Reason = ReasonType.CourierNotFound, IsSuccessful = false};
             }
             
-            courier.Status = (int)CourierStatus.Declined;
+            courier.Status = (int)CourierStatus.DispatchDeclined;
             courier.StatusTimestamp = DateTime.Now;
             
             _db.Update(courier);
