@@ -6,6 +6,7 @@ namespace OrderProcessingService.Core.StateMachines.Activities
     using GreenPipes;
     using MassTransit;
     using Sagas;
+    using Serilog;
     using Services.Core.Events;
 
     public class PrepareOrderItemRequestActivity :
@@ -31,12 +32,16 @@ namespace OrderProcessingService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<OrderItemState, PrepareOrderItemRequested> context,
             Behavior<OrderItemState, PrepareOrderItemRequested> next)
         {
-            await _context.Send<PrepareOrderItem>(new
+            Log.Information($"Courier State Machine - {nameof(PrepareOrderItemRequestActivity)}");
+            
+            await _context.Publish<PrepareOrderItem>(new
             {
                 context.Data.OrderId,
                 context.Data.RestaurantId,
                 context.Data.MenuItemId
             });
+            
+            Log.Information($"Published - {nameof(PrepareOrderItem)}");
 
             await next.Execute(context).ConfigureAwait(false);
         }

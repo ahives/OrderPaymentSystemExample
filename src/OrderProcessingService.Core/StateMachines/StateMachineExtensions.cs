@@ -8,10 +8,11 @@ namespace OrderProcessingService.Core.StateMachines
 
     public static class StateMachineExtensions
     {
-        public static IEnumerable<ExpectedOrderItem> MapExpectedOrderItems(this Item[] items) =>
+        public static IEnumerable<ExpectedOrderItem> MapExpectedOrderItems(this Item[] items, Guid orderId) =>
             items.Select(t => new ExpectedOrderItem
             {
-                CorrelationId = t.Id,
+                CorrelationId = t.MenuItemId,
+                OrderId = orderId,
                 Status = t.Status,
                 Timestamp = DateTime.Now
             });

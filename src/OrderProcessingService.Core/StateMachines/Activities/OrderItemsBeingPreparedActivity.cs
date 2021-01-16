@@ -6,12 +6,21 @@ namespace OrderProcessingService.Core.StateMachines.Activities
     using Automatonymous;
     using Data.Core;
     using GreenPipes;
+    using Microsoft.EntityFrameworkCore;
     using Sagas;
+    using Serilog;
     using Services.Core.Events;
 
     public class OrderItemsBeingPreparedActivity :
         Activity<OrderState, OrderItemPrepared>
     {
+        readonly OrderProcessingServiceDbContext _db;
+
+        public OrderItemsBeingPreparedActivity(OrderProcessingServiceDbContext db)
+        {
+            _db = db;
+        }
+
         public void Probe(ProbeContext context)
         {
             context.CreateScope("");
@@ -25,17 +34,34 @@ namespace OrderProcessingService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<OrderState, OrderItemPrepared> context,
             Behavior<OrderState, OrderItemPrepared> next)
         {
-            for (int i = 0; i < context.Instance.Items.Count; i++)
+            Log.Information($"Courier State Machine - {nameof(OrderItemsBeingPreparedActivity)}");
+            
+            var items = _db.ExpectedOrderItems
+                .Where(x => x.OrderId == context.Data.OrderId);
+
+            var item = await items.FirstOrDefaultAsync(x => x.CorrelationId == context.Data.OrderItemId);
+
+            if (item != null)
             {
-                if (context.Instance.Items[i].CorrelationId != context.Data.OrderItemId)
-                    continue;
-                
-                context.Instance.Items[i].Status = context.Data.Status;
-                context.Instance.Items[i].Timestamp = context.Data.Timestamp;
-                break;
+                item.Status = context.Data.Status;
+                item.Timestamp = context.Data.Timestamp;
+
+                _db.Update(item);
             }
 
-            context.Instance.ActualItemCount = context.Instance.Items
+            // for (int i = 0; i < items.Count; i++)
+            // {
+            //     if (items[i].CorrelationId != context.Data.OrderItemId)
+            //         continue;
+            //
+            //     items[i].Status = context.Data.Status;
+            //     items[i].Timestamp = context.Data.Timestamp;
+            //     break;
+            // }
+
+            int changes = await _db.SaveChangesAsync();
+
+            context.Instance.ActualItemCount = items
                 .Count(x => x.Status == (int) OrderItemStatus.Prepared);
 
             await next.Execute(context).ConfigureAwait(false);

@@ -8,6 +8,8 @@ namespace OrderProcessingService.Core.StateMachines.Sagas
     {
         public Guid CorrelationId { get; set; }
         
+        public Guid OrderId { get; set; }
+        
         public int Status { get; set; }
         
         public DateTime Timestamp { get; set; }

@@ -47,7 +47,6 @@
                 {
                     services.AddScoped<IOrderValidator, OrderValidator>();
                     services.AddScoped<IShelfManager, ShelfManager>();
-                    services.AddScoped<IPrepareOrder, PrepareOrder>();
                     services.AddScoped<ILowInventoryDetector, LowInventoryDetector>();
 
                     services.AddDbContext<OrdersDbContext>(x =>

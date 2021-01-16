@@ -7,7 +7,6 @@
     using Core.Consumers;
     using Core.StateMachines;
     using Core.StateMachines.Sagas;
-    using Data.Core;
     using MassTransit;
     using MassTransit.EntityFrameworkCoreIntegration;
     using Microsoft.EntityFrameworkCore;

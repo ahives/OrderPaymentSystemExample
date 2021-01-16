@@ -21,7 +21,6 @@ namespace Services.Core.Tests
         public CookTests()
         {
             _provider = _services
-                .AddSingleton<IPrepareOrder, PrepareOrder>()
                 .BuildServiceProvider();
         }
 
@@ -121,26 +120,6 @@ namespace Services.Core.Tests
             //
             //     await db.SaveChangesAsync();
             // }
-        }
-
-
-        [Test]
-        public async Task Test()
-        {
-            var cook = _provider.GetService<IPrepareOrder>();
-            // var db = _provider.GetService<OrdersDbContext>();
-
-            Guid orderItemId = NewId.NextGuid();
-            var result = await cook.Prepare(new OrderPrepRequest
-            {
-                OrderId = _orderId,
-                OrderItemId = orderItemId,
-                MenuItemId = _menuItemId,
-                SpecialInstructions = "Cook light"
-            });
-            
-            Assert.AreEqual(orderItemId, result.Value.OrderItemId);
-            Assert.AreEqual((int)OrderItemStatus.Prepared, result.Value.Status);
         }
     }
 }

@@ -12,53 +12,53 @@ namespace OrderProcessingService.Core.StateMachines
         {
             InstanceState(x => x.CurrentState, Preparing, Prepared, Discarded, Canceled, Expired, NotPrepared);
 
-            Initially(When(PrepareOrderItemRequested)
+            Initially(When(PrepareOrderItemRequestedEvent)
                 .Activity(x => x.OfType<PrepareOrderItemRequestActivity>())
                 .TransitionTo(Preparing));
 
             During(Preparing,
-                When(OrderItemPrepared)
+                When(OrderItemPreparedEvent)
                     .Activity(x => x.OfType<OrderItemPreparedActivity>())
                     .TransitionTo(Prepared),
-                When(OrderItemNotPrepared)
+                When(OrderItemNotPreparedEvent)
                     .Activity(x => x.OfType<OrderItemNotPreparedActivity>())
                     .TransitionTo(NotPrepared),
-                When(OrderCanceled)
+                When(OrderCanceledEvent)
                     .Activity(x => x.OfType<CancelOrderItemActivity>())
                     .TransitionTo(Canceled),
-                Ignore(PrepareOrderItemRequested));
+                Ignore(PrepareOrderItemRequestedEvent));
             
             During(Prepared,
-                When(OrderItemDiscarded)
+                When(OrderItemDiscardedEvent)
                     .Activity(x => x.OfType<DiscardOrderItemActivity>())
                     .TransitionTo(Discarded),
-                When(OrderItemExpired)
+                When(OrderItemExpiredEvent)
                     .Activity(x => x.OfType<ExpireOrderItemActivity>())
                     .TransitionTo(Expired),
-                When(OrderCanceled)
+                When(OrderCanceledEvent)
                     .Activity(x => x.OfType<CancelOrderItemActivity>())
                     .TransitionTo(Canceled));
 
             During(Expired,
-                When(OrderItemExceededPreparationLimit)
+                When(OrderItemExceededPreparationLimitEvent)
                     .Activity(x => x.OfType<OrderItemExpiredActivity>())
                     .TransitionTo(NotPrepared),
-                Ignore(OrderItemPrepared),
-                Ignore(PrepareOrderItemRequested));
+                Ignore(OrderItemPreparedEvent),
+                Ignore(PrepareOrderItemRequestedEvent));
             
             During(Discarded,
-                When(OrderItemExceededPreparationLimit)
+                When(OrderItemExceededPreparationLimitEvent)
                     .Activity(x => x.OfType<OrderItemDiscardedActivity>())
                     .TransitionTo(NotPrepared),
-                Ignore(OrderItemPrepared),
-                Ignore(PrepareOrderItemRequested),
-                Ignore(OrderItemExpired));
+                Ignore(OrderItemPreparedEvent),
+                Ignore(PrepareOrderItemRequestedEvent),
+                Ignore(OrderItemExpiredEvent));
 
             During(NotPrepared,
-                Ignore(OrderCanceled),
-                Ignore(OrderItemCanceled),
-                Ignore(OrderItemExpired),
-                Ignore(OrderItemDiscarded));
+                Ignore(OrderCanceledEvent),
+                Ignore(OrderItemCanceledEvent),
+                Ignore(OrderItemExpiredEvent),
+                Ignore(OrderItemDiscardedEvent));
         }
         
         public State Preparing { get; }
@@ -68,13 +68,13 @@ namespace OrderProcessingService.Core.StateMachines
         public State Expired { get; }
         public State NotPrepared { get; }
         
-        public Event<PrepareOrderItemRequested> PrepareOrderItemRequested { get; private set; }
-        public Event<OrderItemPrepared> OrderItemPrepared { get; private set; }
-        public Event<OrderItemExpired> OrderItemExpired { get; private set; }
-        public Event<OrderItemDiscarded> OrderItemDiscarded { get; private set; }
-        public Event<OrderCanceled> OrderCanceled { get; private set; }
-        public Event<OrderItemCanceled> OrderItemCanceled { get; private set; }
-        public Event<OrderItemExceededPreparationLimit> OrderItemExceededPreparationLimit { get; private set; }
-        public Event<OrderItemNotPrepared> OrderItemNotPrepared { get; private set; }
+        public Event<PrepareOrderItemRequested> PrepareOrderItemRequestedEvent { get; private set; }
+        public Event<OrderItemPrepared> OrderItemPreparedEvent { get; private set; }
+        public Event<OrderItemExpired> OrderItemExpiredEvent { get; private set; }
+        public Event<OrderItemDiscarded> OrderItemDiscardedEvent { get; private set; }
+        public Event<OrderCanceled> OrderCanceledEvent { get; private set; }
+        public Event<OrderItemCanceled> OrderItemCanceledEvent { get; private set; }
+        public Event<OrderItemExceededPreparationLimit> OrderItemExceededPreparationLimitEvent { get; private set; }
+        public Event<OrderItemNotPrepared> OrderItemNotPreparedEvent { get; private set; }
     }
 }

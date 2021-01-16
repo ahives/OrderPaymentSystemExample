@@ -13,7 +13,7 @@ namespace Services.Core
 
             for (int i = 0; i < data.Items.Length; i++)
             {
-                if (data.Items[i].Id == Guid.Empty)
+                if (data.Items[i].MenuItemId == Guid.Empty)
                     return false;
             }
 

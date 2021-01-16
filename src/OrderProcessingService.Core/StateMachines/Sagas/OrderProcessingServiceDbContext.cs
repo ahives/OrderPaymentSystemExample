@@ -8,7 +8,9 @@ namespace OrderProcessingService.Core.StateMachines.Sagas
     public class OrderProcessingServiceDbContext :
         SagaDbContext
     {
-        public OrderProcessingServiceDbContext(DbContextOptions options)
+        public DbSet<ExpectedOrderItem> ExpectedOrderItems { get; set; }
+        
+        public OrderProcessingServiceDbContext(DbContextOptions<OrderProcessingServiceDbContext> options)
             : base(options)
         {
         }
