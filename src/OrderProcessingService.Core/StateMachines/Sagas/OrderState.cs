@@ -21,7 +21,7 @@ namespace OrderProcessingService.Core.StateMachines.Sagas
         
         public int ActualItemCount { get; set; }
         
-        // public List<ExpectedOrderItem> Items { get; set; }
+        public List<ExpectedOrderItem> Items { get; set; }
         
         public DateTime Timestamp { get; set; }
         

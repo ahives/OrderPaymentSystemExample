@@ -2,6 +2,7 @@ namespace OrderProcessingService.Core.StateMachines
 {
     using Activities;
     using Automatonymous;
+    using MassTransit;
     using Sagas;
     using Services.Core.Events;
 
@@ -10,6 +11,8 @@ namespace OrderProcessingService.Core.StateMachines
     {
         public OrderItemStateMachine()
         {
+            // Event(() => PrepareOrderItemRequestedEvent, e => e.SelectId(x => NewId.NextGuid()));
+            
             InstanceState(x => x.CurrentState, Preparing, Prepared, Discarded, Canceled, Expired, NotPrepared);
 
             Initially(When(PrepareOrderItemRequestedEvent)

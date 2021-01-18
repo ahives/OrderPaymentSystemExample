@@ -8,6 +8,9 @@ namespace Service.Grpc.Core
     public interface IOrderProcessor
     {
         [OperationContract]
+        Task<Result<Order>> ProcessOrder(OrderProcessRequest request);
+        
+        [OperationContract]
         Task<Result<OrderItem>> PrepareItem(OrderPrepRequest request);
     }
 }

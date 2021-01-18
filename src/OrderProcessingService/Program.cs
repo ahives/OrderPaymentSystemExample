@@ -54,6 +54,7 @@
                     services.AddMassTransit(x =>
                     {
                         x.AddConsumer<PrepareOrderItemConsumer>();
+                        x.AddConsumer<PrepareOrderConsumer>();
                         
                         x.SetKebabCaseEndpointNameFormatter();
                         

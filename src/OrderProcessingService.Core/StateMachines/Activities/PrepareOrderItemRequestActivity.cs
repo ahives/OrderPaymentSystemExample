@@ -32,11 +32,15 @@ namespace OrderProcessingService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<OrderItemState, PrepareOrderItemRequested> context,
             Behavior<OrderItemState, PrepareOrderItemRequested> next)
         {
-            Log.Information($"Courier State Machine - {nameof(PrepareOrderItemRequestActivity)}");
+            Log.Information($"Order Item State Machine - {nameof(PrepareOrderItemRequestActivity)}");
+
+            context.Instance.Timestamp = DateTime.Now;
+            context.Instance.OrderId = context.Data.OrderId;
             
             await _context.Publish<PrepareOrderItem>(new
             {
                 context.Data.OrderId,
+                context.Data.OrderItemId,
                 context.Data.RestaurantId,
                 context.Data.MenuItemId
             });

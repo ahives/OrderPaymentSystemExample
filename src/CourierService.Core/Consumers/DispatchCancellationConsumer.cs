@@ -10,18 +10,18 @@ namespace CourierService.Core.Consumers
     public class DispatchCancellationConsumer :
         IConsumer<CancelCourierDispatch>
     {
-        readonly IGrpcClient<ICourierDispatcher> _client;
+        readonly ICourierDispatcher _client;
 
         public DispatchCancellationConsumer(IGrpcClient<ICourierDispatcher> client)
         {
-            _client = client;
+            _client = client.Client;
         }
 
         public async Task Consume(ConsumeContext<CancelCourierDispatch> context)
         {
             Log.Information($"Consumer - {nameof(DispatchCancellationConsumer)} => consumed {nameof(CancelCourierDispatch)} event");
             
-            var result = await _client.Client.ChangeStatus(new ()
+            var result = await _client.ChangeStatus(new ()
             {
                 CourierId = context.Message.CourierId,
                 Status = CourierStatus.DispatchCanceled

@@ -4,6 +4,8 @@ namespace Services.Core.Model
 
     public record Item
     {
+        public Guid OrderItemId { get; init; }
+        
         public Guid MenuItemId { get; init; }
         
         public int Status { get; init; }

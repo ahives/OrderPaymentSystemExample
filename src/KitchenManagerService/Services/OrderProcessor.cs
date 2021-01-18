@@ -1,10 +1,11 @@
-namespace Service.Grpc.Core
+namespace KitchenManagerService.Services
 {
     using System;
     using System.Threading.Tasks;
     using Data.Core;
     using Data.Core.Model;
-    using Model;
+    using Service.Grpc.Core;
+    using Service.Grpc.Core.Model;
 
     public class OrderProcessor :
         IOrderProcessor
@@ -16,12 +17,59 @@ namespace Service.Grpc.Core
             _db = db;
         }
 
+        public async Task<Result<Order>> ProcessOrder(OrderProcessRequest request)
+        {
+            var entity = CreateOrderEntity(request);
+                
+            await _db.Orders.AddAsync(entity);
+
+            int changes = await _db.SaveChangesAsync();
+
+            if (changes <= 0)
+                return new Result<Order> {Value = null, ChangeCount = changes, IsSuccessful = false};
+
+            var mapped = MapOrderEntity(entity);
+                
+            return new Result<Order> {Value = mapped, ChangeCount = changes, IsSuccessful = true};
+        }
+
+        Order MapOrderEntity(OrderEntity entity) =>
+            new()
+            {
+                OrderId = entity.OrderId,
+                CourierId = entity.CourierId,
+                CustomerId = entity.CustomerId,
+                RestaurantId = entity.RestaurantId,
+                // CustomerPickup = false,
+                Status = entity.Status,
+                StatusTimestamp = entity.StatusTimestamp
+            };
+
+        OrderEntity CreateOrderEntity(OrderProcessRequest request) =>
+            new()
+            {
+                OrderId = request.OrderId,
+                CourierId = null,
+                CustomerId = request.CustomerId,
+                RestaurantId = request.RestaurantId,
+                AddressId = request.AddressId,
+                CustomerPickup = false,
+                Status = (int) OrderStatus.Receipt,
+                StatusTimestamp = DateTime.Now,
+                CreationTimestamp = DateTime.Now
+            };
+
         public async Task<Result<OrderItem>> PrepareItem(OrderPrepRequest request)
         {
             var target = await _db.OrderItems.FindAsync(request.OrderItemId);
 
             if (target != null)
-                return new Result<OrderItem> {Value = null, ChangeCount = 0, IsSuccessful = false};
+            {
+                // target.ExpiryTimestamp = null;
+                // target.TimePrepared = DateTime.Now;
+                
+                return new Result<OrderItem> {Value = null, IsSuccessful = false};
+            }
             
             var entity = MapRequest(request);
                 

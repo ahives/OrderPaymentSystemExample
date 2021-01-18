@@ -11,6 +11,8 @@ namespace OrderProcessingWebService
         
         public Guid RestaurantId { get; init; }
         
+        public Guid AddressId { get; init; }
+        
         public Item[] Items { get; init; }
     }
 }

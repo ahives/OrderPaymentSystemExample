@@ -4,9 +4,9 @@ namespace Services.Core.Events
     using MassTransit;
     using Model;
 
-    public record PrepareOrder
+    public record PrepareOrderRequest
     {
-        public PrepareOrder()
+        public PrepareOrderRequest()
         {
             EventId = NewId.NextGuid();
             Timestamp = DateTime.Now;
@@ -19,8 +19,6 @@ namespace Services.Core.Events
         // }
 
         public Guid EventId { get; }
-        
-        public Guid OrderId { get; init; }
         
         public Guid CustomerId { get; init; }
         

@@ -16,7 +16,6 @@ namespace OrderProcessingService.Core.StateMachines.Sagas
             entity.Property(x => x.ExpectedItemCount).IsRequired();
             entity.Property(x => x.ActualItemCount).IsRequired();
             entity.Property(x => x.Timestamp).IsRequired();
-            // entity.Property(x => x.Items).IsRequired();
             entity.Property(x => x.RowVersion).IsRowVersion();
         }
     }

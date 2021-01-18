@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-
-namespace KitchenManagerService
+﻿namespace KitchenManagerService
 {
     using Data.Core;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Hosting;
     using ProtoBuf.Grpc.Server;
+    using Services;
 
     public class Startup
     {
@@ -46,7 +42,7 @@ namespace KitchenManagerService
 
             app.UseEndpoints(endpoints =>
             {
-                // endpoints.MapGrpcService<GreeterService>();
+                endpoints.MapGrpcService<OrderProcessor>();
 
                 endpoints.MapGet("/",
                     async context =>

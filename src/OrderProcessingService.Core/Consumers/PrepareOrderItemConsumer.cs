@@ -10,21 +10,21 @@ namespace OrderProcessingService.Core.Consumers
     public class PrepareOrderItemConsumer :
         IConsumer<PrepareOrderItem>
     {
-        readonly IGrpcClient<IOrderProcessor> _client;
+        readonly IOrderProcessor _client;
 
         public PrepareOrderItemConsumer(IGrpcClient<IOrderProcessor> client)
         {
-            _client = client;
+            _client = client.Client;
         }
 
         public async Task Consume(ConsumeContext<PrepareOrderItem> context)
         {
             Log.Information($"Consumer - {nameof(PrepareOrderItemConsumer)} => consumed {nameof(PrepareOrderItem)} event");
             
-            var result = await _client.Client.PrepareItem(new ()
+            var result = await _client.PrepareItem(new ()
             {
                 OrderId = context.Message.OrderId,
-                OrderItemId = NewId.NextGuid(),
+                OrderItemId = context.Message.OrderItemId,
                 MenuItemId = context.Message.MenuItemId,
                 SpecialInstructions = context.Message.SpecialInstructions
             });

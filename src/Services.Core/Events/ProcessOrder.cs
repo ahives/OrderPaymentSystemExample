@@ -5,9 +5,9 @@ namespace Services.Core.Events
     using MassTransit;
     using MassTransit.Topology.Topologies;
 
-    public record PrepareOrderItem
+    public record ProcessOrder
     {
-        public PrepareOrderItem()
+        public ProcessOrder()
         {
             EventId = NewId.NextGuid();
             Timestamp = DateTime.Now;
@@ -16,19 +16,16 @@ namespace Services.Core.Events
         [ModuleInitializer]
         internal static void Init()
         {
-            GlobalTopology.Send.UseCorrelationId<PrepareOrderItem>(x => x.OrderId);
+            GlobalTopology.Send.UseCorrelationId<ProcessOrder>(x => x.OrderItemId);
         }
 
         public Guid EventId { get; }
         
-        public Guid OrderItemId { get; init; }
         public Guid OrderId { get; init; }
-                
+        
+        public Guid OrderItemId { get; init; }
+        
         public Guid RestaurantId { get; init; }
-        
-        public Guid MenuItemId { get; init; }
-        
-        public string SpecialInstructions { get; init; }
         
         public DateTime Timestamp { get; }
     }

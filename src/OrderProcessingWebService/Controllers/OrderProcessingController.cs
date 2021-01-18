@@ -20,11 +20,11 @@ namespace OrderProcessingWebService.Controllers
         [HttpPost("PrepareOrder")]
         public async Task<IActionResult> PrepareOrder(PrepareOrderRequest request)
         {
-            await _endpoint.Publish<PrepareOrder>(new()
+            await _endpoint.Publish<PrepareOrderRequest>(new()
             {
-                OrderId = request.OrderId,
                 CustomerId = request.CustomerId,
                 RestaurantId = request.RestaurantId,
+                AddressId = request.AddressId,
                 Items = request.Items
             });
 

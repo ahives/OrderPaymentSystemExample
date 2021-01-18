@@ -1,10 +1,9 @@
-namespace Service.Grpc.Core.Model
+namespace Service.Grpc.Core
 {
     using System;
     using System.Runtime.Serialization;
 
-    [DataContract]
-    public record Order
+    public class OrderProcessRequest
     {
         [DataMember(Order = 1)]
         public Guid OrderId { get; init; }
@@ -13,18 +12,9 @@ namespace Service.Grpc.Core.Model
         public Guid RestaurantId { get; init; }
         
         [DataMember(Order = 3)]
-        public int Status { get; init; }
-        
-        [DataMember(Order = 4)]
-        public DateTime StatusTimestamp { get; init; }
-        
-        [DataMember(Order = 5)]
         public Guid CustomerId { get; init; }
         
-        [DataMember(Order = 6)]
-        public Guid? CourierId { get; init; }
-        
-        [DataMember(Order = 7)]
+        [DataMember(Order = 4)]
         public Guid AddressId { get; init; }
     }
 }

@@ -1,14 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
-
 namespace KitchenManagerService
 {
+    using System;
     using System.Reflection;
+    using System.IO;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.Extensions.Hosting;
     using Microsoft.AspNetCore.Server.Kestrel.Core;
     using Microsoft.Extensions.Configuration;
     using Serilog;
@@ -27,7 +23,7 @@ namespace KitchenManagerService
             Host.CreateDefaultBuilder(args)
                 .UseSerilog((host, log) =>
                 {
-                    string? appBin = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                    string appBin = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
                     log.MinimumLevel.Information();
                     log.WriteTo.File($"{appBin}/log/log-{DateTime.Now:yyMMdd_HHmmss}.txt");
@@ -42,7 +38,7 @@ namespace KitchenManagerService
                 {
                     webBuilder.ConfigureKestrel(options =>
                     {
-                        options.ListenLocalhost(5000, o => o.Protocols = HttpProtocols.Http2);
+                        options.ListenLocalhost(5002, o => o.Protocols = HttpProtocols.Http2);
                     });
                     
                     webBuilder.UseStartup<Startup>();

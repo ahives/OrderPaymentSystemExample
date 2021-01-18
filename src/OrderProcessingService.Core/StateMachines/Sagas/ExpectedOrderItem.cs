@@ -7,13 +7,14 @@ namespace OrderProcessingService.Core.StateMachines.Sagas
         SagaStateMachineInstance
     {
         public Guid CorrelationId { get; set; }
-        
+
         public Guid OrderId { get; set; }
-        
+        public OrderState Order { get; set; }
+
         public int Status { get; set; }
-        
+
         public DateTime Timestamp { get; set; }
-        
+
         public byte[] RowVersion { get; set; }
     }
 }
