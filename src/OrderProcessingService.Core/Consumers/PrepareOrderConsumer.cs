@@ -40,6 +40,8 @@ namespace OrderProcessingService.Core.Consumers
                         context.Message.Items[i].MenuItemId,
                         context.Message.Items[i].SpecialInstructions
                     });
+            
+                    Log.Information($"Published - {nameof(PrepareOrderItemRequested)} (OrderItemId={context.Message.Items[i].OrderItemId})");
                 }
             }
         }
