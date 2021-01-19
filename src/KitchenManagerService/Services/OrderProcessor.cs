@@ -33,32 +33,6 @@ namespace KitchenManagerService.Services
             return new Result<Order> {Value = mapped, ChangeCount = changes, IsSuccessful = true};
         }
 
-        Order MapOrderEntity(OrderEntity entity) =>
-            new()
-            {
-                OrderId = entity.OrderId,
-                CourierId = entity.CourierId,
-                CustomerId = entity.CustomerId,
-                RestaurantId = entity.RestaurantId,
-                // CustomerPickup = false,
-                Status = entity.Status,
-                StatusTimestamp = entity.StatusTimestamp
-            };
-
-        OrderEntity CreateOrderEntity(OrderProcessRequest request) =>
-            new()
-            {
-                OrderId = request.OrderId,
-                CourierId = null,
-                CustomerId = request.CustomerId,
-                RestaurantId = request.RestaurantId,
-                AddressId = request.AddressId,
-                CustomerPickup = false,
-                Status = (int) OrderStatus.Receipt,
-                StatusTimestamp = DateTime.Now,
-                CreationTimestamp = DateTime.Now
-            };
-
         public async Task<Result<OrderItem>> PrepareItem(OrderPrepRequest request)
         {
             var target = await _db.OrderItems.FindAsync(request.OrderItemId);
@@ -112,6 +86,32 @@ namespace KitchenManagerService.Services
                 StatusTimestamp = DateTime.Now,
                 TimePrepared = DateTime.Now,
                 ExpiryTimestamp = null,
+                CreationTimestamp = DateTime.Now
+            };
+
+        Order MapOrderEntity(OrderEntity entity) =>
+            new()
+            {
+                OrderId = entity.OrderId,
+                CourierId = entity.CourierId,
+                CustomerId = entity.CustomerId,
+                RestaurantId = entity.RestaurantId,
+                // CustomerPickup = false,
+                Status = entity.Status,
+                StatusTimestamp = entity.StatusTimestamp
+            };
+
+        OrderEntity CreateOrderEntity(OrderProcessRequest request) =>
+            new()
+            {
+                OrderId = request.OrderId,
+                CourierId = null,
+                CustomerId = request.CustomerId,
+                RestaurantId = request.RestaurantId,
+                AddressId = request.AddressId,
+                CustomerPickup = false,
+                Status = (int) OrderStatus.Receipt,
+                StatusTimestamp = DateTime.Now,
                 CreationTimestamp = DateTime.Now
             };
 

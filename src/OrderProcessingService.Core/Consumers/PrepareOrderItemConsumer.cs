@@ -4,24 +4,23 @@ namespace OrderProcessingService.Core.Consumers
     using MassTransit;
     using Serilog;
     using Service.Grpc.Core;
-    using Service.Grpc.Core.Model;
     using Services.Core.Events;
 
     public class PrepareOrderItemConsumer :
         IConsumer<PrepareOrderItem>
     {
-        readonly IOrderProcessor _client;
+        readonly IGrpcClient<IOrderProcessor> _client;
 
         public PrepareOrderItemConsumer(IGrpcClient<IOrderProcessor> client)
         {
-            _client = client.Client;
+            _client = client;
         }
 
         public async Task Consume(ConsumeContext<PrepareOrderItem> context)
         {
             Log.Information($"Consumer - {nameof(PrepareOrderItemConsumer)} => consumed {nameof(PrepareOrderItem)} event");
             
-            var result = await _client.PrepareItem(new ()
+            var result = await _client.Client.PrepareItem(new ()
             {
                 OrderId = context.Message.OrderId,
                 OrderItemId = context.Message.OrderItemId,
