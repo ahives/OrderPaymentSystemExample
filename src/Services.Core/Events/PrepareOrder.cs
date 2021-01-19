@@ -1,7 +1,9 @@
 namespace Services.Core.Events
 {
     using System;
+    using System.Runtime.CompilerServices;
     using MassTransit;
+    using MassTransit.Topology.Topologies;
     using Model;
 
     public record PrepareOrder
@@ -12,11 +14,11 @@ namespace Services.Core.Events
             Timestamp = DateTime.Now;
         }
 
-        // [ModuleInitializer]
-        // internal static void Init()
-        // {
-        //     GlobalTopology.Send.UseCorrelationId<PrepareOrder>(x => x.OrderId);
-        // }
+        [ModuleInitializer]
+        internal static void Init()
+        {
+            GlobalTopology.Send.UseCorrelationId<PrepareOrder>(x => x.OrderId);
+        }
 
         public Guid EventId { get; }
         

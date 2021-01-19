@@ -46,6 +46,7 @@ namespace OrderProcessingService.Core.StateMachines.Activities
             });
             
             Log.Information($"Published - {nameof(PrepareOrderItem)}");
+            Log.Information($"Order Item ID - {context.Data.OrderItemId}");
 
             await next.Execute(context).ConfigureAwait(false);
         }

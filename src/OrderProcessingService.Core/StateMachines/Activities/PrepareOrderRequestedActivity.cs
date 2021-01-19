@@ -38,13 +38,18 @@ namespace OrderProcessingService.Core.StateMachines.Activities
             Log.Information($"Order Item State Machine - {nameof(PrepareOrderRequestedActivity)}");
             
             var items = GenerateOrderItemIdentifiers(context.Data.Items);
-
+            
             context.Instance.Timestamp = DateTime.Now;
             context.Instance.CustomerId = context.Data.CustomerId;
             context.Instance.RestaurantId = context.Data.RestaurantId;
             context.Instance.ExpectedItemCount = context.Data.Items.Length;
             context.Instance.ActualItemCount = 0;
-            context.Instance.Items = MapExpectedOrderItems(items, context.Instance.CorrelationId).ToList();
+            
+            var expectedOrderItems = MapExpectedOrderItems(items, context.Instance.CorrelationId).ToList();
+            
+            context.Instance.Items = expectedOrderItems;
+
+            var publishedItems = items.ToArray();
             
             await _context.Publish<PrepareOrder>(new
             {
@@ -52,10 +57,15 @@ namespace OrderProcessingService.Core.StateMachines.Activities
                 context.Data.CustomerId,
                 context.Data.RestaurantId,
                 context.Data.AddressId,
-                Items = items.ToArray()
+                Items = publishedItems
             });
             
             Log.Information($"Published - {nameof(PrepareOrder)}");
+
+            for (int i = 0; i < publishedItems.Length; i++)
+            {
+                Log.Information($"Order Item ID => {publishedItems[i].OrderItemId} (published), {expectedOrderItems[i].OrderItemId} (state)");
+            }
 
             await next.Execute(context).ConfigureAwait(false);
         }
@@ -67,20 +77,21 @@ namespace OrderProcessingService.Core.StateMachines.Activities
         }
         
         IEnumerable<Item> GenerateOrderItemIdentifiers(Item[] items) =>
-            items.Select(t => new Item
+            items.Select(x => new Item
             {
                 OrderItemId = NewId.NextGuid(),
-                MenuItemId = t.MenuItemId,
-                Status = t.Status,
-                SpecialInstructions = t.SpecialInstructions
+                MenuItemId = x.MenuItemId,
+                Status = x.Status,
+                SpecialInstructions = x.SpecialInstructions
             });
         
         IEnumerable<ExpectedOrderItem> MapExpectedOrderItems(IEnumerable<Item> items, Guid orderId) =>
-            items.Select(t => new ExpectedOrderItem
+            items.Select(x => new ExpectedOrderItem
             {
-                CorrelationId = t.OrderItemId,
+                CorrelationId = NewId.NextGuid(),
+                OrderItemId = x.OrderItemId,
                 OrderId = orderId,
-                Status = t.Status,
+                Status = x.Status,
                 Timestamp = DateTime.Now
             });
     }

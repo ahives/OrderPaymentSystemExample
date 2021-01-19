@@ -7,6 +7,8 @@ namespace OrderProcessingService.Core.StateMachines.Sagas
         SagaStateMachineInstance
     {
         public Guid CorrelationId { get; set; }
+        
+        public Guid OrderItemId { get; set; }
 
         public Guid OrderId { get; set; }
         public OrderState Order { get; set; }
