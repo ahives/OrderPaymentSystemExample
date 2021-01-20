@@ -20,7 +20,7 @@ namespace OrderProcessingService.Core.Consumers
         {
             Log.Information($"Consumer - {nameof(PrepareOrderConsumer)} => consumed {nameof(PrepareOrder)} event");
             
-            var result = await _client.Client.ProcessOrder(new ()
+            var result = await _client.Client.AddNewOrder(new ()
             {
                 OrderId = context.Message.OrderId,
                 CustomerId = context.Message.CustomerId,

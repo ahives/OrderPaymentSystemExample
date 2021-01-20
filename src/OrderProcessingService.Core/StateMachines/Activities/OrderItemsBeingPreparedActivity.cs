@@ -6,6 +6,7 @@ namespace OrderProcessingService.Core.StateMachines.Activities
     using Automatonymous;
     using Data.Core;
     using GreenPipes;
+    using Microsoft.EntityFrameworkCore;
     using Sagas;
     using Serilog;
     using Services.Core.Events;
@@ -13,6 +14,13 @@ namespace OrderProcessingService.Core.StateMachines.Activities
     public class OrderItemsBeingPreparedActivity :
         Activity<OrderState, OrderItemPrepared>
     {
+        readonly OrderProcessingServiceDbContext _dbContext;
+
+        public OrderItemsBeingPreparedActivity(OrderProcessingServiceDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+
         public void Probe(ProbeContext context)
         {
             context.CreateScope("");
@@ -26,18 +34,24 @@ namespace OrderProcessingService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<OrderState, OrderItemPrepared> context,
             Behavior<OrderState, OrderItemPrepared> next)
         {
-            Log.Information($"Courier State Machine - {nameof(OrderItemsBeingPreparedActivity)}");
-            
+            Log.Information($"Order State Machine - {nameof(OrderItemsBeingPreparedActivity)} (state = {context.Instance.CurrentState})");
+
             context.Instance.Timestamp = DateTime.Now;
-            
+
+            // _dbContext.Orders.Include(x => x.Items);
+
             for (int i = 0; i < context.Instance.Items.Count; i++)
             {
                 if (context.Instance.Items[i].OrderItemId != context.Data.OrderItemId)
                     continue;
-            
+
                 context.Instance.Items[i].Status = context.Data.Status;
+                
+                // _dbContext.ExpectedOrderItems.Update(context.Instance.Items[i]);
                 break;
             }
+
+            // await _dbContext.SaveChangesAsync();
 
             context.Instance.ActualItemCount = context.Instance.Items
                 .Count(x => x.Status == (int) OrderItemStatus.Prepared);

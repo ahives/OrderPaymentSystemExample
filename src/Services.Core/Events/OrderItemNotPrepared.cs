@@ -9,17 +9,8 @@ namespace Services.Core.Events
     {
         public OrderItemNotPrepared()
         {
-            EventId = NewId.NextGuid();
             Timestamp = DateTime.Now;
         }
-
-        [ModuleInitializer]
-        internal static void Init()
-        {
-            GlobalTopology.Send.UseCorrelationId<OrderItemNotPrepared>(x => x.OrderId);
-        }
-
-        public Guid EventId { get; }
         
         public Guid OrderId { get; init; }
         

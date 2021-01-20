@@ -4,6 +4,7 @@ namespace KitchenManagerService.Services
     using System.Threading.Tasks;
     using Data.Core;
     using Data.Core.Model;
+    using Serilog;
     using Service.Grpc.Core;
     using Service.Grpc.Core.Model;
 
@@ -17,7 +18,7 @@ namespace KitchenManagerService.Services
             _db = db;
         }
 
-        public async Task<Result<Order>> ProcessOrder(OrderProcessRequest request)
+        public async Task<Result<Order>> AddNewOrder(OrderProcessRequest request)
         {
             var entity = CreateOrderEntity(request);
                 
@@ -26,21 +27,24 @@ namespace KitchenManagerService.Services
             int changes = await _db.SaveChangesAsync();
 
             if (changes <= 0)
-                return new Result<Order> {Value = null, ChangeCount = changes, IsSuccessful = false};
-
-            var mapped = MapOrderEntity(entity);
+            {
+                Log.Information($"Order {request.OrderId} could not be saved.");
                 
-            return new Result<Order> {Value = mapped, ChangeCount = changes, IsSuccessful = true};
+                return new Result<Order> {Reason = ReasonType.DatabaseError, ChangeCount = changes, IsSuccessful = false};
+            }
+                
+            Log.Information($"Order {request.OrderId} was saved.");
+                
+            return new Result<Order> {Value = MapOrderEntity(entity), ChangeCount = changes, IsSuccessful = true};
         }
 
-        public async Task<Result<OrderItem>> PrepareItem(OrderPrepRequest request)
+        public async Task<Result<OrderItem>> AddNewOrderItem(OrderPrepRequest request)
         {
             var target = await _db.OrderItems.FindAsync(request.OrderItemId);
 
             if (target != null)
             {
-                // target.ExpiryTimestamp = null;
-                // target.TimePrepared = DateTime.Now;
+                Log.Information($"Order item {request.OrderId} already exists.");
                 
                 return new Result<OrderItem> {Value = null, IsSuccessful = false};
             }
@@ -52,11 +56,15 @@ namespace KitchenManagerService.Services
             int changes = await _db.SaveChangesAsync();
 
             if (changes <= 0)
-                return new Result<OrderItem> {Value = null, ChangeCount = changes, IsSuccessful = false};
-
-            var mapped = MapEntity(entity);
+            {
+                Log.Information($"Order item {request.OrderItemId} of Order {request.OrderId} could not be saved.");
                 
-            return new Result<OrderItem> {Value = mapped, ChangeCount = changes, IsSuccessful = true};
+                return new Result<OrderItem> {Value = null, ChangeCount = changes, IsSuccessful = false};
+            }
+                
+            Log.Information($"Order {request.OrderItemId} was saved.");
+                
+            return new Result<OrderItem> {Value = MapEntity(entity), ChangeCount = changes, IsSuccessful = true};
         }
 
         OrderItem MapEntity(OrderItemEntity entity) =>

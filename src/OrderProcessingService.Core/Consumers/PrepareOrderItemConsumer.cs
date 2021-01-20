@@ -20,7 +20,7 @@ namespace OrderProcessingService.Core.Consumers
         {
             Log.Information($"Consumer - {nameof(PrepareOrderItemConsumer)} => consumed {nameof(PrepareOrderItem)} event");
             
-            var result = await _client.Client.PrepareItem(new ()
+            var result = await _client.Client.AddNewOrderItem(new ()
             {
                 OrderId = context.Message.OrderId,
                 OrderItemId = context.Message.OrderItemId,
@@ -30,6 +30,15 @@ namespace OrderProcessingService.Core.Consumers
             
             if (result.IsSuccessful)
             {
+                await context.Publish<OrderItemPrepared>(new
+                {
+                    context.Message.OrderId,
+                    result.Value.OrderItemId,
+                    result.Value.Status,
+                    result.Value.ShelfId
+                });
+                
+                Log.Information($"Published - {nameof(OrderItemPrepared)}");
             }
             else
             {
@@ -40,6 +49,8 @@ namespace OrderProcessingService.Core.Consumers
                     result.Value.Status,
                     result.Value.ShelfId
                 });
+                
+                Log.Information($"Published - {nameof(OrderItemNotPrepared)}");
             }
         }
 

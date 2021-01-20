@@ -32,7 +32,7 @@ namespace OrderProcessingService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<OrderItemState, RequestOrderItemPreparation> context,
             Behavior<OrderItemState, RequestOrderItemPreparation> next)
         {
-            Log.Information($"Order Item State Machine - {nameof(RequestOrderItemPreparationActivity)}");
+            Log.Information($"Order Item State Machine - {nameof(RequestOrderItemPreparationActivity)} (state = {context.Instance.CurrentState})");
 
             context.Instance.Timestamp = DateTime.Now;
             context.Instance.OrderId = context.Data.OrderId;

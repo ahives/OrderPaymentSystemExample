@@ -5,6 +5,7 @@ namespace OrderProcessingService.Core.StateMachines.Activities
     using Automatonymous;
     using GreenPipes;
     using Sagas;
+    using Serilog;
     using Services.Core.Events;
 
     public class OrderItemPreparedActivity :
@@ -23,6 +24,8 @@ namespace OrderProcessingService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<OrderItemState, OrderItemPrepared> context,
             Behavior<OrderItemState, OrderItemPrepared> next)
         {
+            Log.Information($"Order Item State Machine - {nameof(OrderItemPreparedActivity)} (state = {context.Instance.CurrentState})");
+
             context.Instance.Timestamp = DateTime.Now;
         }
 

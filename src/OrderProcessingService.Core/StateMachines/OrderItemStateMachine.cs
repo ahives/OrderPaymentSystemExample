@@ -12,6 +12,8 @@ namespace OrderProcessingService.Core.StateMachines
         public OrderItemStateMachine()
         {
             Event(() => RequestOrderItemPreparationEvent, e => e.CorrelateById(context => context.Message.OrderItemId));
+            Event(() => OrderItemPreparedEvent, e => e.CorrelateById(context => context.Message.OrderItemId));
+            Event(() => OrderItemNotPreparedEvent, e => e.CorrelateById(context => context.Message.OrderItemId));
 
             InstanceState(x => x.CurrentState, Preparing, Prepared, Discarded, Canceled, Expired, NotPrepared);
 
@@ -19,18 +21,18 @@ namespace OrderProcessingService.Core.StateMachines
                 .Activity(x => x.OfType<RequestOrderItemPreparationActivity>())
                 .TransitionTo(Preparing));
 
-            // During(Preparing,
-            //     When(OrderItemPreparedEvent)
-            //         .Activity(x => x.OfType<OrderItemPreparedActivity>())
-            //         .TransitionTo(Prepared),
-            //     When(OrderItemNotPreparedEvent)
-            //         .Activity(x => x.OfType<OrderItemNotPreparedActivity>())
-            //         .TransitionTo(NotPrepared),
-            //     When(OrderCanceledEvent)
-            //         .Activity(x => x.OfType<CancelOrderItemActivity>())
-            //         .TransitionTo(Canceled),
-            //     Ignore(RequestOrderItemPreparationEvent));
-            //
+            During(Preparing,
+                When(OrderItemPreparedEvent)
+                    .Activity(x => x.OfType<OrderItemPreparedActivity>())
+                    .TransitionTo(Prepared),
+                When(OrderItemNotPreparedEvent)
+                    .Activity(x => x.OfType<OrderItemNotPreparedActivity>())
+                    .TransitionTo(NotPrepared),
+                // When(OrderCanceledEvent)
+                //     .Activity(x => x.OfType<CancelOrderItemActivity>())
+                //     .TransitionTo(Canceled),
+                Ignore(RequestOrderItemPreparationEvent));
+            
             // During(Prepared,
             //     When(OrderItemDiscardedEvent)
             //         .Activity(x => x.OfType<DiscardOrderItemActivity>())
@@ -72,12 +74,12 @@ namespace OrderProcessingService.Core.StateMachines
         public State NotPrepared { get; }
         
         public Event<RequestOrderItemPreparation> RequestOrderItemPreparationEvent { get; private set; }
-        // public Event<OrderItemPrepared> OrderItemPreparedEvent { get; private set; }
+        public Event<OrderItemPrepared> OrderItemPreparedEvent { get; private set; }
+        public Event<OrderItemNotPrepared> OrderItemNotPreparedEvent { get; private set; }
         // public Event<OrderItemExpired> OrderItemExpiredEvent { get; private set; }
         // public Event<OrderItemDiscarded> OrderItemDiscardedEvent { get; private set; }
         // public Event<OrderCanceled> OrderCanceledEvent { get; private set; }
         // public Event<OrderItemCanceled> OrderItemCanceledEvent { get; private set; }
         // public Event<OrderItemExceededPreparationLimit> OrderItemExceededPreparationLimitEvent { get; private set; }
-        // public Event<OrderItemNotPrepared> OrderItemNotPreparedEvent { get; private set; }
     }
 }

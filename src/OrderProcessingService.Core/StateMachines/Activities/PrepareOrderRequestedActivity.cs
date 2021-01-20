@@ -5,6 +5,7 @@ namespace OrderProcessingService.Core.StateMachines.Activities
     using System.Linq;
     using System.Threading.Tasks;
     using Automatonymous;
+    using Data.Core;
     using GreenPipes;
     using MassTransit;
     using Sagas;
@@ -35,7 +36,7 @@ namespace OrderProcessingService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<OrderState, RequestOrderPreparation> context,
             Behavior<OrderState, RequestOrderPreparation> next)
         {
-            Log.Information($"Order State Machine - {nameof(PrepareOrderRequestedActivity)}");
+            Log.Information($"Order State Machine - {nameof(PrepareOrderRequestedActivity)} (state = {context.Instance.CurrentState})");
             
             context.Instance.Timestamp = DateTime.Now;
             context.Instance.CustomerId = context.Data.CustomerId;
@@ -72,7 +73,7 @@ namespace OrderProcessingService.Core.StateMachines.Activities
             {
                 OrderItemId = NewId.NextGuid(),
                 MenuItemId = x.MenuItemId,
-                Status = x.Status,
+                Status = (int)OrderItemStatus.Receipt,
                 SpecialInstructions = x.SpecialInstructions
             });
         
