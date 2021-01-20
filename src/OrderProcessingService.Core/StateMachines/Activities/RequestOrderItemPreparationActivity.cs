@@ -9,12 +9,12 @@ namespace OrderProcessingService.Core.StateMachines.Activities
     using Serilog;
     using Services.Core.Events;
 
-    public class PrepareOrderItemRequestActivity :
-        Activity<OrderItemState, PrepareOrderItemRequested>
+    public class RequestOrderItemPreparationActivity :
+        Activity<OrderItemState, RequestOrderItemPreparation>
     {
         readonly ConsumeContext _context;
 
-        public PrepareOrderItemRequestActivity(ConsumeContext context)
+        public RequestOrderItemPreparationActivity(ConsumeContext context)
         {
             _context = context;
         }
@@ -29,10 +29,10 @@ namespace OrderProcessingService.Core.StateMachines.Activities
             visitor.Visit(this);
         }
 
-        public async Task Execute(BehaviorContext<OrderItemState, PrepareOrderItemRequested> context,
-            Behavior<OrderItemState, PrepareOrderItemRequested> next)
+        public async Task Execute(BehaviorContext<OrderItemState, RequestOrderItemPreparation> context,
+            Behavior<OrderItemState, RequestOrderItemPreparation> next)
         {
-            Log.Information($"Order Item State Machine - {nameof(PrepareOrderItemRequestActivity)}");
+            Log.Information($"Order Item State Machine - {nameof(RequestOrderItemPreparationActivity)}");
 
             context.Instance.Timestamp = DateTime.Now;
             context.Instance.OrderId = context.Data.OrderId;
@@ -52,8 +52,8 @@ namespace OrderProcessingService.Core.StateMachines.Activities
         }
 
         public async Task Faulted<TException>(
-            BehaviorExceptionContext<OrderItemState, PrepareOrderItemRequested, TException> context,
-            Behavior<OrderItemState, PrepareOrderItemRequested> next)
+            BehaviorExceptionContext<OrderItemState, RequestOrderItemPreparation, TException> context,
+            Behavior<OrderItemState, RequestOrderItemPreparation> next)
             where TException : Exception
         {
             await next.Faulted(context);

@@ -1,24 +1,16 @@
 namespace Services.Core.Events
 {
     using System;
-    using MassTransit;
     using Model;
 
-    public record PrepareOrderRequest
+    public record RequestOrderPreparation
     {
-        public PrepareOrderRequest()
+        public RequestOrderPreparation()
         {
-            EventId = NewId.NextGuid();
             Timestamp = DateTime.Now;
         }
 
-        // [ModuleInitializer]
-        // internal static void Init()
-        // {
-        //     GlobalTopology.Send.UseCorrelationId<PrepareOrder>(x => x.OrderId);
-        // }
-
-        public Guid EventId { get; }
+        public Guid OrderId { get; init; }
         
         public Guid CustomerId { get; init; }
         

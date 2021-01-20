@@ -1,5 +1,6 @@
 namespace OrderProcessingWebService.Controllers
 {
+    using System;
     using System.Threading.Tasks;
     using MassTransit;
     using Microsoft.AspNetCore.Mvc;
@@ -18,17 +19,20 @@ namespace OrderProcessingWebService.Controllers
         }
 
         [HttpPost("PrepareOrder")]
-        public async Task<IActionResult> PrepareOrder(PrepareOrderRequest request)
+        public async Task<IActionResult> PrepareOrder(RequestOrderPreparation request)
         {
-            await _endpoint.Publish<PrepareOrderRequest>(new()
+            Guid orderId = NewId.NextGuid();
+            
+            await _endpoint.Publish<RequestOrderPreparation>(new()
             {
+                OrderId = orderId,
                 CustomerId = request.CustomerId,
                 RestaurantId = request.RestaurantId,
                 AddressId = request.AddressId,
                 Items = request.Items
             });
 
-            return Ok();
+            return Ok(orderId);
         }
     }
 }

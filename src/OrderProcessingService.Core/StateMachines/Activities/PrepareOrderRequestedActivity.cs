@@ -13,7 +13,7 @@ namespace OrderProcessingService.Core.StateMachines.Activities
     using Services.Core.Model;
 
     public class PrepareOrderRequestedActivity :
-        Activity<OrderState, PrepareOrderRequest>
+        Activity<OrderState, RequestOrderPreparation>
     {
         readonly ConsumeContext _context;
 
@@ -32,12 +32,10 @@ namespace OrderProcessingService.Core.StateMachines.Activities
             visitor.Visit(this);
         }
 
-        public async Task Execute(BehaviorContext<OrderState, PrepareOrderRequest> context,
-            Behavior<OrderState, PrepareOrderRequest> next)
+        public async Task Execute(BehaviorContext<OrderState, RequestOrderPreparation> context,
+            Behavior<OrderState, RequestOrderPreparation> next)
         {
-            Log.Information($"Order Item State Machine - {nameof(PrepareOrderRequestedActivity)}");
-            
-            var items = GenerateOrderItemIdentifiers(context.Data.Items);
+            Log.Information($"Order State Machine - {nameof(PrepareOrderRequestedActivity)}");
             
             context.Instance.Timestamp = DateTime.Now;
             context.Instance.CustomerId = context.Data.CustomerId;
@@ -45,11 +43,9 @@ namespace OrderProcessingService.Core.StateMachines.Activities
             context.Instance.ExpectedItemCount = context.Data.Items.Length;
             context.Instance.ActualItemCount = 0;
             
-            var expectedOrderItems = MapExpectedOrderItems(items, context.Instance.CorrelationId).ToList();
+            var items = GenerateOrderItemIdentifiers(context.Data.Items).ToList();
             
-            context.Instance.Items = expectedOrderItems;
-
-            var publishedItems = items.ToArray();
+            context.Instance.Items = MapExpectedOrderItems(items, context.Instance.CorrelationId).ToList();
             
             await _context.Publish<PrepareOrder>(new
             {
@@ -57,21 +53,16 @@ namespace OrderProcessingService.Core.StateMachines.Activities
                 context.Data.CustomerId,
                 context.Data.RestaurantId,
                 context.Data.AddressId,
-                Items = publishedItems
+                Items = items
             });
             
             Log.Information($"Published - {nameof(PrepareOrder)}");
 
-            for (int i = 0; i < publishedItems.Length; i++)
-            {
-                Log.Information($"Order Item ID => {publishedItems[i].OrderItemId} (published), {expectedOrderItems[i].OrderItemId} (state)");
-            }
-
             await next.Execute(context).ConfigureAwait(false);
         }
 
-        public async Task Faulted<TException>(BehaviorExceptionContext<OrderState, PrepareOrderRequest, TException> context,
-            Behavior<OrderState, PrepareOrderRequest> next) where TException : Exception
+        public async Task Faulted<TException>(BehaviorExceptionContext<OrderState, RequestOrderPreparation, TException> context,
+            Behavior<OrderState, RequestOrderPreparation> next) where TException : Exception
         {
             await next.Faulted(context);
         }
@@ -85,14 +76,12 @@ namespace OrderProcessingService.Core.StateMachines.Activities
                 SpecialInstructions = x.SpecialInstructions
             });
         
-        IEnumerable<ExpectedOrderItem> MapExpectedOrderItems(IEnumerable<Item> items, Guid orderId) =>
+        IEnumerable<ExpectedOrderItem> MapExpectedOrderItems(List<Item> items, Guid orderId) =>
             items.Select(x => new ExpectedOrderItem
             {
-                CorrelationId = NewId.NextGuid(),
                 OrderItemId = x.OrderItemId,
                 OrderId = orderId,
                 Status = x.Status,
-                Timestamp = DateTime.Now
             });
     }
 }

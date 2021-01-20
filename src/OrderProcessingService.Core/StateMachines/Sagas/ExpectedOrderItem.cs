@@ -1,22 +1,20 @@
 namespace OrderProcessingService.Core.StateMachines.Sagas
 {
     using System;
-    using Automatonymous;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
 
-    public class ExpectedOrderItem :
-        SagaStateMachineInstance
+    [Table("ExpectedOrderItem")]
+    public class ExpectedOrderItem
     {
-        public Guid CorrelationId { get; set; }
-        
+        [Column("OrderItemId"), Key, Required]
         public Guid OrderItemId { get; set; }
 
+        [ForeignKey("OrderId"), Required]
         public Guid OrderId { get; set; }
         public OrderState Order { get; set; }
 
+        [Column("Status"), Required]
         public int Status { get; set; }
-
-        public DateTime Timestamp { get; set; }
-
-        public byte[] RowVersion { get; set; }
     }
 }

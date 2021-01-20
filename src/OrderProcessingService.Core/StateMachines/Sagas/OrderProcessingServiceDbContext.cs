@@ -20,7 +20,6 @@ namespace OrderProcessingService.Core.StateMachines.Sagas
             get
             {
                 yield return new OrderStateMap();
-                yield return new ExpectedOrderItemMap();
                 yield return new OrderItemStateMap();
             }
         }

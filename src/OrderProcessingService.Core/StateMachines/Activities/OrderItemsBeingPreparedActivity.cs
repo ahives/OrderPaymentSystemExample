@@ -32,11 +32,10 @@ namespace OrderProcessingService.Core.StateMachines.Activities
             
             for (int i = 0; i < context.Instance.Items.Count; i++)
             {
-                if (context.Instance.Items[i].CorrelationId != context.Data.OrderItemId)
+                if (context.Instance.Items[i].OrderItemId != context.Data.OrderItemId)
                     continue;
             
                 context.Instance.Items[i].Status = context.Data.Status;
-                context.Instance.Items[i].Timestamp = context.Data.Timestamp;
                 break;
             }
 

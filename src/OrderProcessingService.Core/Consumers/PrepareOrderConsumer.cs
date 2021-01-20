@@ -32,7 +32,7 @@ namespace OrderProcessingService.Core.Consumers
             {
                 for (int i = 0; i < context.Message.Items.Length; i++)
                 {
-                    await context.Publish<PrepareOrderItemRequested>(new
+                    await context.Publish<RequestOrderItemPreparation>(new
                     {
                         context.Message.OrderId,
                         context.Message.RestaurantId,
@@ -41,7 +41,7 @@ namespace OrderProcessingService.Core.Consumers
                         context.Message.Items[i].SpecialInstructions
                     });
 
-                    Log.Information($"Published - {nameof(PrepareOrderItemRequested)} (OrderItemId={context.Message.Items[i].OrderItemId})");
+                    Log.Information($"Published - {nameof(RequestOrderItemPreparation)} (OrderItemId={context.Message.Items[i].OrderItemId})");
                 }
             }
         }
