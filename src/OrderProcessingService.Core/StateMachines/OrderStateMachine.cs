@@ -11,8 +11,8 @@ namespace OrderProcessingService.Core.StateMachines
         public OrderStateMachine()
         {
             Event(() => PrepareOrderRequestEvent, e => e.CorrelateById(context => context.Message.OrderId));
-            Event(() => OrderItemPreparedEvent, e => e.CorrelateById(context => context.Message.OrderItemId));
-            Event(() => OrderItemNotPreparedEvent, e => e.CorrelateById(context => context.Message.OrderItemId));
+            Event(() => OrderItemPreparedEvent, e => e.CorrelateById(context => context.Message.OrderId));
+            Event(() => OrderItemNotPreparedEvent, e => e.CorrelateById(context => context.Message.OrderId));
             
             InstanceState(x => x.CurrentState, Pending, Prepared, NotPrepared, Canceled);
 
@@ -22,7 +22,7 @@ namespace OrderProcessingService.Core.StateMachines
 
             During(Pending,
                 When(OrderItemPreparedEvent)
-                    .Activity(x => x.OfType<OrderItemsBeingPreparedActivity>())
+                    .Activity(x => x.OfType<OrderItemsPreparedActivity>())
                     .IfElse(context => context.Instance.ActualItemCount == context.Instance.ExpectedItemCount,
                         thenBinder => thenBinder.TransitionTo(Prepared),
                         elseBinder => elseBinder.TransitionTo(Pending)),

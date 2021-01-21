@@ -6,17 +6,16 @@ namespace OrderProcessingService.Core.StateMachines.Activities
     using Automatonymous;
     using Data.Core;
     using GreenPipes;
-    using Microsoft.EntityFrameworkCore;
     using Sagas;
     using Serilog;
     using Services.Core.Events;
 
-    public class OrderItemsBeingPreparedActivity :
+    public class OrderItemsPreparedActivity :
         Activity<OrderState, OrderItemPrepared>
     {
         readonly OrderProcessingServiceDbContext _dbContext;
 
-        public OrderItemsBeingPreparedActivity(OrderProcessingServiceDbContext dbContext)
+        public OrderItemsPreparedActivity(OrderProcessingServiceDbContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -34,26 +33,23 @@ namespace OrderProcessingService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<OrderState, OrderItemPrepared> context,
             Behavior<OrderState, OrderItemPrepared> next)
         {
-            Log.Information($"Order State Machine - {nameof(OrderItemsBeingPreparedActivity)} (state = {context.Instance.CurrentState})");
+            Log.Information($"Order State Machine - {nameof(OrderItemsPreparedActivity)} (state = {context.Instance.CurrentState})");
 
             context.Instance.Timestamp = DateTime.Now;
 
-            // _dbContext.Orders.Include(x => x.Items);
-
-            for (int i = 0; i < context.Instance.Items.Count; i++)
+            var item = await _dbContext.ExpectedOrderItems.FindAsync(context.Data.OrderItemId);
+            
+            if (item != null)
             {
-                if (context.Instance.Items[i].OrderItemId != context.Data.OrderItemId)
-                    continue;
-
-                context.Instance.Items[i].Status = context.Data.Status;
+                item.Status = context.Data.Status;
                 
-                // _dbContext.ExpectedOrderItems.Update(context.Instance.Items[i]);
-                break;
+                _dbContext.ExpectedOrderItems.Update(item);
+                
+                await _dbContext.SaveChangesAsync();
             }
-
-            // await _dbContext.SaveChangesAsync();
-
-            context.Instance.ActualItemCount = context.Instance.Items
+            
+            context.Instance.ActualItemCount = _dbContext.ExpectedOrderItems
+                .Where(x => x.OrderId == context.Instance.CorrelationId)
                 .Count(x => x.Status == (int) OrderItemStatus.Prepared);
 
             await next.Execute(context).ConfigureAwait(false);
