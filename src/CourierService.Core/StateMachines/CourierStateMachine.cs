@@ -5,13 +5,14 @@ namespace CourierService.Core.StateMachines
     using Automatonymous;
     using MassTransit;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.Options;
     using Sagas;
     using Services.Core.Events;
 
     public class CourierStateMachine :
         MassTransitStateMachine<CourierState>
     {
-        public CourierStateMachine(IConfiguration configuration)
+        public CourierStateMachine(IOptions<CourierServiceSettings> options)
         {
             Event(() => RequestCourierDispatchEvent, e => e.CorrelateById(context => context.Message.OrderId));
             Event(() => CourierIdentifiedForDispatchEvent, e => e.CorrelateById(context => context.Message.CourierId));
@@ -30,11 +31,12 @@ namespace CourierService.Core.StateMachines
             Event(() => OrderReadyForDeliveryEvent, e => e.CorrelateById(context => context.Message.OrderId));
             Event(() => OrderExpiredEvent, e => e.CorrelateById(context => context.Message.OrderId));
             Event(() => OrderCanceledEvent, e => e.CorrelateById(context => context.Message.OrderId));
+
+            var settings = options.Value;
             
             Schedule(() => OrderCompletionTimeout, instance => instance.OrderCompletionTimeoutTokenId, s =>
             {
-                int seconds = configuration.GetSection("Application")
-                    .GetValue<int>("CourierWaitUponArrivalInSeconds");
+                int seconds = settings.CourierWaitUponArrivalInSeconds;
                 
                 s.Delay = TimeSpan.FromSeconds(seconds > 0 ? seconds : 15);
                 s.Received = r => r.CorrelateById(context => context.Message.OrderId);

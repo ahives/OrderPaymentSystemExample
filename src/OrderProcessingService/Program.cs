@@ -4,6 +4,7 @@
     using System.IO;
     using System.Reflection;
     using System.Threading.Tasks;
+    using Core;
     using Core.Consumers;
     using Core.StateMachines;
     using Core.StateMachines.Sagas;
@@ -13,6 +14,7 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
+    using Microsoft.Extensions.Options;
     using Serilog;
     using Serilog.Events;
     using Service.Grpc.Core;
@@ -44,6 +46,8 @@
                     // services.AddScoped<IShelfManager, ShelfManager>();
                     services.AddSingleton<IGrpcClient<IOrderProcessor>, OrderProcessorClient>();
 
+                    services.Configure<OrderProcessingServiceSettings>(options => host.Configuration.GetSection("Application").Bind(options));
+
                     services.AddDbContext<OrderProcessingServiceDbContext>(builder =>
                         builder.UseNpgsql(host.Configuration.GetConnectionString("OrdersConnection"), m =>
                         {
@@ -60,11 +64,10 @@
                         
                         x.UsingRabbitMq((context, cfg) =>
                         {
-                            string vhost = host.Configuration
-                                .GetSection("Application")
-                                .GetValue<string>("VirtualHost");
+                            var options = context.GetService<IOptions<OrderProcessingServiceSettings>>();
+                            var settings = options.Value;
                             
-                            cfg.Host("localhost", vhost, h =>
+                            cfg.Host("localhost", settings.VirtualHost, h =>
                             {
                                 h.Username("guest");
                                 h.Password("guest");
