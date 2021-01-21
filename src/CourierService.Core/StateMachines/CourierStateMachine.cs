@@ -13,6 +13,24 @@ namespace CourierService.Core.StateMachines
     {
         public CourierStateMachine(IConfiguration configuration)
         {
+            Event(() => RequestCourierDispatchEvent, e => e.CorrelateById(context => context.Message.OrderId));
+            Event(() => CourierIdentifiedForDispatchEvent, e => e.CorrelateById(context => context.Message.CourierId));
+            Event(() => CourierNotIdentifiedForDispatchEvent, e => e.CorrelateById(context => context.Message.OrderId));
+            Event(() => CourierDispatchedEvent, e => e.CorrelateById(context => context.Message.CourierId));
+            Event(() => CourierDispatchConfirmedEvent, e => e.CorrelateById(context => context.Message.CourierId));
+            Event(() => CourierDispatchDeclinedEvent, e => e.CorrelateById(context => context.Message.CourierId));
+            Event(() => CourierEnRouteRestaurantEvent, e => e.CorrelateById(context => context.Message.CourierId));
+            Event(() => CourierArrivedAtRestaurantEvent, e => e.CorrelateById(context => context.Message.CourierId));
+            Event(() => OrderPickedUpEvent, e => e.CorrelateById(context => context.Message.CourierId));
+            Event(() => CourierEnRouteToCustomerEvent, e => e.CorrelateById(context => context.Message.CourierId));
+            Event(() => CourierArrivedAtCustomerEvent, e => e.CorrelateById(context => context.Message.CourierId));
+            Event(() => DeliveringOrderEvent, e => e.CorrelateById(context => context.Message.CourierId));
+            Event(() => OrderDeliveredEvent, e => e.CorrelateById(context => context.Message.CourierId));
+            Event(() => CourierDispatchCanceledEvent, e => e.CorrelateById(context => context.Message.CourierId));
+            Event(() => OrderReadyForDeliveryEvent, e => e.CorrelateById(context => context.Message.OrderId));
+            Event(() => OrderExpiredEvent, e => e.CorrelateById(context => context.Message.OrderId));
+            Event(() => OrderCanceledEvent, e => e.CorrelateById(context => context.Message.OrderId));
+            
             Schedule(() => OrderCompletionTimeout, instance => instance.OrderCompletionTimeoutTokenId, s =>
             {
                 int seconds = configuration.GetSection("Application")
@@ -34,12 +52,12 @@ namespace CourierService.Core.StateMachines
                 When(CourierIdentifiedForDispatchEvent)
                     .Activity(x => x.OfType<CourierIdentifiedForDispatchActivity>())
                     .TransitionTo(Pending),
-                When(CourierDispatchedEvent)
-                    .Activity(x => x.OfType<DispatchedActivity>())
-                    .TransitionTo(Dispatched),
                 When(CourierNotIdentifiedForDispatchEvent)
                     .Activity(x => x.OfType<CourierNotIdentifiedForDispatchActivity>())
                     .TransitionTo(Pending),
+                When(CourierDispatchedEvent)
+                    .Activity(x => x.OfType<DispatchedActivity>())
+                    .TransitionTo(Dispatched),
                 When(OrderReadyForDeliveryEvent)
                     .Activity(x => x.OfType<OrderReadyForDeliveryActivity>())
                     .TransitionTo(Pending));
