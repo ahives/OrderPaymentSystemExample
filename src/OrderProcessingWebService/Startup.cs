@@ -13,6 +13,7 @@ namespace OrderProcessingWebService
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
     using Microsoft.OpenApi.Models;
 
     public class Startup
@@ -34,17 +35,18 @@ namespace OrderProcessingWebService
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "OrderProcessingWebService", Version = "v1"});
             });
 
+            services.Configure<ApplicationSettings>(options => Configuration.GetSection("Application").Bind(options));
+
             services.AddMassTransit(x =>
             {
                 x.SetKebabCaseEndpointNameFormatter();
                 
                 x.UsingRabbitMq((context, cfg) =>
                 {
-                    string vhost = Configuration
-                        .GetSection("Application")
-                        .GetValue<string>("VirtualHost");
+                    var options = context.GetService<IOptions<ApplicationSettings>>();
+                    var settings = options.Value;
                             
-                    cfg.Host("localhost", vhost, h =>
+                    cfg.Host("localhost", settings.VirtualHost, h =>
                     {
                         h.Username("guest");
                         h.Password("guest");

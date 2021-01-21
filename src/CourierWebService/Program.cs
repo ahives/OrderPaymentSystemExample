@@ -28,7 +28,7 @@ namespace CourierWebService
                         options.Limits.MinRequestBodyDataRate = new MinDataRate(100, TimeSpan.FromSeconds(10));
                         options.Limits.MinResponseDataRate = new MinDataRate(100, TimeSpan.FromSeconds(10));
                         options.Limits.KeepAliveTimeout = TimeSpan.FromMinutes(2);
-                        options.ListenLocalhost(5001);
+                        options.ListenLocalhost(5010);
                     });
                     
                     webBuilder.UseStartup<Startup>();

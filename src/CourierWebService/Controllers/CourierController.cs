@@ -33,19 +33,6 @@ namespace CourierWebService.Controllers
             return Ok();
         }
 
-        [HttpPost("OrderReadyForDelivery")]
-        public async Task<IActionResult> OrderReadyForDelivery(OrderReadyRequest request)
-        {
-            await _endpoint.Publish<OrderReadyForDelivery>(new()
-            {
-                OrderId = request.OrderId,
-                CustomerId = request.CustomerId,
-                RestaurantId = request.RestaurantId
-            });
-
-            return Ok();
-        }
-
         [HttpPost("DispatchConfirmed")]
         public async Task<IActionResult> DispatchConfirmed(ChangeStatusRequest request)
         {
@@ -130,39 +117,12 @@ namespace CourierWebService.Controllers
             return Ok();
         }
 
-        [HttpPost("CancelOrder")]
-        public async Task<IActionResult> OrderCanceled(OrderCancelRequest request)
-        {
-            await _endpoint.Publish<OrderCanceled>(new()
-            {
-                CourierId = request.CourierId,
-                OrderId = request.OrderId,
-                CustomerId = request.CustomerId,
-                RestaurantId = request.RestaurantId
-            });
-
-            return Ok();
-        }
-
         [HttpPost("DeclineDispatchRequest")]
-        public async Task<IActionResult> DeclineDispatchRequest(OrderCancelRequest request)
+        public async Task<IActionResult> DeclineDispatchRequest(DeclineDispatchRequest request)
         {
             await _endpoint.Publish<CourierDispatchDeclined>(new()
             {
                 CourierId = request.CourierId,
-                OrderId = request.OrderId,
-                CustomerId = request.CustomerId,
-                RestaurantId = request.RestaurantId
-            });
-
-            return Ok();
-        }
-
-        [HttpPost("OrderExpired")]
-        public async Task<IActionResult> OrderExpired(OrderExpiredRequest request)
-        {
-            await _endpoint.Publish<OrderExpired>(new()
-            {
                 OrderId = request.OrderId,
                 CustomerId = request.CustomerId,
                 RestaurantId = request.RestaurantId

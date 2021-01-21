@@ -1,4 +1,4 @@
-namespace CourierWebService
+namespace OrderProcessingWbService
 {
     using System;
 

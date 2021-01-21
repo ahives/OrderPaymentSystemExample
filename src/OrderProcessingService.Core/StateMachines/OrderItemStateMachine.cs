@@ -14,6 +14,8 @@ namespace OrderProcessingService.Core.StateMachines
             Event(() => RequestOrderItemPreparationEvent, e => e.CorrelateById(context => context.Message.OrderItemId));
             Event(() => OrderItemPreparedEvent, e => e.CorrelateById(context => context.Message.OrderItemId));
             Event(() => OrderItemNotPreparedEvent, e => e.CorrelateById(context => context.Message.OrderItemId));
+            Event(() => OrderItemDiscardedEvent, e => e.CorrelateById(context => context.Message.OrderItemId));
+            Event(() => OrderCanceledEvent, e => e.CorrelateById(context => context.Message.OrderId));
 
             InstanceState(x => x.CurrentState, Preparing, Prepared, Discarded, Canceled, Expired, NotPrepared);
 
@@ -33,17 +35,17 @@ namespace OrderProcessingService.Core.StateMachines
                 //     .TransitionTo(Canceled),
                 Ignore(RequestOrderItemPreparationEvent));
             
-            // During(Prepared,
-            //     When(OrderItemDiscardedEvent)
-            //         .Activity(x => x.OfType<DiscardOrderItemActivity>())
-            //         .TransitionTo(Discarded),
-            //     When(OrderItemExpiredEvent)
-            //         .Activity(x => x.OfType<ExpireOrderItemActivity>())
-            //         .TransitionTo(Expired),
-            //     When(OrderCanceledEvent)
-            //         .Activity(x => x.OfType<CancelOrderItemActivity>())
-            //         .TransitionTo(Canceled));
-            //
+            During(Prepared,
+                When(OrderItemDiscardedEvent)
+                    .Activity(x => x.OfType<OrderItemDiscardedActivity>())
+                    .TransitionTo(Discarded),
+                // When(OrderItemExpiredEvent)
+                //     .Activity(x => x.OfType<ExpireOrderItemActivity>())
+                //     .TransitionTo(Expired),
+                When(OrderCanceledEvent)
+                    .Activity(x => x.OfType<CancelOrderItemActivity>())
+                    .TransitionTo(Canceled));
+            
             // During(Expired,
             //     When(OrderItemExceededPreparationLimitEvent)
             //         .Activity(x => x.OfType<OrderItemExpiredActivity>())
@@ -53,7 +55,7 @@ namespace OrderProcessingService.Core.StateMachines
             //
             // During(Discarded,
             //     When(OrderItemExceededPreparationLimitEvent)
-            //         .Activity(x => x.OfType<OrderItemDiscardedActivity>())
+            //         .Activity(x => x.OfType<OrderItemExceededPreparationLimitActivity>())
             //         .TransitionTo(NotPrepared),
             //     Ignore(OrderItemPreparedEvent),
             //     Ignore(RequestOrderItemPreparationEvent),
@@ -77,8 +79,8 @@ namespace OrderProcessingService.Core.StateMachines
         public Event<OrderItemPrepared> OrderItemPreparedEvent { get; private set; }
         public Event<OrderItemNotPrepared> OrderItemNotPreparedEvent { get; private set; }
         // public Event<OrderItemExpired> OrderItemExpiredEvent { get; private set; }
-        // public Event<OrderItemDiscarded> OrderItemDiscardedEvent { get; private set; }
-        // public Event<OrderCanceled> OrderCanceledEvent { get; private set; }
+        public Event<OrderItemDiscarded> OrderItemDiscardedEvent { get; private set; }
+        public Event<OrderCanceled> OrderCanceledEvent { get; private set; }
         // public Event<OrderItemCanceled> OrderItemCanceledEvent { get; private set; }
         // public Event<OrderItemExceededPreparationLimit> OrderItemExceededPreparationLimitEvent { get; private set; }
     }
