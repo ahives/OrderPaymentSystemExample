@@ -1,23 +1,22 @@
 namespace OrderProcessingService.Core.StateMachines.Activities
 {
     using System;
-    using System.Linq;
     using System.Threading.Tasks;
     using Automatonymous;
-    using Data.Core;
     using GreenPipes;
     using Sagas;
     using Serilog;
+    using Service.Grpc.Core;
     using Services.Core.Events;
 
     public class OrderItemsPreparedActivity :
         Activity<OrderState, OrderItemPrepared>
     {
-        readonly OrderProcessingServiceDbContext _dbContext;
+        readonly IGrpcClient<IOrderProcessor> _client;
 
-        public OrderItemsPreparedActivity(OrderProcessingServiceDbContext dbContext)
+        public OrderItemsPreparedActivity(IGrpcClient<IOrderProcessor> client)
         {
-            _dbContext = dbContext;
+            _client = client;
         }
 
         public void Probe(ProbeContext context)
@@ -37,20 +36,22 @@ namespace OrderProcessingService.Core.StateMachines.Activities
 
             context.Instance.Timestamp = DateTime.Now;
 
-            var item = await _dbContext.ExpectedOrderItems.FindAsync(context.Data.OrderItemId);
+            var updateResult = await _client.Client.UpdateExpectedOrderItem(
+                new ()
+                {
+                    OrderItemId = context.Data.OrderItemId,
+                    Status = context.Data.Status
+                });
             
-            if (item != null)
-            {
-                item.Status = context.Data.Status;
-                
-                _dbContext.ExpectedOrderItems.Update(item);
-                
-                await _dbContext.SaveChangesAsync();
-            }
+            var result = await _client.Client.GetExpectedOrderItemCount(
+                new ()
+                {
+                    OrderId = context.Instance.CorrelationId
+                });
             
-            context.Instance.ActualItemCount = _dbContext.ExpectedOrderItems
-                .Where(x => x.OrderId == context.Instance.CorrelationId)
-                .Count(x => x.Status == (int) OrderItemStatus.Prepared);
+            Log.Information($"ActualItemCount={result.Value}");
+            
+            context.Instance.ActualItemCount = result.Value;
 
             await next.Execute(context).ConfigureAwait(false);
         }

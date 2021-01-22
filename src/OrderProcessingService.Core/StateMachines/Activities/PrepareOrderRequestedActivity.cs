@@ -10,6 +10,7 @@ namespace OrderProcessingService.Core.StateMachines.Activities
     using MassTransit;
     using Sagas;
     using Serilog;
+    using Service.Grpc.Core;
     using Services.Core.Events;
     using Services.Core.Model;
 
@@ -17,10 +18,12 @@ namespace OrderProcessingService.Core.StateMachines.Activities
         Activity<OrderState, RequestOrderPreparation>
     {
         readonly ConsumeContext _context;
+        readonly IGrpcClient<IOrderProcessor> _client;
 
-        public PrepareOrderRequestedActivity(ConsumeContext context)
+        public PrepareOrderRequestedActivity(ConsumeContext context, IGrpcClient<IOrderProcessor> client)
         {
             _context = context;
+            _client = client;
         }
 
         public void Probe(ProbeContext context)
@@ -45,8 +48,17 @@ namespace OrderProcessingService.Core.StateMachines.Activities
             context.Instance.ActualItemCount = 0;
             
             var items = GenerateOrderItemIdentifiers(context.Data.Items).ToList();
-            
-            context.Instance.Items = MapExpectedOrderItems(items, context.Instance.CorrelationId).ToList();
+
+            foreach (var item in items)
+            {
+                await _client.Client.AddExpectedOrderItem(
+                    new ()
+                    {
+                        OrderId = context.Instance.CorrelationId,
+                        OrderItemId = item.OrderItemId,
+                        Status = item.Status
+                    });
+            }
             
             await _context.Publish<PrepareOrder>(new
             {
@@ -75,14 +87,6 @@ namespace OrderProcessingService.Core.StateMachines.Activities
                 MenuItemId = x.MenuItemId,
                 Status = (int)OrderItemStatus.Receipt,
                 SpecialInstructions = x.SpecialInstructions
-            });
-        
-        IEnumerable<ExpectedOrderItem> MapExpectedOrderItems(List<Item> items, Guid orderId) =>
-            items.Select(x => new ExpectedOrderItem
-            {
-                OrderItemId = x.OrderItemId,
-                OrderId = orderId,
-                Status = x.Status,
             });
     }
 }

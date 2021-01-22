@@ -7,16 +7,18 @@ namespace OrderProcessingService.Core.StateMachines.Activities
     using Data.Core;
     using GreenPipes;
     using Sagas;
+    using Serilog;
+    using Service.Grpc.Core;
     using Services.Core.Events;
 
     public class OrderCanceledActivity :
         Activity<OrderState, OrderCanceled>
     {
-        readonly OrderProcessingServiceDbContext _db;
+        readonly IGrpcClient<IOrderProcessor> _client;
 
-        public OrderCanceledActivity(OrderProcessingServiceDbContext db)
+        public OrderCanceledActivity(IGrpcClient<IOrderProcessor> client)
         {
-            _db = db;
+            _client = client;
         }
 
         public void Probe(ProbeContext context)
@@ -32,19 +34,21 @@ namespace OrderProcessingService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<OrderState, OrderCanceled> context,
             Behavior<OrderState, OrderCanceled> next)
         {
-            var items = _db.ExpectedOrderItems
-                .Where(x => x.OrderId == context.Data.OrderId)
-                .ToList();
-            
-            foreach (var item in items)
-            {
-                item.Status = (int) OrderItemStatus.Canceled;
-                _db.ExpectedOrderItems.Update(item);
-            }
+            Log.Information($"Order State Machine - {nameof(OrderCanceledActivity)} (state = {context.Instance.CurrentState})");
 
-            int changes = await _db.SaveChangesAsync();
-            
             context.Instance.Timestamp = DateTime.Now;
+
+            // var items = _db.ExpectedOrderItems
+            //     .Where(x => x.OrderId == context.Data.OrderId)
+            //     .ToList();
+            //
+            // foreach (var item in items)
+            // {
+            //     item.Status = (int) OrderItemStatus.Canceled;
+            //     _db.ExpectedOrderItems.Update(item);
+            // }
+            //
+            // int changes = await _db.SaveChangesAsync();
             
             await next.Execute(context).ConfigureAwait(false);
         }

@@ -8,18 +8,18 @@ namespace Service.Grpc.Core
     public interface ICourierDispatcher
     {
         [OperationContract]
-        Task<Result<Courier>> Identify(CourierIdentificationRequest request);
+        Task<Result<Courier>> Identify(CourierIdentificationContext context);
         
         [OperationContract]
-        Task<Result<Courier>> Decline(CourierDispatchRequest request);
+        Task<Result<Courier>> Decline(CourierDispatchContext context);
 
         [OperationContract]
-        Task<Result<Courier>> ChangeStatus(CourierStatusChangeRequest request);
+        Task<Result<Courier>> ChangeStatus(CourierStatusChangeContext context);
         
         [OperationContract]
-        Task<Result<Order>> PickUpOrder(CourierDispatchRequest request);
+        Task<Result<Order>> PickUpOrder(CourierDispatchContext context);
         
         [OperationContract]
-        Task<Result<Order>> Deliver(CourierDispatchRequest request);
+        Task<Result<Order>> Deliver(CourierDispatchContext context);
     }
 }

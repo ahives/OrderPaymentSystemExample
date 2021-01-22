@@ -5,6 +5,7 @@ namespace OrderProcessingService.Core.StateMachines.Activities
     using Automatonymous;
     using GreenPipes;
     using Sagas;
+    using Serilog;
     using Services.Core.Events;
 
     public class CancelOrderItemActivity :
@@ -12,16 +13,28 @@ namespace OrderProcessingService.Core.StateMachines.Activities
     {
         public void Probe(ProbeContext context)
         {
-            throw new NotImplementedException();
+            context.CreateScope("");
         }
 
         public void Accept(StateMachineVisitor visitor)
         {
-            throw new NotImplementedException();
+            visitor.Visit(this);
         }
 
-        public async Task Execute(BehaviorContext<OrderItemState, OrderCanceled> context, Behavior<OrderItemState, OrderCanceled> next) => throw new NotImplementedException();
+        public async Task Execute(BehaviorContext<OrderItemState, OrderCanceled> context,
+            Behavior<OrderItemState, OrderCanceled> next)
+        {
+            Log.Information($"Order Item State Machine - {nameof(CancelOrderItemActivity)} (state = {context.Instance.CurrentState})");
+            
+            context.Instance.Timestamp = DateTime.Now;
+        }
 
-        public async Task Faulted<TException>(BehaviorExceptionContext<OrderItemState, OrderCanceled, TException> context, Behavior<OrderItemState, OrderCanceled> next) where TException : Exception => throw new NotImplementedException();
+        public async Task Faulted<TException>(
+            BehaviorExceptionContext<OrderItemState, OrderCanceled, TException> context,
+            Behavior<OrderItemState, OrderCanceled> next)
+            where TException : Exception
+        {
+            
+        }
     }
 }

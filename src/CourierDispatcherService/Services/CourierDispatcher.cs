@@ -19,9 +19,9 @@ namespace CourierDispatcherService.Services
             _db = db;
         }
 
-        public async Task<Result<Courier>> Identify(CourierIdentificationRequest request)
+        public async Task<Result<Courier>> Identify(CourierIdentificationContext context)
         {
-            var customer = await _db.Customers.FindAsync(request.CustomerId);
+            var customer = await _db.Customers.FindAsync(context.CustomerId);
             
             if (customer == null)
             {
@@ -55,13 +55,13 @@ namespace CourierDispatcherService.Services
             return new Result<Courier> {Reason = ReasonType.CourierNotAvailable, IsSuccessful = false};
         }
 
-        public async Task<Result<Courier>> Decline(CourierDispatchRequest request)
+        public async Task<Result<Courier>> Decline(CourierDispatchContext context)
         {
-            var courier = await _db.Couriers.FindAsync(request.CourierId);
+            var courier = await _db.Couriers.FindAsync(context.CourierId);
             
             if (courier == null)
             {
-                Log.Information($"Courier {request.CourierId} could not be found.");
+                Log.Information($"Courier {context.CourierId} could not be found.");
                 
                 return new Result<Courier> {Reason = ReasonType.CourierNotFound, IsSuccessful = false};
             }
@@ -71,11 +71,11 @@ namespace CourierDispatcherService.Services
             
             _db.Update(courier);
             
-            var order = await _db.Orders.FindAsync(request.OrderId);
+            var order = await _db.Orders.FindAsync(context.OrderId);
             
             if (order == null)
             {
-                Log.Information($"Order {request.OrderId} could not be found.");
+                Log.Information($"Order {context.OrderId} could not be found.");
                 
                 return new Result<Courier> {Reason = ReasonType.OrderNotFound, IsSuccessful = false};
             }
@@ -89,41 +89,41 @@ namespace CourierDispatcherService.Services
             
             if (changes <= 0)
             {
-                Log.Information($"Courier {request.CourierId} was not updated.");
+                Log.Information($"Courier {context.CourierId} was not updated.");
                 
                 return new Result<Courier> {Reason = ReasonType.DatabaseError, ChangeCount = changes, IsSuccessful = false};
             }
             
             var address = await _db.Addresses.FindAsync(courier.AddressId);
 
-            Log.Information($"Order {request.OrderId} and courier {request.CourierId} information was updated.");
+            Log.Information($"Order {context.OrderId} and courier {context.CourierId} information was updated.");
                 
             return new Result<Courier> {ChangeCount = changes, Value = MapEntity(courier, address), IsSuccessful = true};
         }
 
-        public async Task<Result<Order>> PickUpOrder(CourierDispatchRequest request)
+        public async Task<Result<Order>> PickUpOrder(CourierDispatchContext context)
         {
-            var restaurant = await _db.Restaurants.FindAsync(request.RestaurantId);
+            var restaurant = await _db.Restaurants.FindAsync(context.RestaurantId);
             
             if (restaurant == null || !restaurant.IsActive)
             {
-                Log.Information($"Restaurant {request.RestaurantId} could not be found.");
+                Log.Information($"Restaurant {context.RestaurantId} could not be found.");
                 
                 return new Result<Order> {Reason = ReasonType.RestaurantNotFound, IsSuccessful = false};
             }
             
             if (!restaurant.IsOpen)
             {
-                Log.Information($"Restaurant {request.RestaurantId} is not open.");
+                Log.Information($"Restaurant {context.RestaurantId} is not open.");
                 
                 return new Result<Order> {Reason = ReasonType.RestaurantNotOpen, IsSuccessful = false};
             }
 
-            var courier = await _db.Couriers.FindAsync(request.CourierId);
+            var courier = await _db.Couriers.FindAsync(context.CourierId);
             
             if (courier == null)
             {
-                Log.Information($"Courier {request.CourierId} could not be found.");
+                Log.Information($"Courier {context.CourierId} could not be found.");
                 
                 return new Result<Order> {Reason = ReasonType.CourierNotFound, IsSuccessful = false};
             }
@@ -133,11 +133,11 @@ namespace CourierDispatcherService.Services
             
             _db.Update(courier);
             
-            var order = await _db.Orders.FindAsync(request.OrderId);
+            var order = await _db.Orders.FindAsync(context.OrderId);
             
             if (order == null)
             {
-                Log.Information($"Order {request.OrderId} could not be found.");
+                Log.Information($"Order {context.OrderId} could not be found.");
                 
                 return new Result<Order> {Reason = ReasonType.OrderNotFound, IsSuccessful = false};
             }
@@ -152,23 +152,23 @@ namespace CourierDispatcherService.Services
             
             if (changes <= 0)
             {
-                Log.Information($"Order {request.OrderId} was not updated.");
+                Log.Information($"Order {context.OrderId} was not updated.");
                 
                 return new Result<Order> {Reason = ReasonType.DatabaseError, ChangeCount = changes, IsSuccessful = false};
             }
             
-            Log.Information($"Order {request.OrderId} and courier {request.CourierId} information was updated.");
+            Log.Information($"Order {context.OrderId} and courier {context.CourierId} information was updated.");
                 
             return new Result<Order> {ChangeCount = changes, Value = MapEntity(courier, order), IsSuccessful = true};
         }
 
-        public async Task<Result<Order>> Deliver(CourierDispatchRequest request)
+        public async Task<Result<Order>> Deliver(CourierDispatchContext context)
         {
-            var courier = await _db.Couriers.FindAsync(request.CourierId);
+            var courier = await _db.Couriers.FindAsync(context.CourierId);
             
             if (courier == null)
             {
-                Log.Information($"Courier {request.CourierId} could not be found.");
+                Log.Information($"Courier {context.CourierId} could not be found.");
                 
                 return new Result<Order> {Reason = ReasonType.CourierNotFound, IsSuccessful = false};
             }
@@ -178,11 +178,11 @@ namespace CourierDispatcherService.Services
             
             _db.Update(courier);
             
-            var order = await _db.Orders.FindAsync(request.OrderId);
+            var order = await _db.Orders.FindAsync(context.OrderId);
             
             if (order == null)
             {
-                Log.Information($"Order {request.OrderId} could not be found.");
+                Log.Information($"Order {context.OrderId} could not be found.");
                 
                 return new Result<Order> {Reason = ReasonType.OrderNotFound, IsSuccessful = false};
             }
@@ -197,28 +197,28 @@ namespace CourierDispatcherService.Services
             
             if (changes <= 0)
             {
-                Log.Information($"Order {request.OrderId} was not updated.");
+                Log.Information($"Order {context.OrderId} was not updated.");
                 
                 return new Result<Order> {Reason = ReasonType.DatabaseError, ChangeCount = changes, IsSuccessful = false};
             }
             
-            Log.Information($"Order {request.OrderId} and courier {request.CourierId} information was updated.");
+            Log.Information($"Order {context.OrderId} and courier {context.CourierId} information was updated.");
                 
             return new Result<Order> {ChangeCount = changes, Value = MapEntity(courier, order), IsSuccessful = true};
         }
 
-        public async Task<Result<Courier>> ChangeStatus(CourierStatusChangeRequest request)
+        public async Task<Result<Courier>> ChangeStatus(CourierStatusChangeContext context)
         {
-            var courier = await _db.Couriers.FindAsync(request.CourierId);
+            var courier = await _db.Couriers.FindAsync(context.CourierId);
             
             if (courier == null)
             {
-                Log.Information($"Courier {request.CourierId} could not be found.");
+                Log.Information($"Courier {context.CourierId} could not be found.");
                 
                 return new Result<Courier> {Reason = ReasonType.CourierNotFound, IsSuccessful = false};
             }
             
-            courier.Status = (int)request.Status;
+            courier.Status = (int)context.Status;
             courier.StatusTimestamp = DateTime.Now;
             
             _db.Update(courier);
@@ -227,14 +227,14 @@ namespace CourierDispatcherService.Services
             
             if (changes <= 0)
             {
-                Log.Information($"Courier {request.CourierId} status was not updated.");
+                Log.Information($"Courier {context.CourierId} status was not updated.");
                 
                 return new Result<Courier> {Reason = ReasonType.DatabaseError, ChangeCount = changes, IsSuccessful = false};
             }
             
             var address = await _db.Addresses.FindAsync(courier.AddressId);
 
-            Log.Information($"Courier {request.CourierId} status was updated.");
+            Log.Information($"Courier {context.CourierId} status was updated.");
                 
             return new Result<Courier> {ChangeCount = changes, Value = MapEntity(courier, address), IsSuccessful = true};
         }

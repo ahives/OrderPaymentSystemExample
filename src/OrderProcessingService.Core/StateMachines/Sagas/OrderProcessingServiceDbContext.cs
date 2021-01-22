@@ -8,8 +8,6 @@ namespace OrderProcessingService.Core.StateMachines.Sagas
     public class OrderProcessingServiceDbContext :
         SagaDbContext
     {
-        public DbSet<ExpectedOrderItem> ExpectedOrderItems { get; set; }
-        
         public OrderProcessingServiceDbContext(DbContextOptions<OrderProcessingServiceDbContext> options)
             : base(options)
         {

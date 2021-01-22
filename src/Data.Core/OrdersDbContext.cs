@@ -20,6 +20,7 @@ namespace Data.Core
         public DbSet<IngredientEntity> Ingredients { get; set; }
         public DbSet<InventoryItemEntity> InventoryItems { get; set; }
         public DbSet<MenuItemIngredientEntity> MenuItemIngredients { get; set; }
+        public DbSet<ExpectedOrderItemEntity> ExpectedOrderItems { get; set; }
 
         public OrdersDbContext(DbContextOptions<OrdersDbContext> options)
             : base(options)

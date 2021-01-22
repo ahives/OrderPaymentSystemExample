@@ -190,7 +190,7 @@ namespace Services.Core.Tests
 
             // var db = _provider.GetService<OrdersDbContext>();
             
-            var result = await dispatcher.PickUpOrder(new CourierDispatchRequest
+            var result = await dispatcher.PickUpOrder(new CourierDispatchContext
             {
                 OrderId = _orderId,
                 CourierId = _courierId
@@ -205,7 +205,7 @@ namespace Services.Core.Tests
         {
             var dispatcher = _provider.GetService<ICourierDispatcher>();
 
-            var result = await dispatcher.Deliver(new CourierDispatchRequest
+            var result = await dispatcher.Deliver(new CourierDispatchContext
             {
                 OrderId = _orderId,
                 CourierId = _courierId

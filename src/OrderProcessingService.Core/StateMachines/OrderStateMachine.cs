@@ -27,7 +27,10 @@ namespace OrderProcessingService.Core.StateMachines
                         thenBinder => thenBinder.TransitionTo(Prepared),
                         elseBinder => elseBinder.TransitionTo(Pending)),
                 When(OrderItemNotPreparedEvent)
-                    .TransitionTo(NotPrepared));
+                    .TransitionTo(NotPrepared),
+                When(OrderCanceledEvent)
+                    .Activity(x => x.OfType<OrderCanceledActivity>())
+                    .TransitionTo(Canceled));
 
             // During(Canceled,
             //     When(OrderCanceled)
@@ -42,7 +45,7 @@ namespace OrderProcessingService.Core.StateMachines
 
         public Event<RequestOrderPreparation> PrepareOrderRequestEvent { get; private set; }
         public Event<OrderItemPrepared> OrderItemPreparedEvent { get; private set; }
-        // public Event<OrderCanceled> OrderCanceled { get; private set; }
+        public Event<OrderCanceled> OrderCanceledEvent { get; private set; }
         public Event<OrderItemNotPrepared> OrderItemNotPreparedEvent { get; private set; }
         // public Event<PrepareOrder> PrepareOrder { get; private set; }
     }

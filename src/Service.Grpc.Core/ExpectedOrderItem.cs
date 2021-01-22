@@ -4,7 +4,7 @@ namespace Service.Grpc.Core
     using System.Runtime.Serialization;
 
     [DataContract]
-    public record OrderPrepRequest
+    public class ExpectedOrderItem
     {
         [DataMember(Order = 1)]
         public Guid OrderId { get; init; }
@@ -13,9 +13,6 @@ namespace Service.Grpc.Core
         public Guid OrderItemId { get; init; }
         
         [DataMember(Order = 3)]
-        public Guid MenuItemId { get; init; }
-        
-        [DataMember(Order = 4)]
-        public string SpecialInstructions { get; init; }
+        public int Status { get; init; }
     }
 }

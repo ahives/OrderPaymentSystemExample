@@ -21,7 +21,7 @@ namespace CourierService.Core.Consumers
         {
             Log.Information($"Consumer - {nameof(OrderDeliveryConsumer)} => consumed {nameof(DeliverOrder)} event");
 
-            var result = await _client.Client.Deliver(new CourierDispatchRequest()
+            var result = await _client.Client.Deliver(new CourierDispatchContext()
             {
                 CourierId = context.Message.CourierId
             });
@@ -40,7 +40,7 @@ namespace CourierService.Core.Consumers
             }
             else
             {
-                var statusResult = await _client.Client.ChangeStatus(new CourierStatusChangeRequest()
+                var statusResult = await _client.Client.ChangeStatus(new CourierStatusChangeContext()
                 {
                     CourierId = context.Message.CourierId,
                     Status = CourierStatus.ArrivedAtCustomer

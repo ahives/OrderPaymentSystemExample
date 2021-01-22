@@ -30,9 +30,9 @@ namespace OrderProcessingService.Core.StateMachines
                 When(OrderItemNotPreparedEvent)
                     .Activity(x => x.OfType<OrderItemNotPreparedActivity>())
                     .TransitionTo(NotPrepared),
-                // When(OrderCanceledEvent)
-                //     .Activity(x => x.OfType<CancelOrderItemActivity>())
-                //     .TransitionTo(Canceled),
+                When(OrderCanceledEvent)
+                    .Activity(x => x.OfType<CancelOrderItemActivity>())
+                    .TransitionTo(Canceled),
                 Ignore(RequestOrderItemPreparationEvent));
             
             During(Prepared,

@@ -1,7 +1,6 @@
 namespace OrderProcessingService.Core.StateMachines.Sagas
 {
     using System;
-    using System.Collections.Generic;
     using Automatonymous;
 
     public class OrderState :
@@ -20,8 +19,6 @@ namespace OrderProcessingService.Core.StateMachines.Sagas
         public int ExpectedItemCount { get; set; }
         
         public int ActualItemCount { get; set; }
-        
-        public List<ExpectedOrderItem> Items { get; set; }
         
         public DateTime Timestamp { get; set; }
         

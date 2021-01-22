@@ -4,9 +4,9 @@ namespace Service.Grpc.Core
     using System.Runtime.Serialization;
 
     [DataContract]
-    public record CourierIdentificationRequest
+    public class ExpectedOrderItemCountContext
     {
         [DataMember(Order = 1)]
-        public Guid CustomerId { get; init; }
+        public Guid OrderId { get; init; }
     }
 }

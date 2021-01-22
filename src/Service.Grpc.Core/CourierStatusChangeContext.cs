@@ -5,7 +5,7 @@ namespace Service.Grpc.Core
     using Data.Core;
 
     [DataContract]
-    public record CourierStatusChangeRequest
+    public record CourierStatusChangeContext
     {
         [DataMember(Order = 1)]
         public Guid CourierId { get; init; }

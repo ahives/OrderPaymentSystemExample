@@ -1,6 +1,7 @@
 namespace KitchenManagerService.Services
 {
     using System;
+    using System.Linq;
     using System.Threading.Tasks;
     using Data.Core;
     using Data.Core.Model;
@@ -11,63 +12,150 @@ namespace KitchenManagerService.Services
     public class OrderProcessor :
         IOrderProcessor
     {
-        readonly OrdersDbContext _db;
+        readonly OrdersDbContext _dbContext;
 
-        public OrderProcessor(OrdersDbContext db)
+        public OrderProcessor(OrdersDbContext dbContext)
         {
-            _db = db;
+            _dbContext = dbContext;
         }
 
-        public async Task<Result<Order>> AddNewOrder(OrderProcessRequest request)
+        public async Task<Result<Order>> AddNewOrder(OrderProcessContext context)
         {
-            var entity = CreateOrderEntity(request);
+            var entity = CreateOrderEntity(context);
                 
-            await _db.Orders.AddAsync(entity);
+            await _dbContext.Orders.AddAsync(entity);
 
-            int changes = await _db.SaveChangesAsync();
+            int changes = await _dbContext.SaveChangesAsync();
 
             if (changes <= 0)
             {
-                Log.Information($"Order {request.OrderId} could not be saved.");
+                Log.Information($"Order {context.OrderId} could not be saved.");
                 
                 return new Result<Order> {Reason = ReasonType.DatabaseError, ChangeCount = changes, IsSuccessful = false};
             }
                 
-            Log.Information($"Order {request.OrderId} was saved.");
+            Log.Information($"Order {context.OrderId} was saved.");
                 
             return new Result<Order> {Value = MapOrderEntity(entity), ChangeCount = changes, IsSuccessful = true};
         }
 
-        public async Task<Result<OrderItem>> AddNewOrderItem(OrderPrepRequest request)
+        public async Task<Result<OrderItem>> AddNewOrderItem(OrderItemPreparationContext context)
         {
-            var target = await _db.OrderItems.FindAsync(request.OrderItemId);
+            var target = await _dbContext.OrderItems.FindAsync(context.OrderItemId);
 
             if (target != null)
             {
-                Log.Information($"Order item {request.OrderId} already exists.");
+                Log.Information($"Order item {context.OrderId} already exists.");
                 
                 return new Result<OrderItem> {Value = null, IsSuccessful = false};
             }
             
-            var entity = MapRequest(request);
+            var entity = MapRequest(context);
                 
-            await _db.OrderItems.AddAsync(entity);
+            await _dbContext.OrderItems.AddAsync(entity);
 
-            int changes = await _db.SaveChangesAsync();
+            int changes = await _dbContext.SaveChangesAsync();
 
             if (changes <= 0)
             {
-                Log.Information($"Order item {request.OrderItemId} of Order {request.OrderId} could not be saved.");
+                Log.Information($"Order item {context.OrderItemId} of Order {context.OrderId} could not be saved.");
                 
-                return new Result<OrderItem> {Value = null, ChangeCount = changes, IsSuccessful = false};
+                return new Result<OrderItem> {Reason = ReasonType.DatabaseError, ChangeCount = changes, IsSuccessful = false};
             }
                 
-            Log.Information($"Order {request.OrderItemId} was saved.");
+            Log.Information($"Order {context.OrderItemId} was saved.");
                 
-            return new Result<OrderItem> {Value = MapEntity(entity), ChangeCount = changes, IsSuccessful = true};
+            return new Result<OrderItem> {Value = MapToOrderItem(entity), ChangeCount = changes, IsSuccessful = true};
         }
 
-        OrderItem MapEntity(OrderItemEntity entity) =>
+        public async Task<Result<ExpectedOrderItem>> AddExpectedOrderItem(AddExpectedOrderItemContext context)
+        {
+            var item = await _dbContext.ExpectedOrderItems.FindAsync(context.OrderItemId);
+
+            if (item != null)
+            {
+                Log.Information($"Order item {context.OrderItemId} already exists.");
+
+                return new Result<ExpectedOrderItem> {Value = null, IsSuccessful = false};
+            }
+            
+            var entity = MapAddExpectedOrderItemContext(context);
+                
+            await _dbContext.ExpectedOrderItems.AddAsync(entity);
+
+            int changes = await _dbContext.SaveChangesAsync();
+
+            if (changes <= 0)
+            {
+                Log.Information($"Order item {context.OrderItemId} could not be saved.");
+
+                return new Result<ExpectedOrderItem> {Reason = ReasonType.DatabaseError, ChangeCount = changes, IsSuccessful = false};
+            }
+
+            Log.Information($"Order item {context.OrderItemId} was saved.");
+
+            return new Result<ExpectedOrderItem> {Value = MapToExpectedOrderItem(entity), ChangeCount = changes, IsSuccessful = true};
+        }
+
+        public async Task<Result<ExpectedOrderItem>> UpdateExpectedOrderItem(ExpectedOrderItemContext context)
+        {
+            var item = await _dbContext.ExpectedOrderItems.FindAsync(context.OrderItemId);
+
+            if (item == null)
+            {
+                Log.Information($"Could not find order item {context.OrderItemId}.");
+
+                return new Result<ExpectedOrderItem> {Value = null, IsSuccessful = false};
+            }
+
+            item.Status = context.Status;
+
+            _dbContext.ExpectedOrderItems.Update(item);
+
+            int changes = await _dbContext.SaveChangesAsync();
+
+            if (changes <= 0)
+            {
+                Log.Information($"Order item {context.OrderItemId} could not be saved.");
+
+                return new Result<ExpectedOrderItem> {Reason = ReasonType.DatabaseError, ChangeCount = changes, IsSuccessful = false};
+            }
+
+            Log.Information($"Order item {context.OrderItemId} was saved.");
+
+            return new Result<ExpectedOrderItem> {Value = MapToExpectedOrderItem(item), ChangeCount = changes, IsSuccessful = true};
+        }
+
+        public async Task<Result<int>> GetExpectedOrderItemCount(ExpectedOrderItemCountContext context)
+        {
+            var items = _dbContext.ExpectedOrderItems
+                .Where(x => x.OrderId == context.OrderId);
+
+            if (!items.Any())
+            {
+                Log.Information($"Could not find any order items for order {context.OrderId}.");
+
+                return new Result<int> {Reason = ReasonType.None, IsSuccessful = false};
+            }
+            
+            int count = items.Count(x => x.Status == (int) OrderItemStatus.Prepared);
+
+            Log.Information($"Found order items for order {context.OrderId}.");
+
+            return new Result<int> {Value = count, IsSuccessful = true};
+        }
+
+        public async Task<Result<OrderItem>> CancelOrder(CancelOrderContext context) => throw new NotImplementedException();
+
+        ExpectedOrderItem MapToExpectedOrderItem(ExpectedOrderItemEntity entity) =>
+            new()
+            {
+                OrderId = entity.OrderId,
+                OrderItemId = entity.OrderItemId,
+                Status = entity.Status
+            };
+
+        OrderItem MapToOrderItem(OrderItemEntity entity) =>
             new()
             {
                 OrderId = entity.OrderId,
@@ -83,13 +171,13 @@ namespace KitchenManagerService.Services
                 CreationTimestamp = entity.CreationTimestamp
             };
 
-        OrderItemEntity MapRequest(OrderPrepRequest request) =>
+        OrderItemEntity MapRequest(OrderItemPreparationContext context) =>
             new()
             {
-                OrderItemId = request.OrderItemId,
-                OrderId = request.OrderId,
-                MenuItemId = request.MenuItemId,
-                SpecialInstructions = request.SpecialInstructions,
+                OrderItemId = context.OrderItemId,
+                OrderId = context.OrderId,
+                MenuItemId = context.MenuItemId,
+                SpecialInstructions = context.SpecialInstructions,
                 Status = (int)OrderItemStatus.Prepared,
                 StatusTimestamp = DateTime.Now,
                 TimePrepared = DateTime.Now,
@@ -109,14 +197,22 @@ namespace KitchenManagerService.Services
                 StatusTimestamp = entity.StatusTimestamp
             };
 
-        OrderEntity CreateOrderEntity(OrderProcessRequest request) =>
+        ExpectedOrderItemEntity MapAddExpectedOrderItemContext(AddExpectedOrderItemContext context) =>
             new()
             {
-                OrderId = request.OrderId,
+                OrderId = context.OrderId,
+                OrderItemId = context.OrderItemId,
+                Status = context.Status
+            };
+
+        OrderEntity CreateOrderEntity(OrderProcessContext context) =>
+            new()
+            {
+                OrderId = context.OrderId,
                 CourierId = null,
-                CustomerId = request.CustomerId,
-                RestaurantId = request.RestaurantId,
-                AddressId = request.AddressId,
+                CustomerId = context.CustomerId,
+                RestaurantId = context.RestaurantId,
+                AddressId = context.AddressId,
                 CustomerPickup = false,
                 Status = (int) OrderStatus.Receipt,
                 StatusTimestamp = DateTime.Now,
