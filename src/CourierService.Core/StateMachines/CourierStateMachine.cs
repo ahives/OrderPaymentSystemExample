@@ -32,7 +32,7 @@ namespace CourierService.Core.StateMachines
             Event(() => OrderExpiredEvent, e => e.CorrelateById(context => context.Message.OrderId));
             Event(() => OrderCanceledEvent, e => e.CorrelateById(context => context.Message.OrderId));
 
-            var settings = options.Value;
+            CourierServiceSettings settings = options.Value;
             
             Schedule(() => OrderCompletionTimeout, instance => instance.OrderCompletionTimeoutTokenId, s =>
             {

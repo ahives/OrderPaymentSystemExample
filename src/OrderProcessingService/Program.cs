@@ -57,10 +57,13 @@
                     
                     services.AddMassTransit(x =>
                     {
+                        x.SetKebabCaseEndpointNameFormatter();
+                        
                         x.AddConsumer<PrepareOrderItemConsumer>();
                         x.AddConsumer<PrepareOrderConsumer>();
                         
-                        x.SetKebabCaseEndpointNameFormatter();
+                        x.AddSagaStateMachine(typeof(OrderStateMachine), typeof(OrderStateDefinition));
+                        x.AddSagaStateMachine(typeof(OrderItemStateMachine), typeof(OrderItemStateDefinition));
                         
                         x.UsingRabbitMq((context, cfg) =>
                         {
