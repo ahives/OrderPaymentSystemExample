@@ -1,9 +1,6 @@
 namespace Services.Core.Events
 {
     using System;
-    using System.Runtime.CompilerServices;
-    using MassTransit;
-    using MassTransit.Topology.Topologies;
 
     public class OrderItemNotPrepared
     {

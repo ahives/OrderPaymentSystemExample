@@ -2,7 +2,7 @@ namespace OrderProcessingWbService
 {
     using System;
 
-    public record OrderCancelRequest
+    public record CancelOrderContext
     {
         public Guid CourierId { get; init; }
         

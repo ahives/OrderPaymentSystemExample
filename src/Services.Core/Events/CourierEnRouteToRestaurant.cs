@@ -1,25 +1,13 @@
 namespace Services.Core.Events
 {
     using System;
-    using System.Runtime.CompilerServices;
-    using MassTransit;
-    using MassTransit.Topology.Topologies;
 
     public record CourierEnRouteToRestaurant
     {
         public CourierEnRouteToRestaurant()
         {
-            EventId = NewId.NextGuid();
             Timestamp = DateTime.Now;
         }
-
-        [ModuleInitializer]
-        internal static void Init()
-        {
-            GlobalTopology.Send.UseCorrelationId<CourierEnRouteToRestaurant>(x => x.OrderId);
-        }
-
-        public Guid EventId { get; }
         
         public Guid CourierId { get; init; }
         
