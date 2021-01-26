@@ -1,4 +1,4 @@
-namespace Service.Grpc.Core
+namespace Service.Grpc.Core.Model
 {
     using System;
     using System.Runtime.Serialization;
