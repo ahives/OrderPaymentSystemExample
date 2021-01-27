@@ -26,5 +26,8 @@ namespace Service.Grpc.Core.Model
         
         [DataMember(Order = 7)]
         public Guid AddressId { get; init; }
+        
+        [DataMember(Order = 8)]
+        public bool CustomerPickup { get; init; }
     }
 }

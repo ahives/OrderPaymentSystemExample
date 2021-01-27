@@ -51,7 +51,7 @@ namespace OrderProcessingService.Core.StateMachines.Activities
             
             Log.Information($"ActualItemCount={result.Value}");
             
-            context.Instance.ActualItemCount = result.Value;
+            context.Instance.PreparedItemCount = result.Value;
 
             await next.Execute(context).ConfigureAwait(false);
         }

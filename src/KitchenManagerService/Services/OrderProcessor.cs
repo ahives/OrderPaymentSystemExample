@@ -1,6 +1,7 @@
 namespace KitchenManagerService.Services
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using Data.Core;
@@ -68,7 +69,18 @@ namespace KitchenManagerService.Services
             return new Result<OrderItem> {Value = MapToOrderItem(entity), ChangeCount = changes, IsSuccessful = true};
         }
 
-        public async Task<Result<ExpectedOrderItem>> AddExpectedOrderItem(AddExpectedOrderItemContext context)
+        public async Task<Result<IReadOnlyList<ExpectedOrderItem>>> GetExpectedOrderItems(
+            ExpectedOrderItemContext context)
+        {
+            var items = _dbContext.ExpectedOrderItems
+                .Where(x => x.OrderId == context.OrderId);
+                
+            Log.Information($"Order {context.OrderItemId} was saved.");
+                
+            return new Result<IReadOnlyList<ExpectedOrderItem>> {Value = MapToExpectedOrderItems(items).ToList(), IsSuccessful = true};
+        }
+
+        public async Task<Result<ExpectedOrderItem>> AddExpectedOrderItem(ExpectedOrderItemContext context)
         {
             var item = await _dbContext.ExpectedOrderItems.FindAsync(context.OrderItemId);
 
@@ -145,7 +157,65 @@ namespace KitchenManagerService.Services
             return new Result<int> {Value = count, IsSuccessful = true};
         }
 
-        public async Task<Result<OrderItem>> CancelOrder(CancelOrderContext context) => throw new NotImplementedException();
+        public async Task<Result<Order>> ChangeOrderStatus(CancelOrderContext context)
+        {
+            var order = await _dbContext.Orders.FindAsync(context.OrderId);
+            
+            if (order == null)
+            {
+                Log.Information($"Order {context.OrderId} could not be found.");
+                
+                return new Result<Order> {Reason = ReasonType.CourierNotFound, IsSuccessful = false};
+            }
+            
+            order.Status = (int)context.Status;
+            order.StatusTimestamp = DateTime.Now;
+            
+            _dbContext.Update(order);
+            
+            int changes = await _dbContext.SaveChangesAsync();
+            
+            if (changes <= 0)
+            {
+                Log.Information($"Order {context.OrderId} status was not updated.");
+                
+                return new Result<Order> {Reason = ReasonType.DatabaseError, ChangeCount = changes, IsSuccessful = false};
+            }
+
+            Log.Information($"Order {context.OrderId} status was updated.");
+                
+            return new Result<Order> {ChangeCount = changes, Value = MapToOrder(order), IsSuccessful = true};
+        }
+
+        public async Task<Result<OrderItem>> ChangeOrderItemStatus(CancelOrderItemContext context)
+        {
+            var orderItem = await _dbContext.OrderItems.FindAsync(context.OrderItemId);
+            
+            if (orderItem == null)
+            {
+                Log.Information($"Order item {context.OrderItemId} of order {context.OrderId} could not be found.");
+                
+                return new Result<OrderItem> {Reason = ReasonType.CourierNotFound, IsSuccessful = false};
+            }
+            
+            orderItem.Status = (int)context.Status;
+            orderItem.StatusTimestamp = DateTime.Now;
+            
+            _dbContext.Update(orderItem);
+            
+            int changes = await _dbContext.SaveChangesAsync();
+            
+            if (changes <= 0)
+            {
+                Log.Information($"Order item {context.OrderItemId} of order {context.OrderId} status was not updated.");
+                
+                return new Result<OrderItem> {Reason = ReasonType.DatabaseError, ChangeCount = changes, IsSuccessful = false};
+            }
+
+            Log.Information($"Order item {context.OrderItemId} of order {context.OrderId} status was updated.");
+                
+            return new Result<OrderItem> {ChangeCount = changes, Value = MapToOrderItem(orderItem), IsSuccessful = true};
+        }
 
         ExpectedOrderItem MapToExpectedOrderItem(ExpectedOrderItemEntity entity) =>
             new()
@@ -154,6 +224,9 @@ namespace KitchenManagerService.Services
                 OrderItemId = entity.OrderItemId,
                 Status = entity.Status
             };
+
+        IEnumerable<ExpectedOrderItem> MapToExpectedOrderItems(IQueryable<ExpectedOrderItemEntity> entities) =>
+            entities.Select(x => MapToExpectedOrderItem(x));
 
         OrderItem MapToOrderItem(OrderItemEntity entity) =>
             new()
@@ -197,7 +270,7 @@ namespace KitchenManagerService.Services
                 StatusTimestamp = entity.StatusTimestamp
             };
 
-        ExpectedOrderItemEntity MapAddExpectedOrderItemContext(AddExpectedOrderItemContext context) =>
+        ExpectedOrderItemEntity MapAddExpectedOrderItemContext(ExpectedOrderItemContext context) =>
             new()
             {
                 OrderId = context.OrderId,
@@ -217,6 +290,19 @@ namespace KitchenManagerService.Services
                 Status = (int) OrderStatus.Receipt,
                 StatusTimestamp = DateTime.Now,
                 CreationTimestamp = DateTime.Now
+            };
+
+        Order MapToOrder(OrderEntity entity) =>
+            new ()
+            {
+                OrderId = entity.OrderId,
+                CourierId = entity.CourierId,
+                CustomerId = entity.CustomerId,
+                RestaurantId = entity.RestaurantId,
+                AddressId = entity.AddressId,
+                Status = entity.Status,
+                StatusTimestamp = entity.StatusTimestamp,
+                CustomerPickup = entity.CustomerPickup
             };
 
         // public async IAsyncEnumerable<Result> Expire()

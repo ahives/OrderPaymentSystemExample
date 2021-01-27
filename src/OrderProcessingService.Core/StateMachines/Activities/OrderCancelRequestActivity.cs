@@ -10,13 +10,13 @@ namespace OrderProcessingService.Core.StateMachines.Activities
     using Service.Grpc.Core;
     using Services.Core.Events;
 
-    public class OrderCanceledActivity :
-        Activity<OrderState, OrderCanceled>
+    public class OrderCancelRequestActivity :
+        Activity<OrderState, OrderCancelRequest>
     {
         readonly ConsumeContext _context;
         readonly IGrpcClient<IOrderProcessor> _client;
 
-        public OrderCanceledActivity(ConsumeContext context, IGrpcClient<IOrderProcessor> client)
+        public OrderCancelRequestActivity(ConsumeContext context, IGrpcClient<IOrderProcessor> client)
         {
             _context = context;
             _client = client;
@@ -32,18 +32,33 @@ namespace OrderProcessingService.Core.StateMachines.Activities
             visitor.Visit(this);
         }
 
-        public async Task Execute(BehaviorContext<OrderState, OrderCanceled> context,
-            Behavior<OrderState, OrderCanceled> next)
+        public async Task Execute(BehaviorContext<OrderState, OrderCancelRequest> context,
+            Behavior<OrderState, OrderCancelRequest> next)
         {
             Log.Information($"Order State Machine - {nameof(OrderCanceledActivity)} (state = {context.Instance.CurrentState})");
 
             context.Instance.Timestamp = DateTime.Now;
+
+            var result = await _client.Client.GetExpectedOrderItems(new ()
+            {
+                OrderId = context.Data.OrderId
+            });
+
+            foreach (var item in result.Value)
+            {
+                await _context.Publish<OrderItemCancelRequest>(new ()
+                {
+                    OrderId = item.OrderId,
+                    OrderItemId = item.OrderItemId,
+                });
+            }
             
             await next.Execute(context).ConfigureAwait(false);
         }
 
-        public async Task Faulted<TException>(BehaviorExceptionContext<OrderState, OrderCanceled, TException> context,
-            Behavior<OrderState, OrderCanceled> next) where TException : Exception
+        public async Task Faulted<TException>(
+            BehaviorExceptionContext<OrderState, OrderCancelRequest, TException> context,
+            Behavior<OrderState, OrderCancelRequest> next) where TException : Exception
         {
             await next.Faulted(context);
         }

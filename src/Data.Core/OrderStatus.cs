@@ -6,6 +6,7 @@ namespace Data.Core
         Preparing = 1,
         Prepared = 2,
         Delivering = 3,
-        Delivered = 4
+        Delivered = 4,
+        Canceled = 5
     }
 }

@@ -2,7 +2,6 @@ namespace OrderProcessingService.Core.StateMachines
 {
     using Activities;
     using Automatonymous;
-    using MassTransit;
     using Sagas;
     using Services.Core.Events;
 
@@ -15,7 +14,9 @@ namespace OrderProcessingService.Core.StateMachines
             Event(() => OrderItemPreparedEvent, e => e.CorrelateById(context => context.Message.OrderItemId));
             Event(() => OrderItemNotPreparedEvent, e => e.CorrelateById(context => context.Message.OrderItemId));
             Event(() => OrderItemDiscardedEvent, e => e.CorrelateById(context => context.Message.OrderItemId));
-            Event(() => OrderCanceledEvent, e => e.CorrelateById(context => context.Message.OrderId));
+            // Event(() => OrderCanceledEvent, e => e.CorrelateById(context => context.Message.OrderId));
+            Event(() => OrderItemCancelRequestEvent, e => e.CorrelateById(context => context.Message.OrderId));
+            Event(() => OrderItemCanceledEvent, e => e.CorrelateById(context => context.Message.OrderItemId));
 
             InstanceState(x => x.CurrentState, Preparing, Prepared, Discarded, Canceled, Expired, NotPrepared);
 
@@ -30,11 +31,14 @@ namespace OrderProcessingService.Core.StateMachines
                 When(OrderItemNotPreparedEvent)
                     .Activity(x => x.OfType<OrderItemNotPreparedActivity>())
                     .TransitionTo(NotPrepared),
-                When(OrderCanceledEvent)
-                    .Activity(x => x.OfType<CancelOrderItemActivity>())
+                When(OrderItemCancelRequestEvent)
+                    .Activity(x => x.OfType<OrderItemCancelRequestActivity>())
+                    .TransitionTo(Preparing),
+                When(OrderItemCanceledEvent)
+                    .Activity(x => x.OfType<OrderItemCanceledActivity>())
                     .TransitionTo(Canceled),
                 Ignore(RequestOrderItemPreparationEvent));
-            
+
             During(Prepared,
                 When(OrderItemDiscardedEvent)
                     .Activity(x => x.OfType<OrderItemDiscardedActivity>())
@@ -42,8 +46,11 @@ namespace OrderProcessingService.Core.StateMachines
                 // When(OrderItemExpiredEvent)
                 //     .Activity(x => x.OfType<ExpireOrderItemActivity>())
                 //     .TransitionTo(Expired),
-                When(OrderCanceledEvent)
-                    .Activity(x => x.OfType<CancelOrderItemActivity>())
+                When(OrderItemCancelRequestEvent)
+                    .Activity(x => x.OfType<OrderItemCancelRequestActivity>())
+                    .TransitionTo(Preparing),
+                When(OrderItemCanceledEvent)
+                    .Activity(x => x.OfType<OrderItemCanceledActivity>())
                     .TransitionTo(Canceled));
             
             // During(Expired,
@@ -66,6 +73,14 @@ namespace OrderProcessingService.Core.StateMachines
             //     Ignore(OrderItemCanceledEvent),
             //     Ignore(OrderItemExpiredEvent),
             //     Ignore(OrderItemDiscardedEvent));
+            
+            // DuringAny(When(OrderCanceledEvent)
+            //     .Activity(x => x.OfType<CancelOrderItemActivity>())
+            //     .TransitionTo(Canceled));
+            //
+            // DuringAny(When(OrderItemCancelRequestEvent)
+            //     .Activity(x => x.OfType<OrderItemCancelRequestActivity>())
+            //     .TransitionTo(Canceled));
         }
         
         public State Preparing { get; }
@@ -80,8 +95,9 @@ namespace OrderProcessingService.Core.StateMachines
         public Event<OrderItemNotPrepared> OrderItemNotPreparedEvent { get; private set; }
         // public Event<OrderItemExpired> OrderItemExpiredEvent { get; private set; }
         public Event<OrderItemDiscarded> OrderItemDiscardedEvent { get; private set; }
-        public Event<OrderCanceled> OrderCanceledEvent { get; private set; }
-        // public Event<OrderItemCanceled> OrderItemCanceledEvent { get; private set; }
+        // public Event<OrderCanceled> OrderCanceledEvent { get; private set; }
+        public Event<OrderItemCancelRequest> OrderItemCancelRequestEvent { get; private set; }
+        public Event<OrderItemCanceled> OrderItemCanceledEvent { get; private set; }
         // public Event<OrderItemExceededPreparationLimit> OrderItemExceededPreparationLimitEvent { get; private set; }
     }
 }

@@ -61,6 +61,8 @@
                         
                         x.AddConsumer<PrepareOrderItemConsumer>();
                         x.AddConsumer<PrepareOrderConsumer>();
+                        x.AddConsumer<CancelOrderItemConsumer>();
+                        x.AddConsumer<CancelOrderConsumer>();
                         
                         x.AddSagaStateMachine(typeof(OrderStateMachine), typeof(OrderStateDefinition));
                         x.AddSagaStateMachine(typeof(OrderItemStateMachine), typeof(OrderItemStateDefinition));

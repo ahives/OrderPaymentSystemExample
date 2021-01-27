@@ -45,7 +45,8 @@ namespace OrderProcessingService.Core.StateMachines.Activities
             context.Instance.CustomerId = context.Data.CustomerId;
             context.Instance.RestaurantId = context.Data.RestaurantId;
             context.Instance.ExpectedItemCount = context.Data.Items.Length;
-            context.Instance.ActualItemCount = 0;
+            context.Instance.PreparedItemCount = 0;
+            context.Instance.CanceledItemCount = 0;
             
             var items = GenerateOrderItemIdentifiers(context.Data.Items).ToList();
 

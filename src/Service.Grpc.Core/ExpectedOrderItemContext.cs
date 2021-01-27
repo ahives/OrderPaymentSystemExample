@@ -7,9 +7,12 @@ namespace Service.Grpc.Core
     public class ExpectedOrderItemContext
     {
         [DataMember(Order = 1)]
-        public Guid OrderItemId { get; init; }
+        public Guid OrderId { get; init; }
         
         [DataMember(Order = 2)]
+        public Guid OrderItemId { get; init; }
+        
+        [DataMember(Order = 3)]
         public int Status { get; init; }
     }
 }

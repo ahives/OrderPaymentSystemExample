@@ -62,19 +62,45 @@ namespace OrderProcessingWebService.Controllers
             return Ok();
         }
 
-        [HttpPost("CancelOrder")]
-        public async Task<IActionResult> OrderCanceled(OrderCancelRequest request)
+        [HttpPost("CancelOrderRequest")]
+        public async Task<IActionResult> CancelOrderRequest(CancelOrderContext context)
         {
-            await _endpoint.Publish<OrderCanceled>(new()
+            await _endpoint.Publish<OrderCancelRequest>(new()
             {
-                CourierId = request.CourierId,
-                OrderId = request.OrderId,
-                CustomerId = request.CustomerId,
-                RestaurantId = request.RestaurantId
+                CourierId = context.CourierId,
+                OrderId = context.OrderId,
+                CustomerId = context.CustomerId,
+                RestaurantId = context.RestaurantId
             });
 
             return Ok();
         }
+
+        [HttpPost("CancelOrderItemRequest")]
+        public async Task<IActionResult> CancelOrderItemRequest(CancelOrderItemContext context)
+        {
+            await _endpoint.Publish<OrderItemCancelRequest>(new()
+            {
+                OrderId = context.OrderId,
+                OrderItemId = context.OrderItemId
+            });
+
+            return Ok();
+        }
+
+        // [HttpPost("CancelOrder")]
+        // public async Task<IActionResult> OrderCanceled(CancelOrderContext context)
+        // {
+        //     await _endpoint.Publish<OrderCanceled>(new()
+        //     {
+        //         CourierId = context.CourierId,
+        //         OrderId = context.OrderId,
+        //         CustomerId = context.CustomerId,
+        //         RestaurantId = context.RestaurantId
+        //     });
+        //
+        //     return Ok();
+        // }
 
         [HttpPost("DiscardOrderItem")]
         public async Task<IActionResult> OrderItemDiscarded(OrderDiscardRequest request)

@@ -1,5 +1,6 @@
 namespace Service.Grpc.Core
 {
+    using System.Collections.Generic;
     using System.ServiceModel;
     using System.Threading.Tasks;
     using Model;
@@ -14,7 +15,10 @@ namespace Service.Grpc.Core
         Task<Result<OrderItem>> AddNewOrderItem(OrderItemPreparationContext context);
         
         [OperationContract]
-        Task<Result<ExpectedOrderItem>> AddExpectedOrderItem(AddExpectedOrderItemContext context);
+        Task<Result<IReadOnlyList<ExpectedOrderItem>>> GetExpectedOrderItems(ExpectedOrderItemContext context);
+        
+        [OperationContract]
+        Task<Result<ExpectedOrderItem>> AddExpectedOrderItem(ExpectedOrderItemContext context);
         
         [OperationContract]
         Task<Result<ExpectedOrderItem>> UpdateExpectedOrderItem(ExpectedOrderItemContext context);
@@ -23,6 +27,9 @@ namespace Service.Grpc.Core
         Task<Result<int>> GetExpectedOrderItemCount(ExpectedOrderItemCountContext context);
         
         [OperationContract]
-        Task<Result<OrderItem>> CancelOrder(CancelOrderContext context);
+        Task<Result<Order>> ChangeOrderStatus(CancelOrderContext context);
+        
+        [OperationContract]
+        Task<Result<OrderItem>> ChangeOrderItemStatus(CancelOrderItemContext context);
     }
 }
