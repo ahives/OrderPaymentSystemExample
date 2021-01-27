@@ -21,12 +21,12 @@ namespace OrderProcessingService.Core.StateMachines.Activities
 
         public void Probe(ProbeContext context)
         {
-            throw new NotImplementedException();
+            context.CreateScope("");
         }
 
         public void Accept(StateMachineVisitor visitor)
         {
-            throw new NotImplementedException();
+            visitor.Visit(this);
         }
 
         public async Task Execute(BehaviorContext<OrderItemState, OrderItemCancelRequest> context,
@@ -45,6 +45,11 @@ namespace OrderProcessingService.Core.StateMachines.Activities
             await next.Execute(context).ConfigureAwait(false);
         }
 
-        public async Task Faulted<TException>(BehaviorExceptionContext<OrderItemState, OrderItemCancelRequest, TException> context, Behavior<OrderItemState, OrderItemCancelRequest> next) where TException : Exception => throw new NotImplementedException();
+        public async Task Faulted<TException>(
+            BehaviorExceptionContext<OrderItemState, OrderItemCancelRequest, TException> context,
+            Behavior<OrderItemState, OrderItemCancelRequest> next) where TException : Exception
+        {
+            await next.Faulted(context);
+        }
     }
 }

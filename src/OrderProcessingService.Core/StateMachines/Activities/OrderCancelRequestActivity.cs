@@ -35,7 +35,7 @@ namespace OrderProcessingService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<OrderState, OrderCancelRequest> context,
             Behavior<OrderState, OrderCancelRequest> next)
         {
-            Log.Information($"Order State Machine - {nameof(OrderCanceledActivity)} (state = {context.Instance.CurrentState})");
+            Log.Information($"Order State Machine - {nameof(OrderCancelRequestActivity)} (state = {context.Instance.CurrentState})");
 
             context.Instance.Timestamp = DateTime.Now;
 

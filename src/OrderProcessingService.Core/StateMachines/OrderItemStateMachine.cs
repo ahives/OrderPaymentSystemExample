@@ -37,7 +37,8 @@ namespace OrderProcessingService.Core.StateMachines
                 When(OrderItemCanceledEvent)
                     .Activity(x => x.OfType<OrderItemCanceledActivity>())
                     .TransitionTo(Canceled),
-                Ignore(RequestOrderItemPreparationEvent));
+                Ignore(RequestOrderItemPreparationEvent),
+                Ignore(OrderItemDiscardedEvent));
 
             During(Prepared,
                 When(OrderItemDiscardedEvent)
