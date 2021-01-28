@@ -14,7 +14,7 @@ namespace OrderProcessingService.Core.StateMachines
             Event(() => OrderItemPreparedEvent, e => e.CorrelateById(context => context.Message.OrderId));
             Event(() => OrderItemExpiredEvent, e => e.CorrelateById(context => context.Message.OrderId));
             Event(() => OrderCancelRequestEvent, e => e.CorrelateById(context => context.Message.OrderId));
-            Event(() => OrderItemCanceledEvent, e => e.CorrelateById(context => context.Message.OrderItemId));
+            Event(() => OrderItemCanceledEvent, e => e.CorrelateById(context => context.Message.OrderId));
             Event(() => OrderCanceledEvent, e => e.CorrelateById(context => context.Message.OrderId));
             
             InstanceState(x => x.CurrentState, Pending, Prepared, NotPrepared, Canceled);
@@ -60,10 +60,10 @@ namespace OrderProcessingService.Core.StateMachines
                     .Activity(x => x.OfType<OrderItemsExpiredActivity>())
                     .TransitionTo(Pending));
             
-            // During(Canceled,
-            //     When(OrderCanceled)
-            //         .Activity(x => x.OfType<OrderCanceledActivity>())
-            //         .TransitionTo(Canceled));
+            During(Canceled,
+                When(OrderCanceledEvent)
+                    .Activity(x => x.OfType<OrderCanceledActivity>())
+                    .TransitionTo(Canceled));
         }
 
         public State Pending { get; }

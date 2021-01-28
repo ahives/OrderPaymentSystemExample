@@ -36,14 +36,15 @@ namespace OrderProcessingService.Core.StateMachines.Activities
 
             context.Instance.Timestamp = DateTime.Now;
             context.Instance.OrderId = context.Data.OrderId;
-            
-            await _context.Publish<PrepareOrderItem>(new
-            {
-                context.Data.OrderId,
-                context.Data.OrderItemId,
-                context.Data.RestaurantId,
-                context.Data.MenuItemId
-            });
+
+            await _context.Publish<PrepareOrderItem>(
+                new
+                {
+                    context.Data.OrderId,
+                    context.Data.OrderItemId,
+                    context.Data.RestaurantId,
+                    context.Data.MenuItemId
+                });
             
             Log.Information($"Published - {nameof(PrepareOrderItem)}");
             Log.Information($"Order Item ID - {context.Data.OrderItemId}");

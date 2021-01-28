@@ -15,12 +15,12 @@ namespace OrderProcessingService.Core.StateMachines.Activities
         Activity<OrderState, OrderItemCanceled>
     {
         readonly ConsumeContext _context;
-        readonly IGrpcClient<IOrderProcessor> _client;
+        readonly IOrderProcessor _client;
 
-        public OrderItemsCanceledActivity(ConsumeContext context, IGrpcClient<IOrderProcessor> client)
+        public OrderItemsCanceledActivity(ConsumeContext context, IGrpcClient<IOrderProcessor> grpcClient)
         {
             _context = context;
-            _client = client;
+            _client = grpcClient.Client;
         }
 
         public void Probe(ProbeContext context)
@@ -39,15 +39,8 @@ namespace OrderProcessingService.Core.StateMachines.Activities
             Log.Information($"Order State Machine - {nameof(OrderItemsCanceledActivity)} (state = {context.Instance.CurrentState})");
 
             context.Instance.Timestamp = DateTime.Now;
-
-            // var updateResult = await _client.Client.UpdateExpectedOrderItem(
-            //     new ()
-            //     {
-            //         OrderItemId = context.Data.OrderItemId,
-            //         Status = OrderItemStatus.Canceled
-            //     });
             
-            var result = await _client.Client.GetOrderItemCount(
+            var result = await _client.GetOrderItemCount(
                 new ()
                 {
                     OrderId = context.Instance.CorrelationId,
@@ -62,13 +55,14 @@ namespace OrderProcessingService.Core.StateMachines.Activities
 
             if (context.Instance.CanceledItemCount == context.Instance.ExpectedItemCount)
             {
-                await _context.Publish<CancelOrder>(new()
-                {
-                    OrderId = context.Data.OrderId,
-                    CourierId = context.Instance.CourierId,
-                    CustomerId = context.Instance.CustomerId,
-                    RestaurantId = context.Instance.RestaurantId
-                });
+                await _context.Publish<CancelOrder>(
+                    new()
+                    {
+                        OrderId = context.Data.OrderId,
+                        CourierId = context.Instance.CourierId,
+                        CustomerId = context.Instance.CustomerId,
+                        RestaurantId = context.Instance.RestaurantId
+                    });
 
                 Log.Information($"Published - {nameof(CancelOrder)}");
             }

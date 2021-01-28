@@ -14,12 +14,12 @@ namespace OrderProcessingService.Core.StateMachines.Activities
         Activity<OrderState, OrderCancelRequest>
     {
         readonly ConsumeContext _context;
-        readonly IGrpcClient<IOrderProcessor> _client;
+        readonly IOrderProcessor _client;
 
-        public OrderCancelRequestActivity(ConsumeContext context, IGrpcClient<IOrderProcessor> client)
+        public OrderCancelRequestActivity(ConsumeContext context, IGrpcClient<IOrderProcessor> grpcClient)
         {
             _context = context;
-            _client = client;
+            _client = grpcClient.Client;
         }
 
         public void Probe(ProbeContext context)
@@ -39,20 +39,22 @@ namespace OrderProcessingService.Core.StateMachines.Activities
 
             context.Instance.Timestamp = DateTime.Now;
 
-            var result = await _client.Client.GetExpectedOrderItems(new ()
-            {
-                OrderId = context.Data.OrderId
-            });
+            var result = await _client.GetExpectedOrderItems(
+                new()
+                {
+                    OrderId = context.Data.OrderId
+                });
 
             foreach (var item in result.Value)
             {
-                await _context.Publish<OrderItemCancelRequest>(new ()
-                {
-                    OrderId = item.OrderId,
-                    OrderItemId = item.OrderItemId,
-                    CustomerId = context.Data.CustomerId,
-                    RestaurantId = context.Data.RestaurantId
-                });
+                await _context.Publish<OrderItemCancelRequest>(
+                    new()
+                    {
+                        OrderId = item.OrderId,
+                        OrderItemId = item.OrderItemId,
+                        CustomerId = context.Data.CustomerId,
+                        RestaurantId = context.Data.RestaurantId
+                    });
             
                 Log.Information($"Published - {nameof(OrderItemCancelRequest)}");
             }

@@ -31,7 +31,8 @@ namespace OrderProcessingService.Core.StateMachines.Activities
 
         public async Task Faulted<TException>(
             BehaviorExceptionContext<OrderItemState, OrderItemNotPrepared, TException> context,
-            Behavior<OrderItemState, OrderItemNotPrepared> next) where TException : Exception
+            Behavior<OrderItemState, OrderItemNotPrepared> next)
+            where TException : Exception
         {
             await next.Faulted(context);
         }

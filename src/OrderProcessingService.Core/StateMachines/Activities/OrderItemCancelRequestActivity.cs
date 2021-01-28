@@ -36,13 +36,14 @@ namespace OrderProcessingService.Core.StateMachines.Activities
 
             context.Instance.Timestamp = DateTime.Now;
 
-            await _context.Publish<CancelOrderItem>(new ()
-            {
-                OrderId = context.Data.OrderId,
-                OrderItemId = context.Data.OrderItemId,
-                CustomerId = context.Data.CustomerId,
-                RestaurantId = context.Data.RestaurantId
-            });
+            await _context.Publish<CancelOrderItem>(
+                new()
+                {
+                    OrderId = context.Data.OrderId,
+                    OrderItemId = context.Data.OrderItemId,
+                    CustomerId = context.Data.CustomerId,
+                    RestaurantId = context.Data.RestaurantId
+                });
             
             Log.Information($"Published - {nameof(CancelOrderItem)}");
             

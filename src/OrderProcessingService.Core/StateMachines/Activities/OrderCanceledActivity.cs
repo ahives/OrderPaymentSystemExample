@@ -4,24 +4,13 @@ namespace OrderProcessingService.Core.StateMachines.Activities
     using System.Threading.Tasks;
     using Automatonymous;
     using GreenPipes;
-    using MassTransit;
     using Sagas;
     using Serilog;
-    using Service.Grpc.Core;
     using Services.Core.Events;
 
     public class OrderCanceledActivity :
         Activity<OrderState, OrderCanceled>
     {
-        readonly ConsumeContext _context;
-        readonly IGrpcClient<IOrderProcessor> _client;
-
-        public OrderCanceledActivity(ConsumeContext context, IGrpcClient<IOrderProcessor> client)
-        {
-            _context = context;
-            _client = client;
-        }
-
         public void Probe(ProbeContext context)
         {
             context.CreateScope("");

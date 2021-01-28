@@ -13,11 +13,11 @@ namespace OrderProcessingService.Core.StateMachines.Activities
     public class OrderItemsPreparedActivity :
         Activity<OrderState, OrderItemPrepared>
     {
-        readonly IGrpcClient<IOrderProcessor> _client;
+        readonly IOrderProcessor _client;
 
-        public OrderItemsPreparedActivity(IGrpcClient<IOrderProcessor> client)
+        public OrderItemsPreparedActivity(IGrpcClient<IOrderProcessor> grpcClient)
         {
-            _client = client;
+            _client = grpcClient.Client;
         }
 
         public void Probe(ProbeContext context)
@@ -37,14 +37,14 @@ namespace OrderProcessingService.Core.StateMachines.Activities
 
             context.Instance.Timestamp = DateTime.Now;
 
-            var updateResult = await _client.Client.UpdateExpectedOrderItem(
+            var updateResult = await _client.UpdateExpectedOrderItem(
                 new ()
                 {
                     OrderItemId = context.Data.OrderItemId,
                     Status = OrderItemStatus.Prepared
                 });
             
-            var result = await _client.Client.GetOrderItemCount(
+            var result = await _client.GetOrderItemCount(
                 new ()
                 {
                     OrderId = context.Instance.CorrelationId,

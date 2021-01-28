@@ -18,12 +18,12 @@ namespace OrderProcessingService.Core.StateMachines.Activities
         Activity<OrderState, RequestOrderPreparation>
     {
         readonly ConsumeContext _context;
-        readonly IGrpcClient<IOrderProcessor> _client;
+        readonly IOrderProcessor _client;
 
-        public PrepareOrderRequestedActivity(ConsumeContext context, IGrpcClient<IOrderProcessor> client)
+        public PrepareOrderRequestedActivity(ConsumeContext context, IGrpcClient<IOrderProcessor> grpcClient)
         {
             _context = context;
-            _client = client;
+            _client = grpcClient.Client;
         }
 
         public void Probe(ProbeContext context)
@@ -52,7 +52,7 @@ namespace OrderProcessingService.Core.StateMachines.Activities
 
             foreach (var item in items)
             {
-                await _client.Client.AddExpectedOrderItem(
+                await _client.AddExpectedOrderItem(
                     new ()
                     {
                         OrderId = context.Instance.CorrelationId,
@@ -60,15 +60,16 @@ namespace OrderProcessingService.Core.StateMachines.Activities
                         Status = item.Status
                     });
             }
-            
-            await _context.Publish<PrepareOrder>(new
-            {
-                OrderId = context.Instance.CorrelationId,
-                context.Data.CustomerId,
-                context.Data.RestaurantId,
-                context.Data.AddressId,
-                Items = items
-            });
+
+            await _context.Publish<PrepareOrder>(
+                new
+                {
+                    OrderId = context.Instance.CorrelationId,
+                    context.Data.CustomerId,
+                    context.Data.RestaurantId,
+                    context.Data.AddressId,
+                    Items = items
+                });
             
             Log.Information($"Published - {nameof(PrepareOrder)}");
 
