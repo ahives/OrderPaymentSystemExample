@@ -44,7 +44,7 @@ namespace OrderProcessingService.Core.StateMachines.Activities
                     Status = OrderItemStatus.Prepared
                 });
             
-            var result = await _client.GetOrderItemCount(
+            var result = await _client.GetIncludedOrderItemCount(
                 new ()
                 {
                     OrderId = context.Instance.CorrelationId,

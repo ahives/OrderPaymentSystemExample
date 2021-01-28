@@ -40,7 +40,7 @@ namespace OrderProcessingService.Core.StateMachines.Activities
 
             context.Instance.Timestamp = DateTime.Now;
             
-            var result = await _client.GetOrderItemCount(
+            var result = await _client.GetIncludedOrderItemCount(
                 new ()
                 {
                     OrderId = context.Instance.CorrelationId,

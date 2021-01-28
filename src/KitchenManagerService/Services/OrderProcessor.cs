@@ -143,7 +143,7 @@ namespace KitchenManagerService.Services
             return new Result<ExpectedOrderItem> {Value = MapToExpectedOrderItem(item), ChangeCount = changes, IsSuccessful = true};
         }
 
-        public async Task<Result<int>> GetOrderItemCount(OrderItemCountContext context)
+        public async Task<Result<int>> GetIncludedOrderItemCount(OrderItemCountContext context)
         {
             var items = _dbContext.ExpectedOrderItems
                 .Where(x => x.OrderId == context.OrderId)
@@ -157,6 +157,26 @@ namespace KitchenManagerService.Services
             }
             
             int count = items.Count(x => x.Status == (int) context.Status);
+
+            Log.Information($"Found order items for order {context.OrderId}.");
+
+            return new Result<int> {Value = count, IsSuccessful = true};
+        }
+
+        public async Task<Result<int>> GetExcludedOrderItemCount(OrderItemCountContext context)
+        {
+            var items = _dbContext.ExpectedOrderItems
+                .Where(x => x.OrderId == context.OrderId)
+                .ToList();
+
+            if (!items.Any())
+            {
+                Log.Information($"Could not find any order items for order {context.OrderId}.");
+
+                return new Result<int> {Reason = ReasonType.None, IsSuccessful = false};
+            }
+            
+            int count = items.Count(x => x.Status != (int) context.Status);
 
             Log.Information($"Found order items for order {context.OrderId}.");
 

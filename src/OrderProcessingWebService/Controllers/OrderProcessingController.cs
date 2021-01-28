@@ -22,15 +22,16 @@ namespace OrderProcessingWebService.Controllers
         public async Task<IActionResult> PrepareOrder(OrderPreparationContext context)
         {
             Guid orderId = NewId.NextGuid();
-            
-            await _endpoint.Publish<RequestOrderPreparation>(new()
-            {
-                OrderId = orderId,
-                CustomerId = context.CustomerId,
-                RestaurantId = context.RestaurantId,
-                AddressId = context.AddressId,
-                Items = context.Items
-            });
+
+            await _endpoint.Publish<RequestOrderPreparation>(
+                new()
+                {
+                    OrderId = orderId,
+                    CustomerId = context.CustomerId,
+                    RestaurantId = context.RestaurantId,
+                    AddressId = context.AddressId,
+                    Items = context.Items
+                });
 
             return Ok(orderId);
         }
@@ -38,12 +39,13 @@ namespace OrderProcessingWebService.Controllers
         [HttpPost("OrderReadyForDelivery")]
         public async Task<IActionResult> OrderReadyForDelivery(OrderReadyContext context)
         {
-            await _endpoint.Publish<OrderReadyForDelivery>(new()
-            {
-                OrderId = context.OrderId,
-                CustomerId = context.CustomerId,
-                RestaurantId = context.RestaurantId
-            });
+            await _endpoint.Publish<OrderReadyForDelivery>(
+                new()
+                {
+                    OrderId = context.OrderId,
+                    CustomerId = context.CustomerId,
+                    RestaurantId = context.RestaurantId
+                });
 
             return Ok();
         }
@@ -51,12 +53,13 @@ namespace OrderProcessingWebService.Controllers
         [HttpPost("OrderExpired")]
         public async Task<IActionResult> OrderExpired(OrderExpiredContext context)
         {
-            await _endpoint.Publish<OrderExpired>(new()
-            {
-                OrderId = context.OrderId,
-                CustomerId = context.CustomerId,
-                RestaurantId = context.RestaurantId
-            });
+            await _endpoint.Publish<OrderExpired>(
+                new()
+                {
+                    OrderId = context.OrderId,
+                    CustomerId = context.CustomerId,
+                    RestaurantId = context.RestaurantId
+                });
 
             return Ok();
         }
@@ -64,13 +67,29 @@ namespace OrderProcessingWebService.Controllers
         [HttpPost("CancelOrderRequest")]
         public async Task<IActionResult> CancelOrderRequest(CancelOrderContext context)
         {
-            await _endpoint.Publish<OrderCancelRequest>(new()
-            {
-                CourierId = context.CourierId,
-                OrderId = context.OrderId,
-                CustomerId = context.CustomerId,
-                RestaurantId = context.RestaurantId
-            });
+            await _endpoint.Publish<OrderCancelRequest>(
+                new()
+                {
+                    CourierId = context.CourierId,
+                    OrderId = context.OrderId,
+                    CustomerId = context.CustomerId,
+                    RestaurantId = context.RestaurantId
+                });
+
+            return Ok();
+        }
+
+        [HttpPost("VoidOrderItemRequest")]
+        public async Task<IActionResult> VoidOrderItemRequest(VoidOrderItemRequestContext context)
+        {
+            await _endpoint.Publish<VoidOrderItemRequest>(
+                new()
+                {
+                    OrderId = context.OrderId,
+                    OrderItemId = context.OrderItemId,
+                    CustomerId = context.CustomerId,
+                    RestaurantId = context.RestaurantId
+                });
 
             return Ok();
         }
@@ -78,11 +97,12 @@ namespace OrderProcessingWebService.Controllers
         [HttpPost("CancelOrderItemRequest")]
         public async Task<IActionResult> CancelOrderItemRequest(CancelOrderItemContext context)
         {
-            await _endpoint.Publish<OrderItemCancelRequest>(new()
-            {
-                OrderId = context.OrderId,
-                OrderItemId = context.OrderItemId
-            });
+            await _endpoint.Publish<OrderItemCancelRequest>(
+                new()
+                {
+                    OrderId = context.OrderId,
+                    OrderItemId = context.OrderItemId
+                });
 
             return Ok();
         }
@@ -104,11 +124,12 @@ namespace OrderProcessingWebService.Controllers
         [HttpPost("DiscardOrderItem")]
         public async Task<IActionResult> OrderItemDiscarded(OrderDiscardContext context)
         {
-            await _endpoint.Publish<OrderItemDiscarded>(new()
-            {
-                OrderId = context.OrderId,
-                OrderItemId = context.OrderItemId
-            });
+            await _endpoint.Publish<OrderItemDiscarded>(
+                new()
+                {
+                    OrderId = context.OrderId,
+                    OrderItemId = context.OrderItemId
+                });
 
             return Ok();
         }

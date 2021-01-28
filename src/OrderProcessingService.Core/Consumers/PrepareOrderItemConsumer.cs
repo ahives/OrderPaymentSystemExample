@@ -9,46 +9,49 @@ namespace OrderProcessingService.Core.Consumers
     public class PrepareOrderItemConsumer :
         IConsumer<PrepareOrderItem>
     {
-        readonly IGrpcClient<IOrderProcessor> _client;
+        readonly IOrderProcessor _client;
 
-        public PrepareOrderItemConsumer(IGrpcClient<IOrderProcessor> client)
+        public PrepareOrderItemConsumer(IGrpcClient<IOrderProcessor> grpcClient)
         {
-            _client = client;
+            _client = grpcClient.Client;
         }
 
         public async Task Consume(ConsumeContext<PrepareOrderItem> context)
         {
             Log.Information($"Consumer - {nameof(PrepareOrderItemConsumer)} => consumed {nameof(PrepareOrderItem)} event");
-            
-            var result = await _client.Client.AddNewOrderItem(new ()
-            {
-                OrderId = context.Message.OrderId,
-                OrderItemId = context.Message.OrderItemId,
-                MenuItemId = context.Message.MenuItemId,
-                SpecialInstructions = context.Message.SpecialInstructions
-            });
+
+            var result = await _client.AddNewOrderItem(
+                new()
+                {
+                    OrderId = context.Message.OrderId,
+                    OrderItemId = context.Message.OrderItemId,
+                    MenuItemId = context.Message.MenuItemId,
+                    SpecialInstructions = context.Message.SpecialInstructions
+                });
             
             if (result.IsSuccessful)
             {
-                await context.Publish<OrderItemPrepared>(new
-                {
-                    context.Message.OrderId,
-                    result.Value.OrderItemId,
-                    result.Value.Status,
-                    result.Value.ShelfId
-                });
+                await context.Publish<OrderItemPrepared>(
+                    new
+                    {
+                        context.Message.OrderId,
+                        result.Value.OrderItemId,
+                        result.Value.Status,
+                        result.Value.ShelfId
+                    });
                 
                 Log.Information($"Published - {nameof(OrderItemPrepared)}");
             }
             else
             {
-                await context.Publish<OrderItemNotPrepared>(new
-                {
-                    context.Message.OrderId,
-                    result.Value.OrderItemId,
-                    result.Value.Status,
-                    result.Value.ShelfId
-                });
+                await context.Publish<OrderItemNotPrepared>(
+                    new
+                    {
+                        context.Message.OrderId,
+                        result.Value.OrderItemId,
+                        result.Value.Status,
+                        result.Value.ShelfId
+                    });
                 
                 Log.Information($"Published - {nameof(OrderItemNotPrepared)}");
             }

@@ -8,8 +8,8 @@ namespace OrderProcessingService.Core.StateMachines.Activities
     using Serilog;
     using Services.Core.Events;
 
-    public class OrderItemPreparedActivity :
-        Activity<OrderItemState, OrderItemPrepared>
+    public class OrderItemVoidedActivity :
+        Activity<OrderItemState, OrderItemVoided>
     {
         public void Probe(ProbeContext context)
         {
@@ -21,10 +21,10 @@ namespace OrderProcessingService.Core.StateMachines.Activities
             visitor.Visit(this);
         }
 
-        public async Task Execute(BehaviorContext<OrderItemState, OrderItemPrepared> context,
-            Behavior<OrderItemState, OrderItemPrepared> next)
+        public async Task Execute(BehaviorContext<OrderItemState, OrderItemVoided> context,
+            Behavior<OrderItemState, OrderItemVoided> next)
         {
-            Log.Information($"Order Item State Machine - {nameof(OrderItemPreparedActivity)} (state = {context.Instance.CurrentState})");
+            Log.Information($"Order Item State Machine - {nameof(OrderItemVoidedActivity)} (state = {context.Instance.CurrentState})");
 
             context.Instance.Timestamp = DateTime.Now;
             
@@ -32,8 +32,8 @@ namespace OrderProcessingService.Core.StateMachines.Activities
         }
 
         public async Task Faulted<TException>(
-            BehaviorExceptionContext<OrderItemState, OrderItemPrepared, TException> context,
-            Behavior<OrderItemState, OrderItemPrepared> next)
+            BehaviorExceptionContext<OrderItemState, OrderItemVoided, TException> context,
+            Behavior<OrderItemState, OrderItemVoided> next)
             where TException : Exception
         {
             await next.Faulted(context);

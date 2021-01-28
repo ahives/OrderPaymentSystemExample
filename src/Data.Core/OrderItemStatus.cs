@@ -8,6 +8,7 @@ namespace Data.Core
         Delivered = 3,
         Expired = 4,
         Canceled = 5,
-        NotPrepared = 6
+        NotPrepared = 6,
+        Voided = 7
     }
 }

@@ -17,8 +17,10 @@ namespace OrderProcessingService.Core.StateMachines
             // Event(() => OrderCanceledEvent, e => e.CorrelateById(context => context.Message.OrderId));
             Event(() => OrderItemCancelRequestEvent, e => e.CorrelateById(context => context.Message.OrderItemId));
             Event(() => OrderItemCanceledEvent, e => e.CorrelateById(context => context.Message.OrderItemId));
+            Event(() => VoidOrderItemRequestEvent, e => e.CorrelateById(context => context.Message.OrderItemId));
+            Event(() => OrderItemVoidedEvent, e => e.CorrelateById(context => context.Message.OrderItemId));
 
-            InstanceState(x => x.CurrentState, Preparing, Prepared, Discarded, Canceled, Expired, NotPrepared);
+            InstanceState(x => x.CurrentState, Preparing, Prepared, Discarded, Canceled, Expired, NotPrepared, Voided);
 
             Initially(When(RequestOrderItemPreparationEvent)
                 .Activity(x => x.OfType<RequestOrderItemPreparationActivity>())
@@ -37,6 +39,12 @@ namespace OrderProcessingService.Core.StateMachines
                 When(OrderItemCanceledEvent)
                     .Activity(x => x.OfType<OrderItemCanceledActivity>())
                     .TransitionTo(Canceled),
+                When(VoidOrderItemRequestEvent)
+                    .Activity(x => x.OfType<VoidOrderItemRequestActivity>())
+                    .TransitionTo(Preparing),
+                When(OrderItemVoidedEvent)
+                    .Activity(x => x.OfType<OrderItemVoidedActivity>())
+                    .TransitionTo(Voided),
                 Ignore(RequestOrderItemPreparationEvent),
                 Ignore(OrderItemDiscardedEvent));
 
@@ -49,7 +57,13 @@ namespace OrderProcessingService.Core.StateMachines
                 //     .TransitionTo(Expired),
                 When(OrderItemCancelRequestEvent)
                     .Activity(x => x.OfType<OrderItemCancelRequestActivity>())
-                    .TransitionTo(Preparing),
+                    .TransitionTo(Prepared),
+                When(VoidOrderItemRequestEvent)
+                    .Activity(x => x.OfType<VoidOrderItemRequestActivity>())
+                    .TransitionTo(Prepared),
+                When(OrderItemVoidedEvent)
+                    .Activity(x => x.OfType<OrderItemVoidedActivity>())
+                    .TransitionTo(Voided),
                 When(OrderItemCanceledEvent)
                     .Activity(x => x.OfType<OrderItemCanceledActivity>())
                     .TransitionTo(Canceled));
@@ -90,6 +104,7 @@ namespace OrderProcessingService.Core.StateMachines
         public State Canceled { get; }
         public State Expired { get; }
         public State NotPrepared { get; }
+        public State Voided { get; }
         
         public Event<RequestOrderItemPreparation> RequestOrderItemPreparationEvent { get; private set; }
         public Event<OrderItemPrepared> OrderItemPreparedEvent { get; private set; }
@@ -100,5 +115,7 @@ namespace OrderProcessingService.Core.StateMachines
         public Event<OrderItemCancelRequest> OrderItemCancelRequestEvent { get; private set; }
         public Event<OrderItemCanceled> OrderItemCanceledEvent { get; private set; }
         // public Event<OrderItemExceededPreparationLimit> OrderItemExceededPreparationLimitEvent { get; private set; }
+        public Event<VoidOrderItemRequest> VoidOrderItemRequestEvent { get; private set; }
+        public Event<OrderItemVoided> OrderItemVoidedEvent { get; private set; }
     }
 }
