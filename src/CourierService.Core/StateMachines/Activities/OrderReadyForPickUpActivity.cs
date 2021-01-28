@@ -5,18 +5,20 @@ namespace CourierService.Core.StateMachines.Activities
     using Automatonymous;
     using GreenPipes;
     using MassTransit;
+    using Microsoft.Extensions.Logging;
     using Sagas;
-    using Serilog;
     using Services.Core.Events;
 
     public class OrderReadyForPickUpActivity :
         Activity<CourierState, OrderReadyForDelivery>
     {
         readonly ConsumeContext _context;
+        readonly ILogger<OrderReadyForPickUpActivity> _logger;
 
-        public OrderReadyForPickUpActivity(ConsumeContext context)
+        public OrderReadyForPickUpActivity(ConsumeContext context, ILogger<OrderReadyForPickUpActivity> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public void Probe(ProbeContext context)
@@ -32,7 +34,7 @@ namespace CourierService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<CourierState, OrderReadyForDelivery> context,
             Behavior<CourierState, OrderReadyForDelivery> next)
         {
-            Log.Information($"Courier State Machine - {nameof(OrderReadyForPickUpActivity)}");
+            _logger.LogInformation($"Courier State Machine - {nameof(OrderReadyForPickUpActivity)}");
             
             context.Instance.Timestamp = DateTime.Now;
 
@@ -41,16 +43,17 @@ namespace CourierService.Core.StateMachines.Activities
                 // TODO: might want to fault if the courier Id has not been set at this point
                 if (!context.Instance.CourierId.HasValue)
                     return;
-                
-                await _context.Send<PickUpOrder>(new()
-                {
-                    CourierId = context.Instance.CourierId.Value,
-                    RestaurantId = context.Data.RestaurantId,
-                    CustomerId = context.Data.CustomerId,
-                    OrderId = context.Data.OrderId
-                });
+
+                await _context.Send<PickUpOrder>(
+                    new()
+                    {
+                        CourierId = context.Instance.CourierId.Value,
+                        RestaurantId = context.Data.RestaurantId,
+                        CustomerId = context.Data.CustomerId,
+                        OrderId = context.Data.OrderId
+                    });
             
-                Log.Information($"Published - {nameof(PickUpOrder)}");
+                _logger.LogInformation($"Published - {nameof(PickUpOrder)}");
             }
             else
             {

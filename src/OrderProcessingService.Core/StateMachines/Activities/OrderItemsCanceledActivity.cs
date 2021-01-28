@@ -6,8 +6,8 @@ namespace OrderProcessingService.Core.StateMachines.Activities
     using Data.Core;
     using GreenPipes;
     using MassTransit;
+    using Microsoft.Extensions.Logging;
     using Sagas;
-    using Serilog;
     using Service.Grpc.Core;
     using Services.Core.Events;
 
@@ -15,11 +15,13 @@ namespace OrderProcessingService.Core.StateMachines.Activities
         Activity<OrderState, OrderItemCanceled>
     {
         readonly ConsumeContext _context;
+        readonly ILogger<OrderItemsCanceledActivity> _logger;
         readonly IOrderProcessor _client;
 
-        public OrderItemsCanceledActivity(ConsumeContext context, IGrpcClient<IOrderProcessor> grpcClient)
+        public OrderItemsCanceledActivity(ConsumeContext context, IGrpcClient<IOrderProcessor> grpcClient, ILogger<OrderItemsCanceledActivity> logger)
         {
             _context = context;
+            _logger = logger;
             _client = grpcClient.Client;
         }
 
@@ -36,7 +38,7 @@ namespace OrderProcessingService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<OrderState, OrderItemCanceled> context,
             Behavior<OrderState, OrderItemCanceled> next)
         {
-            Log.Information($"Order State Machine - {nameof(OrderItemsCanceledActivity)} (state = {context.Instance.CurrentState})");
+            _logger.LogInformation($"Order State Machine - {nameof(OrderItemsCanceledActivity)} (state = {context.Instance.CurrentState})");
 
             context.Instance.Timestamp = DateTime.Now;
             
@@ -49,7 +51,7 @@ namespace OrderProcessingService.Core.StateMachines.Activities
 
             int canceledItemCount = result.Value;
             
-            Log.Information($"CanceledItemCount = {canceledItemCount}");
+            _logger.LogInformation($"CanceledItemCount = {canceledItemCount}");
             
             context.Instance.CanceledItemCount = canceledItemCount;
 
@@ -64,7 +66,7 @@ namespace OrderProcessingService.Core.StateMachines.Activities
                         RestaurantId = context.Instance.RestaurantId
                     });
 
-                Log.Information($"Published - {nameof(CancelOrder)}");
+                _logger.LogInformation($"Published - {nameof(CancelOrder)}");
             }
             
             await next.Execute(context).ConfigureAwait(false);

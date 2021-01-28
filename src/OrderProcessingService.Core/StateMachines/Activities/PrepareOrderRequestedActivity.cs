@@ -8,8 +8,8 @@ namespace OrderProcessingService.Core.StateMachines.Activities
     using Data.Core;
     using GreenPipes;
     using MassTransit;
+    using Microsoft.Extensions.Logging;
     using Sagas;
-    using Serilog;
     using Service.Grpc.Core;
     using Services.Core.Events;
     using Services.Core.Model;
@@ -18,11 +18,13 @@ namespace OrderProcessingService.Core.StateMachines.Activities
         Activity<OrderState, RequestOrderPreparation>
     {
         readonly ConsumeContext _context;
+        readonly ILogger<PrepareOrderRequestedActivity> _logger;
         readonly IOrderProcessor _client;
 
-        public PrepareOrderRequestedActivity(ConsumeContext context, IGrpcClient<IOrderProcessor> grpcClient)
+        public PrepareOrderRequestedActivity(ConsumeContext context, IGrpcClient<IOrderProcessor> grpcClient, ILogger<PrepareOrderRequestedActivity> logger)
         {
             _context = context;
+            _logger = logger;
             _client = grpcClient.Client;
         }
 
@@ -39,7 +41,7 @@ namespace OrderProcessingService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<OrderState, RequestOrderPreparation> context,
             Behavior<OrderState, RequestOrderPreparation> next)
         {
-            Log.Information($"Order State Machine - {nameof(PrepareOrderRequestedActivity)} (state = {context.Instance.CurrentState})");
+            _logger.LogInformation($"Order State Machine - {nameof(PrepareOrderRequestedActivity)} (state = {context.Instance.CurrentState})");
             
             context.Instance.Timestamp = DateTime.Now;
             context.Instance.CustomerId = context.Data.CustomerId;
@@ -71,7 +73,7 @@ namespace OrderProcessingService.Core.StateMachines.Activities
                     Items = items
                 });
             
-            Log.Information($"Published - {nameof(PrepareOrder)}");
+            _logger.LogInformation($"Published - {nameof(PrepareOrder)}");
 
             await next.Execute(context).ConfigureAwait(false);
         }

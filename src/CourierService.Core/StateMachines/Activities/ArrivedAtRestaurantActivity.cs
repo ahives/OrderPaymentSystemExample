@@ -5,18 +5,20 @@ namespace CourierService.Core.StateMachines.Activities
     using Automatonymous;
     using GreenPipes;
     using MassTransit;
+    using Microsoft.Extensions.Logging;
     using Sagas;
-    using Serilog;
     using Services.Core.Events;
 
     public class ArrivedAtRestaurantActivity :
         Activity<CourierState, CourierArrivedAtRestaurant>
     {
         readonly ConsumeContext _context;
+        readonly ILogger<ArrivedAtRestaurantActivity> _logger;
 
-        public ArrivedAtRestaurantActivity(ConsumeContext context)
+        public ArrivedAtRestaurantActivity(ConsumeContext context, ILogger<ArrivedAtRestaurantActivity> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public void Probe(ProbeContext context)
@@ -32,22 +34,23 @@ namespace CourierService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<CourierState, CourierArrivedAtRestaurant> context,
             Behavior<CourierState, CourierArrivedAtRestaurant> next)
         {
-            Log.Information($"Courier State Machine - {nameof(ArrivedAtRestaurantActivity)}");
+            _logger.LogInformation($"Courier State Machine - {nameof(ArrivedAtRestaurantActivity)}");
 
             context.Instance.Timestamp = DateTime.Now;
             context.Instance.HasCourierArrived = true;
 
             if (context.Instance.IsOrderReady)
             {
-                await _context.Publish<PickUpOrder>(new()
-                {
-                    CourierId = context.Data.CourierId,
-                    RestaurantId = context.Data.RestaurantId,
-                    CustomerId = context.Data.CustomerId,
-                    OrderId = context.Data.OrderId
-                });
+                await _context.Publish<PickUpOrder>(
+                    new()
+                    {
+                        CourierId = context.Data.CourierId,
+                        RestaurantId = context.Data.RestaurantId,
+                        CustomerId = context.Data.CustomerId,
+                        OrderId = context.Data.OrderId
+                    });
                 
-                Log.Information($"Published - {nameof(PickUpOrder)}");
+                _logger.LogInformation($"Published - {nameof(PickUpOrder)}");
             }
 
             await next.Execute(context).ConfigureAwait(false);

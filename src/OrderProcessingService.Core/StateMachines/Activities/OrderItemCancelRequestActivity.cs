@@ -5,18 +5,20 @@ namespace OrderProcessingService.Core.StateMachines.Activities
     using Automatonymous;
     using GreenPipes;
     using MassTransit;
+    using Microsoft.Extensions.Logging;
     using Sagas;
-    using Serilog;
     using Services.Core.Events;
 
     public class OrderItemCancelRequestActivity :
         Activity<OrderItemState, OrderItemCancelRequest>
     {
         readonly ConsumeContext _context;
+        readonly ILogger<OrderItemCancelRequestActivity> _logger;
 
-        public OrderItemCancelRequestActivity(ConsumeContext context)
+        public OrderItemCancelRequestActivity(ConsumeContext context, ILogger<OrderItemCancelRequestActivity> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public void Probe(ProbeContext context)
@@ -32,7 +34,7 @@ namespace OrderProcessingService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<OrderItemState, OrderItemCancelRequest> context,
             Behavior<OrderItemState, OrderItemCancelRequest> next)
         {
-            Log.Information($"Order Item State Machine - {nameof(OrderItemCancelRequestActivity)} (state = {context.Instance.CurrentState})");
+            _logger.LogInformation($"Order Item State Machine - {nameof(OrderItemCancelRequestActivity)} (state = {context.Instance.CurrentState})");
 
             context.Instance.Timestamp = DateTime.Now;
 
@@ -45,7 +47,7 @@ namespace OrderProcessingService.Core.StateMachines.Activities
                     RestaurantId = context.Data.RestaurantId
                 });
             
-            Log.Information($"Published - {nameof(CancelOrderItem)}");
+            _logger.LogInformation($"Published - {nameof(CancelOrderItem)}");
             
             await next.Execute(context).ConfigureAwait(false);
         }

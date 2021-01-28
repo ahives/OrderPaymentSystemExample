@@ -4,13 +4,20 @@ namespace CourierService.Core.StateMachines.Activities
     using System.Threading.Tasks;
     using Automatonymous;
     using GreenPipes;
+    using Microsoft.Extensions.Logging;
     using Sagas;
-    using Serilog;
     using Services.Core.Events;
 
     public class CourierNotIdentifiedForDispatchActivity :
         Activity<CourierState, CourierNotIdentifiedForDispatch>
     {
+        readonly ILogger<CourierNotIdentifiedForDispatchActivity> _logger;
+
+        public CourierNotIdentifiedForDispatchActivity(ILogger<CourierNotIdentifiedForDispatchActivity> logger)
+        {
+            _logger = logger;
+        }
+
         public void Probe(ProbeContext context)
         {
             context.CreateScope("");
@@ -24,9 +31,11 @@ namespace CourierService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<CourierState, CourierNotIdentifiedForDispatch> context,
             Behavior<CourierState, CourierNotIdentifiedForDispatch> next)
         {
-            Log.Information($"Courier State Machine - {nameof(CourierNotIdentifiedForDispatchActivity)}");
+            _logger.LogInformation($"Courier State Machine - {nameof(CourierNotIdentifiedForDispatchActivity)}");
             
             context.Instance.Timestamp = DateTime.Now;
+
+            await next.Execute(context).ConfigureAwait(false);
         }
 
         public async Task Faulted<TException>(

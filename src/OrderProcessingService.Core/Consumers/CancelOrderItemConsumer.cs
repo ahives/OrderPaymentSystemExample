@@ -3,23 +3,25 @@ namespace OrderProcessingService.Core.Consumers
     using System.Threading.Tasks;
     using Data.Core;
     using MassTransit;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using Service.Grpc.Core;
     using Services.Core.Events;
 
     public class CancelOrderItemConsumer :
         IConsumer<CancelOrderItem>
     {
+        readonly ILogger<CancelOrderItemConsumer> _logger;
         readonly IOrderProcessor _client;
 
-        public CancelOrderItemConsumer(IGrpcClient<IOrderProcessor> grpcClient)
+        public CancelOrderItemConsumer(IGrpcClient<IOrderProcessor> grpcClient, ILogger<CancelOrderItemConsumer> logger)
         {
+            _logger = logger;
             _client = grpcClient.Client;
         }
 
         public async Task Consume(ConsumeContext<CancelOrderItem> context)
         {
-            Log.Information($"Consumer - {nameof(CancelOrderItemConsumer)} => consumed {nameof(CancelOrderItem)} event");
+            _logger.LogInformation($"Consumer - {nameof(CancelOrderItemConsumer)} => consumed {nameof(CancelOrderItem)} event");
 
             var result = await _client.ChangeOrderItemStatus(
                 new()
@@ -46,7 +48,7 @@ namespace OrderProcessingService.Core.Consumers
                         RestaurantId = context.Message.RestaurantId
                     });
                 
-                Log.Information($"Published - {nameof(OrderItemCanceled)}");
+                _logger.LogInformation($"Published - {nameof(OrderItemCanceled)}");
             }
             else
             {

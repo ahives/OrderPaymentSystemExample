@@ -3,29 +3,32 @@ namespace CourierService.Core.Consumers
     using System.Threading.Tasks;
     using Data.Core;
     using MassTransit;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using Service.Grpc.Core;
     using Services.Core.Events;
 
     public class EnRouteToRestaurantConsumer :
         IConsumer<CourierEnRouteToRestaurant>
     {
-        readonly IGrpcClient<ICourierDispatcher> _client;
+        readonly ICourierDispatcher _client;
+        readonly ILogger<EnRouteToRestaurantConsumer> _logger;
 
-        public EnRouteToRestaurantConsumer(IGrpcClient<ICourierDispatcher> client)
+        public EnRouteToRestaurantConsumer(IGrpcClient<ICourierDispatcher> grpcClient, ILogger<EnRouteToRestaurantConsumer> logger)
         {
-            _client = client;
+            _client = grpcClient.Client;
+            _logger = logger;
         }
 
         public async Task Consume(ConsumeContext<CourierEnRouteToRestaurant> context)
         {
-            Log.Information($"Consumer - {nameof(EnRouteToRestaurantConsumer)} => consumed {nameof(CourierEnRouteToRestaurant)} event");
+            _logger.LogInformation($"Consumer - {nameof(EnRouteToRestaurantConsumer)} => consumed {nameof(CourierEnRouteToRestaurant)} event");
 
-            var result = await _client.Client.ChangeStatus(new ()
-            {
-                CourierId = context.Message.CourierId,
-                Status = CourierStatus.EnRouteToRestaurant
-            });
+            var result = await _client.ChangeStatus(
+                new()
+                {
+                    CourierId = context.Message.CourierId,
+                    Status = CourierStatus.EnRouteToRestaurant
+                });
         }
     }
 }

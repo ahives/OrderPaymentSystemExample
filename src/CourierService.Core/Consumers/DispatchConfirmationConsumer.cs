@@ -3,53 +3,58 @@ namespace CourierService.Core.Consumers
     using System.Threading.Tasks;
     using Data.Core;
     using MassTransit;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using Service.Grpc.Core;
     using Services.Core.Events;
 
     public class DispatchConfirmationConsumer :
         IConsumer<ConfirmCourierDispatch>
     {
-        readonly IGrpcClient<ICourierDispatcher> _client;
+        readonly ICourierDispatcher _client;
+        readonly ILogger<DispatchConfirmationConsumer> _logger;
 
-        public DispatchConfirmationConsumer(IGrpcClient<ICourierDispatcher> client)
+        public DispatchConfirmationConsumer(IGrpcClient<ICourierDispatcher> grpcClient, ILogger<DispatchConfirmationConsumer> logger)
         {
-            _client = client;
+            _client = grpcClient.Client;
+            _logger = logger;
         }
 
         public async Task Consume(ConsumeContext<ConfirmCourierDispatch> context)
         {
-            Log.Information($"Consumer - {nameof(DispatchConfirmationConsumer)} => consumed {nameof(ConfirmCourierDispatch)} event");
-            
-            var result = await _client.Client.ChangeStatus(new ()
-            {
-                CourierId = context.Message.CourierId,
-                Status = CourierStatus.DispatchConfirmed
-            });
+            _logger.LogInformation($"Consumer - {nameof(DispatchConfirmationConsumer)} => consumed {nameof(ConfirmCourierDispatch)} event");
+
+            var result = await _client.ChangeStatus(
+                new()
+                {
+                    CourierId = context.Message.CourierId,
+                    Status = CourierStatus.DispatchConfirmed
+                });
             
             if (result.IsSuccessful)
             {
-                await context.Publish<CourierDispatchConfirmed>(new
-                {
-                    result.Value.CourierId,
-                    context.Message.OrderId,
-                    context.Message.CustomerId,
-                    context.Message.RestaurantId
-                });
+                await context.Publish<CourierDispatchConfirmed>(
+                    new
+                    {
+                        result.Value.CourierId,
+                        context.Message.OrderId,
+                        context.Message.CustomerId,
+                        context.Message.RestaurantId
+                    });
                 
-                Log.Information($"Published - {nameof(CourierDispatchConfirmed)}");
+                _logger.LogInformation($"Published - {nameof(CourierDispatchConfirmed)}");
             }
             else
             {
-                await context.Publish<CourierDispatchDeclined>(new
-                {
-                    result.Value.CourierId,
-                    context.Message.OrderId,
-                    context.Message.CustomerId,
-                    context.Message.RestaurantId
-                });
+                await context.Publish<CourierDispatchDeclined>(
+                    new
+                    {
+                        result.Value.CourierId,
+                        context.Message.OrderId,
+                        context.Message.CustomerId,
+                        context.Message.RestaurantId
+                    });
                 
-                Log.Information($"Published - {nameof(CourierDispatchDeclined)}");
+                _logger.LogInformation($"Published - {nameof(CourierDispatchDeclined)}");
             }
         }
     }

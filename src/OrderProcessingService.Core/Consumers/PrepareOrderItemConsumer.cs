@@ -2,23 +2,25 @@ namespace OrderProcessingService.Core.Consumers
 {
     using System.Threading.Tasks;
     using MassTransit;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using Service.Grpc.Core;
     using Services.Core.Events;
 
     public class PrepareOrderItemConsumer :
         IConsumer<PrepareOrderItem>
     {
+        readonly ILogger<PrepareOrderItemConsumer> _logger;
         readonly IOrderProcessor _client;
 
-        public PrepareOrderItemConsumer(IGrpcClient<IOrderProcessor> grpcClient)
+        public PrepareOrderItemConsumer(IGrpcClient<IOrderProcessor> grpcClient, ILogger<PrepareOrderItemConsumer> logger)
         {
+            _logger = logger;
             _client = grpcClient.Client;
         }
 
         public async Task Consume(ConsumeContext<PrepareOrderItem> context)
         {
-            Log.Information($"Consumer - {nameof(PrepareOrderItemConsumer)} => consumed {nameof(PrepareOrderItem)} event");
+            _logger.LogInformation($"Consumer - {nameof(PrepareOrderItemConsumer)} => consumed {nameof(PrepareOrderItem)} event");
 
             var result = await _client.AddNewOrderItem(
                 new()
@@ -40,7 +42,7 @@ namespace OrderProcessingService.Core.Consumers
                         result.Value.ShelfId
                     });
                 
-                Log.Information($"Published - {nameof(OrderItemPrepared)}");
+                _logger.LogInformation($"Published - {nameof(OrderItemPrepared)}");
             }
             else
             {
@@ -53,64 +55,8 @@ namespace OrderProcessingService.Core.Consumers
                         result.Value.ShelfId
                     });
                 
-                Log.Information($"Published - {nameof(OrderItemNotPrepared)}");
+                _logger.LogInformation($"Published - {nameof(OrderItemNotPrepared)}");
             }
         }
-
-        // async Task MoveToShelf(ConsumeContext<PrepareOrderItem> context, OrderItem orderItem)
-        // {
-        //     var result = await _manager.MoveToShelf(new ShelfManagerRequest
-        //     {
-        //         OrderItemId = orderItem.OrderItemId,
-        //         RestaurantId = context.Message.RestaurantId,
-        //         MenuItemId = context.Message.MenuItemId
-        //     });
-        //         
-        //     if (result.IsSuccessful)
-        //     {
-        //         // TODO: move to appropriate shelf
-        //         await context.Publish<OrderItemPrepared>(new
-        //         {
-        //             context.Message.OrderId,
-        //             orderItem.OrderItemId,
-        //             orderItem.Status,
-        //             orderItem.ShelfId
-        //         });
-        //     }
-        //     else
-        //     {
-        //         await MoveToOverflow(context, orderItem);
-        //     }
-        // }
-        //
-        // async Task MoveToOverflow(ConsumeContext<PrepareOrderItem> context, OrderItem orderItem)
-        // {
-        //     var result = await _manager.MoveToOverflow(new ShelfManagerRequest
-        //     {
-        //         OrderItemId = orderItem.OrderItemId,
-        //         MenuItemId = context.Message.MenuItemId
-        //     });
-        //
-        //     if (result.IsSuccessful)
-        //     {
-        //         await context.Publish<OrderItemPrepared>(new
-        //         {
-        //             context.Message.OrderId,
-        //             orderItem.OrderItemId,
-        //             orderItem.Status,
-        //             orderItem.ShelfId
-        //         });
-        //     }
-        //     else
-        //     {
-        //         await context.Publish<OrderItemNotPrepared>(new
-        //         {
-        //             context.Message.OrderId,
-        //             orderItem.OrderItemId,
-        //             orderItem.Status,
-        //             orderItem.ShelfId
-        //         });
-        //     }
-        // }
     }
 }

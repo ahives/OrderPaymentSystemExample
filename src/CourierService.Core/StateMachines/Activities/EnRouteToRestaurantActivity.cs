@@ -4,13 +4,20 @@ namespace CourierService.Core.StateMachines.Activities
     using System.Threading.Tasks;
     using Automatonymous;
     using GreenPipes;
+    using Microsoft.Extensions.Logging;
     using Sagas;
-    using Serilog;
     using Services.Core.Events;
 
     public class EnRouteToRestaurantActivity :
         Activity<CourierState, CourierEnRouteToRestaurant>
     {
+        readonly ILogger<EnRouteToRestaurantActivity> _logger;
+
+        public EnRouteToRestaurantActivity(ILogger<EnRouteToRestaurantActivity> logger)
+        {
+            _logger = logger;
+        }
+
         public void Probe(ProbeContext context)
         {
             context.CreateScope("");
@@ -24,7 +31,7 @@ namespace CourierService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<CourierState, CourierEnRouteToRestaurant> context,
             Behavior<CourierState, CourierEnRouteToRestaurant> next)
         {
-            Log.Information($"Courier State Machine - {nameof(EnRouteToRestaurantActivity)}");
+            _logger.LogInformation($"Courier State Machine - {nameof(EnRouteToRestaurantActivity)}");
             
             context.Instance.Timestamp = DateTime.Now;
 
@@ -33,7 +40,8 @@ namespace CourierService.Core.StateMachines.Activities
 
         public async Task Faulted<TException>(
             BehaviorExceptionContext<CourierState, CourierEnRouteToRestaurant, TException> context,
-            Behavior<CourierState, CourierEnRouteToRestaurant> next) where TException : Exception
+            Behavior<CourierState, CourierEnRouteToRestaurant> next)
+            where TException : Exception
         {
             await next.Faulted(context);
         }

@@ -5,8 +5,8 @@ namespace OrderProcessingService.Core.StateMachines.Activities
     using Automatonymous;
     using GreenPipes;
     using MassTransit;
+    using Microsoft.Extensions.Logging;
     using Sagas;
-    using Serilog;
     using Service.Grpc.Core;
     using Services.Core.Events;
 
@@ -14,11 +14,13 @@ namespace OrderProcessingService.Core.StateMachines.Activities
         Activity<OrderState, OrderCancelRequest>
     {
         readonly ConsumeContext _context;
+        readonly ILogger<OrderCancelRequestActivity> _logger;
         readonly IOrderProcessor _client;
 
-        public OrderCancelRequestActivity(ConsumeContext context, IGrpcClient<IOrderProcessor> grpcClient)
+        public OrderCancelRequestActivity(ConsumeContext context, IGrpcClient<IOrderProcessor> grpcClient, ILogger<OrderCancelRequestActivity> logger)
         {
             _context = context;
+            _logger = logger;
             _client = grpcClient.Client;
         }
 
@@ -35,7 +37,7 @@ namespace OrderProcessingService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<OrderState, OrderCancelRequest> context,
             Behavior<OrderState, OrderCancelRequest> next)
         {
-            Log.Information($"Order State Machine - {nameof(OrderCancelRequestActivity)} (state = {context.Instance.CurrentState})");
+            _logger.LogInformation($"Order State Machine - {nameof(OrderCancelRequestActivity)} (state = {context.Instance.CurrentState})");
 
             context.Instance.Timestamp = DateTime.Now;
 
@@ -56,7 +58,7 @@ namespace OrderProcessingService.Core.StateMachines.Activities
                         RestaurantId = context.Data.RestaurantId
                     });
             
-                Log.Information($"Published - {nameof(OrderItemCancelRequest)}");
+                _logger.LogInformation($"Published - {nameof(OrderItemCancelRequest)}");
             }
             
             await next.Execute(context).ConfigureAwait(false);

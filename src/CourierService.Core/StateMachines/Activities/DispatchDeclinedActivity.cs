@@ -4,13 +4,20 @@ namespace CourierService.Core.StateMachines.Activities
     using System.Threading.Tasks;
     using Automatonymous;
     using GreenPipes;
+    using Microsoft.Extensions.Logging;
     using Sagas;
-    using Serilog;
     using Services.Core.Events;
 
     public class DispatchDeclinedActivity :
         Activity<CourierState, CourierDispatchDeclined>
     {
+        readonly ILogger<DispatchDeclinedActivity> _logger;
+
+        public DispatchDeclinedActivity(ILogger<DispatchDeclinedActivity> logger)
+        {
+            _logger = logger;
+        }
+
         public void Probe(ProbeContext context)
         {
             context.CreateScope("");
@@ -24,7 +31,7 @@ namespace CourierService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<CourierState, CourierDispatchDeclined> context,
             Behavior<CourierState, CourierDispatchDeclined> next)
         {
-            Log.Information($"Courier State Machine - {nameof(DispatchDeclinedActivity)}");
+            _logger.LogInformation($"Courier State Machine - {nameof(DispatchDeclinedActivity)}");
             
             context.Instance.Timestamp = DateTime.Now;
             context.Instance.CourierId = null;
@@ -35,7 +42,8 @@ namespace CourierService.Core.StateMachines.Activities
 
         public async Task Faulted<TException>(
             BehaviorExceptionContext<CourierState, CourierDispatchDeclined, TException> context,
-            Behavior<CourierState, CourierDispatchDeclined> next) where TException : Exception
+            Behavior<CourierState, CourierDispatchDeclined> next)
+            where TException : Exception
         {
             await next.Faulted(context);
         }

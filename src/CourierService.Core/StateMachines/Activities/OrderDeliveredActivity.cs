@@ -4,13 +4,20 @@ namespace CourierService.Core.StateMachines.Activities
     using System.Threading.Tasks;
     using Automatonymous;
     using GreenPipes;
+    using Microsoft.Extensions.Logging;
     using Sagas;
-    using Serilog;
     using Services.Core.Events;
 
     public class OrderDeliveredActivity :
         Activity<CourierState, OrderDelivered>
     {
+        readonly ILogger<OrderDeliveredActivity> _logger;
+
+        public OrderDeliveredActivity(ILogger<OrderDeliveredActivity> logger)
+        {
+            _logger = logger;
+        }
+
         public void Probe(ProbeContext context)
         {
             context.CreateScope("");
@@ -24,7 +31,7 @@ namespace CourierService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<CourierState, OrderDelivered> context,
             Behavior<CourierState, OrderDelivered> next)
         {
-            Log.Information($"Courier State Machine - {nameof(OrderDeliveredActivity)}");
+            _logger.LogInformation($"Courier State Machine - {nameof(OrderDeliveredActivity)}");
             
             context.Instance.Timestamp = DateTime.Now;
 

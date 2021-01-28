@@ -5,18 +5,20 @@ namespace OrderProcessingService.Core.StateMachines.Activities
     using Automatonymous;
     using GreenPipes;
     using MassTransit;
+    using Microsoft.Extensions.Logging;
     using Sagas;
-    using Serilog;
     using Services.Core.Events;
 
     public class RequestOrderItemPreparationActivity :
         Activity<OrderItemState, RequestOrderItemPreparation>
     {
         readonly ConsumeContext _context;
+        readonly ILogger<RequestOrderItemPreparationActivity> _logger;
 
-        public RequestOrderItemPreparationActivity(ConsumeContext context)
+        public RequestOrderItemPreparationActivity(ConsumeContext context, ILogger<RequestOrderItemPreparationActivity> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public void Probe(ProbeContext context)
@@ -32,7 +34,7 @@ namespace OrderProcessingService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<OrderItemState, RequestOrderItemPreparation> context,
             Behavior<OrderItemState, RequestOrderItemPreparation> next)
         {
-            Log.Information($"Order Item State Machine - {nameof(RequestOrderItemPreparationActivity)} (state = {context.Instance.CurrentState})");
+            _logger.LogInformation($"Order Item State Machine - {nameof(RequestOrderItemPreparationActivity)} (state = {context.Instance.CurrentState})");
 
             context.Instance.Timestamp = DateTime.Now;
             context.Instance.OrderId = context.Data.OrderId;
@@ -46,8 +48,8 @@ namespace OrderProcessingService.Core.StateMachines.Activities
                     context.Data.MenuItemId
                 });
             
-            Log.Information($"Published - {nameof(PrepareOrderItem)}");
-            Log.Information($"Order Item ID - {context.Data.OrderItemId}");
+            _logger.LogInformation($"Published - {nameof(PrepareOrderItem)}");
+            _logger.LogInformation($"Order Item ID - {context.Data.OrderItemId}");
 
             await next.Execute(context).ConfigureAwait(false);
         }

@@ -5,18 +5,20 @@ namespace CourierService.Core.StateMachines.Activities
     using Automatonymous;
     using GreenPipes;
     using MassTransit;
+    using Microsoft.Extensions.Logging;
     using Sagas;
-    using Serilog;
     using Services.Core.Events;
 
     public class OrderCompletionTimeoutActivity :
         Activity<CourierState, OrderCompletionTimeoutExpired>
     {
         readonly ConsumeContext _context;
+        readonly ILogger<OrderCompletionTimeoutActivity> _logger;
 
-        public OrderCompletionTimeoutActivity(ConsumeContext context)
+        public OrderCompletionTimeoutActivity(ConsumeContext context, ILogger<OrderCompletionTimeoutActivity> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public void Probe(ProbeContext context)
@@ -32,7 +34,7 @@ namespace CourierService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<CourierState, OrderCompletionTimeoutExpired> context,
             Behavior<CourierState, OrderCompletionTimeoutExpired> next)
         {
-            Log.Information($"Courier State Machine - {nameof(OrderCompletionTimeoutActivity)}");
+            _logger.LogInformation($"Courier State Machine - {nameof(OrderCompletionTimeoutActivity)}");
             
             context.Instance.Timestamp = DateTime.Now;
             context.Instance.IsOrderReady = false;
@@ -45,7 +47,7 @@ namespace CourierService.Core.StateMachines.Activities
                 context.Data.RestaurantId
             });
             
-            Log.Information($"Published - {nameof(DeclineCourierDispatch)}");
+            _logger.LogInformation($"Published - {nameof(DeclineCourierDispatch)}");
 
             await next.Execute(context).ConfigureAwait(false);
         }

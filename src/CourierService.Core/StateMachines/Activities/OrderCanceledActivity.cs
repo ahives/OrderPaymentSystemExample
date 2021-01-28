@@ -5,18 +5,20 @@ namespace CourierService.Core.StateMachines.Activities
     using Automatonymous;
     using GreenPipes;
     using MassTransit;
+    using Microsoft.Extensions.Logging;
     using Sagas;
-    using Serilog;
     using Services.Core.Events;
 
     public class OrderCanceledActivity :
         Activity<CourierState, OrderCanceled>
     {
         readonly ConsumeContext _context;
+        readonly ILogger<OrderCanceledActivity> _logger;
 
-        public OrderCanceledActivity(ConsumeContext context)
+        public OrderCanceledActivity(ConsumeContext context, ILogger<OrderCanceledActivity> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public void Probe(ProbeContext context)
@@ -32,21 +34,22 @@ namespace CourierService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<CourierState, OrderCanceled> context,
             Behavior<CourierState, OrderCanceled> next)
         {
-            Log.Information($"Courier State Machine - {nameof(OrderCanceledActivity)}");
+            _logger.LogInformation($"Courier State Machine - {nameof(OrderCanceledActivity)}");
             
             context.Instance.Timestamp = DateTime.Now;
             context.Instance.CourierId = null;
             context.Instance.IsOrderReady = false;
 
-            await _context.Publish<CancelCourierDispatch>(new
-            {
-                context.Instance.CourierId,
-                context.Instance.OrderId,
-                context.Instance.CustomerId,
-                context.Instance.RestaurantId
-            });
+            await _context.Publish<CancelCourierDispatch>(
+                new
+                {
+                    context.Instance.CourierId,
+                    context.Instance.OrderId,
+                    context.Instance.CustomerId,
+                    context.Instance.RestaurantId
+                });
             
-            Log.Information($"Published - {nameof(CancelCourierDispatch)}");
+            _logger.LogInformation($"Published - {nameof(CancelCourierDispatch)}");
 
             await next.Execute(context).ConfigureAwait(false);
         }

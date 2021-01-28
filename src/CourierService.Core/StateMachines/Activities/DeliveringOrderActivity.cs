@@ -5,18 +5,20 @@ namespace CourierService.Core.StateMachines.Activities
     using Automatonymous;
     using GreenPipes;
     using MassTransit;
+    using Microsoft.Extensions.Logging;
     using Sagas;
-    using Serilog;
     using Services.Core.Events;
 
     public class DeliveringOrderActivity :
         Activity<CourierState, DeliveringOrder>
     {
         readonly ConsumeContext _context;
+        readonly ILogger<DeliveringOrderActivity> _logger;
 
-        public DeliveringOrderActivity(ConsumeContext context)
+        public DeliveringOrderActivity(ConsumeContext context, ILogger<DeliveringOrderActivity> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public void Probe(ProbeContext context)
@@ -32,19 +34,20 @@ namespace CourierService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<CourierState, DeliveringOrder> context,
             Behavior<CourierState, DeliveringOrder> next)
         {
-            Log.Information($"Courier State Machine - {nameof(DeliveringOrderActivity)}");
+            _logger.LogInformation($"Courier State Machine - {nameof(DeliveringOrderActivity)}");
             
             context.Instance.Timestamp = DateTime.Now;
+
+            await _context.Publish<DeliverOrder>(
+                new
+                {
+                    context.Data.CourierId,
+                    context.Data.OrderId,
+                    context.Data.CustomerId,
+                    context.Data.RestaurantId
+                });
             
-            await _context.Publish<DeliverOrder>(new
-            {
-                context.Data.CourierId,
-                context.Data.OrderId,
-                context.Data.CustomerId,
-                context.Data.RestaurantId
-            });
-            
-            Log.Information($"Published - {nameof(DeliverOrder)}");
+            _logger.LogInformation($"Published - {nameof(DeliverOrder)}");
             
             await next.Execute(context).ConfigureAwait(false);
         }

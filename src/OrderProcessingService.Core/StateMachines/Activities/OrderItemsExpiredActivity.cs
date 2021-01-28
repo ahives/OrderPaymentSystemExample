@@ -4,13 +4,20 @@ namespace OrderProcessingService.Core.StateMachines.Activities
     using System.Threading.Tasks;
     using Automatonymous;
     using GreenPipes;
+    using Microsoft.Extensions.Logging;
     using Sagas;
-    using Serilog;
     using Services.Core.Events;
 
     public class OrderItemsExpiredActivity :
         Activity<OrderState, OrderItemExpired>
     {
+        readonly ILogger<OrderItemsExpiredActivity> _logger;
+
+        public OrderItemsExpiredActivity(ILogger<OrderItemsExpiredActivity> logger)
+        {
+            _logger = logger;
+        }
+
         public void Probe(ProbeContext context)
         {
             context.CreateScope("");
@@ -24,7 +31,7 @@ namespace OrderProcessingService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<OrderState, OrderItemExpired> context,
             Behavior<OrderState, OrderItemExpired> next)
         {
-            Log.Information($"Order State Machine - {nameof(OrderItemsExpiredActivity)} (state = {context.Instance.CurrentState})");
+            _logger.LogInformation($"Order State Machine - {nameof(OrderItemsExpiredActivity)} (state = {context.Instance.CurrentState})");
             
             context.Instance.Timestamp = DateTime.Now;
             

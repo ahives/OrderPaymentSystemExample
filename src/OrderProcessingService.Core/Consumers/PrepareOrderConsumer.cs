@@ -2,23 +2,25 @@ namespace OrderProcessingService.Core.Consumers
 {
     using System.Threading.Tasks;
     using MassTransit;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using Service.Grpc.Core;
     using Services.Core.Events;
 
     public class PrepareOrderConsumer :
         IConsumer<PrepareOrder>
     {
+        readonly ILogger<PrepareOrderConsumer> _logger;
         readonly IOrderProcessor _client;
 
-        public PrepareOrderConsumer(IGrpcClient<IOrderProcessor> grpcClient)
+        public PrepareOrderConsumer(IGrpcClient<IOrderProcessor> grpcClient, ILogger<PrepareOrderConsumer> logger)
         {
+            _logger = logger;
             _client = grpcClient.Client;
         }
 
         public async Task Consume(ConsumeContext<PrepareOrder> context)
         {
-            Log.Information($"Consumer - {nameof(PrepareOrderConsumer)} => consumed {nameof(PrepareOrder)} event");
+            _logger.LogInformation($"Consumer - {nameof(PrepareOrderConsumer)} => consumed {nameof(PrepareOrder)} event");
 
             var result = await _client.AddNewOrder(
                 new()
@@ -43,7 +45,7 @@ namespace OrderProcessingService.Core.Consumers
                             context.Message.Items[i].SpecialInstructions
                         });
 
-                    Log.Information($"Published - {nameof(RequestOrderItemPreparation)} (OrderItemId={context.Message.Items[i].OrderItemId})");
+                    _logger.LogInformation($"Published - {nameof(RequestOrderItemPreparation)} (OrderItemId={context.Message.Items[i].OrderItemId})");
                 }
             }
         }

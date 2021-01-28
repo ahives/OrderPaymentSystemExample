@@ -5,18 +5,20 @@ namespace OrderProcessingService.Core.StateMachines.Activities
     using Automatonymous;
     using Data.Core;
     using GreenPipes;
+    using Microsoft.Extensions.Logging;
     using Sagas;
-    using Serilog;
     using Service.Grpc.Core;
     using Services.Core.Events;
 
     public class OrderItemsVoidedActivity :
         Activity<OrderState, OrderItemVoided>
     {
+        readonly ILogger<OrderItemsVoidedActivity> _logger;
         readonly IOrderProcessor _client;
 
-        public OrderItemsVoidedActivity(IGrpcClient<IOrderProcessor> grpcClient)
+        public OrderItemsVoidedActivity(IGrpcClient<IOrderProcessor> grpcClient, ILogger<OrderItemsVoidedActivity> logger)
         {
+            _logger = logger;
             _client = grpcClient.Client;
         }
 
@@ -33,7 +35,7 @@ namespace OrderProcessingService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<OrderState, OrderItemVoided> context,
             Behavior<OrderState, OrderItemVoided> next)
         {
-            Log.Information($"Order State Machine - {nameof(OrderItemsVoidedActivity)} (state = {context.Instance.CurrentState})");
+            _logger.LogInformation($"Order State Machine - {nameof(OrderItemsVoidedActivity)} (state = {context.Instance.CurrentState})");
 
             context.Instance.Timestamp = DateTime.Now;
 

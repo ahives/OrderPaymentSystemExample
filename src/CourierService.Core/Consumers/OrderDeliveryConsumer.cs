@@ -3,48 +3,53 @@ namespace CourierService.Core.Consumers
     using System.Threading.Tasks;
     using Data.Core;
     using MassTransit;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using Service.Grpc.Core;
     using Services.Core.Events;
 
     public class OrderDeliveryConsumer :
         IConsumer<DeliverOrder>
     {
-        readonly IGrpcClient<ICourierDispatcher> _client;
+        readonly ICourierDispatcher _client;
+        readonly ILogger<OrderDeliveryConsumer> _logger;
 
-        public OrderDeliveryConsumer(IGrpcClient<ICourierDispatcher> client)
+        public OrderDeliveryConsumer(IGrpcClient<ICourierDispatcher> grpcClient, ILogger<OrderDeliveryConsumer> logger)
         {
-            _client = client;
+            _client = grpcClient.Client;
+            _logger = logger;
         }
 
         public async Task Consume(ConsumeContext<DeliverOrder> context)
         {
-            Log.Information($"Consumer - {nameof(OrderDeliveryConsumer)} => consumed {nameof(DeliverOrder)} event");
+            _logger.LogInformation($"Consumer - {nameof(OrderDeliveryConsumer)} => consumed {nameof(DeliverOrder)} event");
 
-            var result = await _client.Client.Deliver(new CourierDispatchContext()
-            {
-                CourierId = context.Message.CourierId
-            });
+            var result = await _client.Deliver(
+                new()
+                {
+                    CourierId = context.Message.CourierId
+                });
             
             if (result.IsSuccessful)
             {
-                await context.Publish<OrderDelivered>(new
-                {
-                    context.Message.CourierId,
-                    context.Message.OrderId,
-                    context.Message.CustomerId,
-                    context.Message.RestaurantId
-                });
+                await context.Publish<OrderDelivered>(
+                    new
+                    {
+                        context.Message.CourierId,
+                        context.Message.OrderId,
+                        context.Message.CustomerId,
+                        context.Message.RestaurantId
+                    });
                 
-                Log.Information($"Published - {nameof(OrderDelivered)}");
+                _logger.LogInformation($"Published - {nameof(OrderDelivered)}");
             }
             else
             {
-                var statusResult = await _client.Client.ChangeStatus(new CourierStatusChangeContext()
-                {
-                    CourierId = context.Message.CourierId,
-                    Status = CourierStatus.ArrivedAtCustomer
-                });
+                var statusResult = await _client.ChangeStatus(
+                    new()
+                    {
+                        CourierId = context.Message.CourierId,
+                        Status = CourierStatus.ArrivedAtCustomer
+                    });
 
                 if (!statusResult.IsSuccessful)
                 {

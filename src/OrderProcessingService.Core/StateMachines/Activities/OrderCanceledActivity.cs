@@ -4,13 +4,20 @@ namespace OrderProcessingService.Core.StateMachines.Activities
     using System.Threading.Tasks;
     using Automatonymous;
     using GreenPipes;
+    using Microsoft.Extensions.Logging;
     using Sagas;
-    using Serilog;
     using Services.Core.Events;
 
     public class OrderCanceledActivity :
         Activity<OrderState, OrderCanceled>
     {
+        readonly ILogger<OrderCanceledActivity> _logger;
+
+        public OrderCanceledActivity(ILogger<OrderCanceledActivity> logger)
+        {
+            _logger = logger;
+        }
+
         public void Probe(ProbeContext context)
         {
             context.CreateScope("");
@@ -24,7 +31,7 @@ namespace OrderProcessingService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<OrderState, OrderCanceled> context,
             Behavior<OrderState, OrderCanceled> next)
         {
-            Log.Information($"Order State Machine - {nameof(OrderCanceledActivity)} (state = {context.Instance.CurrentState})");
+            _logger.LogInformation($"Order State Machine - {nameof(OrderCanceledActivity)} (state = {context.Instance.CurrentState})");
 
             context.Instance.Timestamp = DateTime.Now;
             

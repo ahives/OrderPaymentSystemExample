@@ -5,18 +5,20 @@ namespace OrderProcessingService.Core.StateMachines.Activities
     using Automatonymous;
     using GreenPipes;
     using MassTransit;
+    using Microsoft.Extensions.Logging;
     using Sagas;
-    using Serilog;
     using Services.Core.Events;
 
     public class VoidOrderItemRequestActivity :
         Activity<OrderItemState, VoidOrderItemRequest>
     {
         readonly ConsumeContext _context;
+        readonly ILogger<VoidOrderItemRequestActivity> _logger;
 
-        public VoidOrderItemRequestActivity(ConsumeContext context)
+        public VoidOrderItemRequestActivity(ConsumeContext context, ILogger<VoidOrderItemRequestActivity> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public void Probe(ProbeContext context)
@@ -32,7 +34,7 @@ namespace OrderProcessingService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<OrderItemState, VoidOrderItemRequest> context,
             Behavior<OrderItemState, VoidOrderItemRequest> next)
         {
-            Log.Information($"Order Item State Machine - {nameof(VoidOrderItemRequestActivity)} (state = {context.Instance.CurrentState})");
+            _logger.LogInformation($"Order Item State Machine - {nameof(VoidOrderItemRequestActivity)} (state = {context.Instance.CurrentState})");
 
             context.Instance.Timestamp = DateTime.Now;
 
