@@ -1,8 +1,8 @@
-namespace OrderProcessingWbService
+namespace OrderProcessingWebService
 {
     using System;
 
-    public record OrderReadyRequest
+    public record OrderExpiredContext
     {
         public Guid OrderId { get; init; }
         

@@ -50,7 +50,11 @@ namespace OrderProcessingService.Core.StateMachines.Activities
                 {
                     OrderId = item.OrderId,
                     OrderItemId = item.OrderItemId,
+                    CustomerId = context.Data.CustomerId,
+                    RestaurantId = context.Data.RestaurantId
                 });
+            
+                Log.Information($"Published - {nameof(OrderItemCancelRequest)}");
             }
             
             await next.Execute(context).ConfigureAwait(false);
@@ -58,7 +62,8 @@ namespace OrderProcessingService.Core.StateMachines.Activities
 
         public async Task Faulted<TException>(
             BehaviorExceptionContext<OrderState, OrderCancelRequest, TException> context,
-            Behavior<OrderState, OrderCancelRequest> next) where TException : Exception
+            Behavior<OrderState, OrderCancelRequest> next)
+            where TException : Exception
         {
             await next.Faulted(context);
         }

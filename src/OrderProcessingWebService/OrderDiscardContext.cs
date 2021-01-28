@@ -1,8 +1,8 @@
-namespace OrderProcessingWbService
+namespace OrderProcessingWebService
 {
     using System;
 
-    public record OrderDiscardRequest
+    public record OrderDiscardContext
     {
         public Guid OrderId { get; init; }
         

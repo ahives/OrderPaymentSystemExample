@@ -76,7 +76,8 @@ namespace OrderProcessingService.Core.StateMachines.Activities
         }
 
         public async Task Faulted<TException>(BehaviorExceptionContext<OrderState, RequestOrderPreparation, TException> context,
-            Behavior<OrderState, RequestOrderPreparation> next) where TException : Exception
+            Behavior<OrderState, RequestOrderPreparation> next)
+            where TException : Exception
         {
             await next.Faulted(context);
         }
@@ -86,7 +87,7 @@ namespace OrderProcessingService.Core.StateMachines.Activities
             {
                 OrderItemId = NewId.NextGuid(),
                 MenuItemId = x.MenuItemId,
-                Status = (int)OrderItemStatus.Receipt,
+                Status = OrderItemStatus.Receipt,
                 SpecialInstructions = x.SpecialInstructions
             });
     }

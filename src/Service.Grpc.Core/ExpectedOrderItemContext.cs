@@ -2,6 +2,7 @@ namespace Service.Grpc.Core
 {
     using System;
     using System.Runtime.Serialization;
+    using Data.Core;
 
     [DataContract]
     public class ExpectedOrderItemContext
@@ -13,6 +14,6 @@ namespace Service.Grpc.Core
         public Guid OrderItemId { get; init; }
         
         [DataMember(Order = 3)]
-        public int Status { get; init; }
+        public OrderItemStatus Status { get; init; }
     }
 }

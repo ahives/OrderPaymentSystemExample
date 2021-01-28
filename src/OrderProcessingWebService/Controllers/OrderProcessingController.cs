@@ -4,7 +4,6 @@ namespace OrderProcessingWebService.Controllers
     using System.Threading.Tasks;
     using MassTransit;
     using Microsoft.AspNetCore.Mvc;
-    using OrderProcessingWbService;
     using Services.Core.Events;
 
     [ApiController]
@@ -20,43 +19,43 @@ namespace OrderProcessingWebService.Controllers
         }
 
         [HttpPost("PrepareOrder")]
-        public async Task<IActionResult> PrepareOrder(RequestOrderPreparation request)
+        public async Task<IActionResult> PrepareOrder(OrderPreparationContext context)
         {
             Guid orderId = NewId.NextGuid();
             
             await _endpoint.Publish<RequestOrderPreparation>(new()
             {
                 OrderId = orderId,
-                CustomerId = request.CustomerId,
-                RestaurantId = request.RestaurantId,
-                AddressId = request.AddressId,
-                Items = request.Items
+                CustomerId = context.CustomerId,
+                RestaurantId = context.RestaurantId,
+                AddressId = context.AddressId,
+                Items = context.Items
             });
 
             return Ok(orderId);
         }
 
         [HttpPost("OrderReadyForDelivery")]
-        public async Task<IActionResult> OrderReadyForDelivery(OrderReadyRequest request)
+        public async Task<IActionResult> OrderReadyForDelivery(OrderReadyContext context)
         {
             await _endpoint.Publish<OrderReadyForDelivery>(new()
             {
-                OrderId = request.OrderId,
-                CustomerId = request.CustomerId,
-                RestaurantId = request.RestaurantId
+                OrderId = context.OrderId,
+                CustomerId = context.CustomerId,
+                RestaurantId = context.RestaurantId
             });
 
             return Ok();
         }
 
         [HttpPost("OrderExpired")]
-        public async Task<IActionResult> OrderExpired(OrderExpiredRequest request)
+        public async Task<IActionResult> OrderExpired(OrderExpiredContext context)
         {
             await _endpoint.Publish<OrderExpired>(new()
             {
-                OrderId = request.OrderId,
-                CustomerId = request.CustomerId,
-                RestaurantId = request.RestaurantId
+                OrderId = context.OrderId,
+                CustomerId = context.CustomerId,
+                RestaurantId = context.RestaurantId
             });
 
             return Ok();
@@ -103,12 +102,12 @@ namespace OrderProcessingWebService.Controllers
         // }
 
         [HttpPost("DiscardOrderItem")]
-        public async Task<IActionResult> OrderItemDiscarded(OrderDiscardRequest request)
+        public async Task<IActionResult> OrderItemDiscarded(OrderDiscardContext context)
         {
             await _endpoint.Publish<OrderItemDiscarded>(new()
             {
-                OrderId = request.OrderId,
-                OrderItemId = request.OrderItemId
+                OrderId = context.OrderId,
+                OrderItemId = context.OrderItemId
             });
 
             return Ok();

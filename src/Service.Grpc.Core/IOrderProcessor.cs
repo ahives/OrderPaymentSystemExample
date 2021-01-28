@@ -24,12 +24,15 @@ namespace Service.Grpc.Core
         Task<Result<ExpectedOrderItem>> UpdateExpectedOrderItem(ExpectedOrderItemContext context);
         
         [OperationContract]
-        Task<Result<int>> GetExpectedOrderItemCount(ExpectedOrderItemCountContext context);
+        Task<Result<int>> GetOrderItemCount(OrderItemCountContext context);
         
         [OperationContract]
         Task<Result<Order>> ChangeOrderStatus(CancelOrderContext context);
         
         [OperationContract]
         Task<Result<OrderItem>> ChangeOrderItemStatus(CancelOrderItemContext context);
+
+        [OperationContract]
+        Task<Result<ExpectedOrderItem>> ChangeExpectedOrderItemStatus(CancelOrderItemContext context);
     }
 }

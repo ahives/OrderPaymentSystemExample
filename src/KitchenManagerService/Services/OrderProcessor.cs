@@ -69,15 +69,20 @@ namespace KitchenManagerService.Services
             return new Result<OrderItem> {Value = MapToOrderItem(entity), ChangeCount = changes, IsSuccessful = true};
         }
 
-        public async Task<Result<IReadOnlyList<ExpectedOrderItem>>> GetExpectedOrderItems(
-            ExpectedOrderItemContext context)
+        public async Task<Result<IReadOnlyList<ExpectedOrderItem>>> GetExpectedOrderItems(ExpectedOrderItemContext context)
         {
             var items = _dbContext.ExpectedOrderItems
-                .Where(x => x.OrderId == context.OrderId);
+                .Where(x => x.OrderId == context.OrderId)
+                .ToList();
                 
-            Log.Information($"Order {context.OrderItemId} was saved.");
-                
-            return new Result<IReadOnlyList<ExpectedOrderItem>> {Value = MapToExpectedOrderItems(items).ToList(), IsSuccessful = true};
+            Log.Information($"Returning the following order items associated with order {context.OrderId}.");
+
+            var expectedOrderItems = MapToExpectedOrderItems(items).ToList();
+
+            foreach (var orderItem in expectedOrderItems)
+                Log.Information($"Order Item {orderItem.OrderItemId}");
+
+            return new Result<IReadOnlyList<ExpectedOrderItem>> {Value = expectedOrderItems, IsSuccessful = true};
         }
 
         public async Task<Result<ExpectedOrderItem>> AddExpectedOrderItem(ExpectedOrderItemContext context)
@@ -120,7 +125,7 @@ namespace KitchenManagerService.Services
                 return new Result<ExpectedOrderItem> {Value = null, IsSuccessful = false};
             }
 
-            item.Status = context.Status;
+            item.Status = (int)context.Status;
 
             _dbContext.ExpectedOrderItems.Update(item);
 
@@ -138,10 +143,11 @@ namespace KitchenManagerService.Services
             return new Result<ExpectedOrderItem> {Value = MapToExpectedOrderItem(item), ChangeCount = changes, IsSuccessful = true};
         }
 
-        public async Task<Result<int>> GetExpectedOrderItemCount(ExpectedOrderItemCountContext context)
+        public async Task<Result<int>> GetOrderItemCount(OrderItemCountContext context)
         {
             var items = _dbContext.ExpectedOrderItems
-                .Where(x => x.OrderId == context.OrderId);
+                .Where(x => x.OrderId == context.OrderId)
+                .ToList();
 
             if (!items.Any())
             {
@@ -150,7 +156,7 @@ namespace KitchenManagerService.Services
                 return new Result<int> {Reason = ReasonType.None, IsSuccessful = false};
             }
             
-            int count = items.Count(x => x.Status == (int) OrderItemStatus.Prepared);
+            int count = items.Count(x => x.Status == (int) context.Status);
 
             Log.Information($"Found order items for order {context.OrderId}.");
 
@@ -193,7 +199,7 @@ namespace KitchenManagerService.Services
             
             if (orderItem == null)
             {
-                Log.Information($"Order item {context.OrderItemId} of order {context.OrderId} could not be found.");
+                Log.Information($"Order item {context.OrderItemId} could not be found.");
                 
                 return new Result<OrderItem> {Reason = ReasonType.CourierNotFound, IsSuccessful = false};
             }
@@ -207,14 +213,43 @@ namespace KitchenManagerService.Services
             
             if (changes <= 0)
             {
-                Log.Information($"Order item {context.OrderItemId} of order {context.OrderId} status was not updated.");
+                Log.Information($"Order item {context.OrderItemId} status was not updated.");
                 
                 return new Result<OrderItem> {Reason = ReasonType.DatabaseError, ChangeCount = changes, IsSuccessful = false};
             }
 
-            Log.Information($"Order item {context.OrderItemId} of order {context.OrderId} status was updated.");
+            Log.Information($"Order item {context.OrderItemId} status was updated.");
                 
             return new Result<OrderItem> {ChangeCount = changes, Value = MapToOrderItem(orderItem), IsSuccessful = true};
+        }
+
+        public async Task<Result<ExpectedOrderItem>> ChangeExpectedOrderItemStatus(CancelOrderItemContext context)
+        {
+            var orderItem = await _dbContext.ExpectedOrderItems.FindAsync(context.OrderItemId);
+            
+            if (orderItem == null)
+            {
+                Log.Information($"Order item {context.OrderItemId} could not be found.");
+                
+                return new Result<ExpectedOrderItem> {Reason = ReasonType.CourierNotFound, IsSuccessful = false};
+            }
+            
+            orderItem.Status = (int)context.Status;
+            
+            _dbContext.Update(orderItem);
+            
+            int changes = await _dbContext.SaveChangesAsync();
+            
+            if (changes <= 0)
+            {
+                Log.Information($"Order item {context.OrderItemId} status was not updated.");
+                
+                return new Result<ExpectedOrderItem> {Reason = ReasonType.DatabaseError, ChangeCount = changes, IsSuccessful = false};
+            }
+
+            Log.Information($"Order item {context.OrderItemId} status was updated.");
+                
+            return new Result<ExpectedOrderItem> {ChangeCount = changes, Value = MapToExpectedOrderItem(orderItem), IsSuccessful = true};
         }
 
         ExpectedOrderItem MapToExpectedOrderItem(ExpectedOrderItemEntity entity) =>
@@ -225,8 +260,8 @@ namespace KitchenManagerService.Services
                 Status = entity.Status
             };
 
-        IEnumerable<ExpectedOrderItem> MapToExpectedOrderItems(IQueryable<ExpectedOrderItemEntity> entities) =>
-            entities.Select(x => MapToExpectedOrderItem(x));
+        IEnumerable<ExpectedOrderItem> MapToExpectedOrderItems(List<ExpectedOrderItemEntity> entities) =>
+            entities.Select(MapToExpectedOrderItem);
 
         OrderItem MapToOrderItem(OrderItemEntity entity) =>
             new()
@@ -275,7 +310,7 @@ namespace KitchenManagerService.Services
             {
                 OrderId = context.OrderId,
                 OrderItemId = context.OrderItemId,
-                Status = context.Status
+                Status = (int)context.Status
             };
 
         OrderEntity CreateOrderEntity(OrderProcessContext context) =>

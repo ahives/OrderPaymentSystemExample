@@ -1,6 +1,7 @@
 namespace Services.Core.Model
 {
     using System;
+    using Data.Core;
 
     public record Item
     {
@@ -8,7 +9,7 @@ namespace Services.Core.Model
         
         public Guid MenuItemId { get; init; }
         
-        public int Status { get; init; }
+        public OrderItemStatus Status { get; init; }
         
         public string SpecialInstructions { get; init; }
     }

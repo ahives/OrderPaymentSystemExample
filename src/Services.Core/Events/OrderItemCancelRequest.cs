@@ -13,6 +13,10 @@ namespace Services.Core.Events
         
         public Guid OrderItemId { get; init; }
         
+        public Guid CustomerId { get; init; }
+        
+        public Guid RestaurantId { get; init; }
+        
         public DateTime Timestamp { get; }
     }
 }

@@ -10,29 +10,40 @@ namespace OrderProcessingService.Core.Consumers
     public class CancelOrderItemConsumer :
         IConsumer<CancelOrderItem>
     {
-        readonly IGrpcClient<IOrderProcessor> _client;
+        readonly IOrderProcessor _client;
 
         public CancelOrderItemConsumer(IGrpcClient<IOrderProcessor> client)
         {
-            _client = client;
+            _client = client.Client;
         }
 
         public async Task Consume(ConsumeContext<CancelOrderItem> context)
         {
             Log.Information($"Consumer - {nameof(CancelOrderItemConsumer)} => consumed {nameof(CancelOrderItem)} event");
             
-            var result = await _client.Client.ChangeOrderItemStatus(new CancelOrderItemContext()
+            var result = await _client.ChangeOrderItemStatus(new ()
             {
                 OrderItemId = context.Message.OrderItemId,
                 Status = OrderItemStatus.Canceled
             });
 
-            if (result.IsSuccessful)
+            var expectedResult = await _client.ChangeExpectedOrderItemStatus(new CancelOrderItemContext()
+            {
+                OrderItemId = context.Message.OrderItemId,
+                Status = OrderItemStatus.Canceled
+            });
+
+            if (result.IsSuccessful && expectedResult.IsSuccessful)
             {
                 await context.Publish<OrderItemCanceled>(new ()
                 {
-                    OrderItemId = context.Message.OrderItemId
+                    OrderId = context.Message.OrderId,
+                    OrderItemId = context.Message.OrderItemId,
+                    CustomerId = context.Message.CustomerId,
+                    RestaurantId = context.Message.RestaurantId
                 });
+                
+                Log.Information($"Published - {nameof(OrderItemCanceled)}");
             }
             else
             {

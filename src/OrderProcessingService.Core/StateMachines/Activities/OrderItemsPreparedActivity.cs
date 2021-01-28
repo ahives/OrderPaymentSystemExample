@@ -3,6 +3,7 @@ namespace OrderProcessingService.Core.StateMachines.Activities
     using System;
     using System.Threading.Tasks;
     using Automatonymous;
+    using Data.Core;
     using GreenPipes;
     using Sagas;
     using Serilog;
@@ -40,18 +41,21 @@ namespace OrderProcessingService.Core.StateMachines.Activities
                 new ()
                 {
                     OrderItemId = context.Data.OrderItemId,
-                    Status = context.Data.Status
+                    Status = OrderItemStatus.Prepared
                 });
             
-            var result = await _client.Client.GetExpectedOrderItemCount(
+            var result = await _client.Client.GetOrderItemCount(
                 new ()
                 {
-                    OrderId = context.Instance.CorrelationId
+                    OrderId = context.Instance.CorrelationId,
+                    Status = OrderItemStatus.Prepared
                 });
+
+            int preparedItemCount = result.Value;
             
-            Log.Information($"ActualItemCount={result.Value}");
+            Log.Information($"PreparedItemCount = {preparedItemCount}");
             
-            context.Instance.PreparedItemCount = result.Value;
+            context.Instance.PreparedItemCount = preparedItemCount;
 
             await next.Execute(context).ConfigureAwait(false);
         }

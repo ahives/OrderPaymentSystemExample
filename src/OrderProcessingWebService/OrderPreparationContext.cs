@@ -3,7 +3,7 @@ namespace OrderProcessingWebService
     using System;
     using Services.Core.Model;
 
-    public record PrepareOrderRequest
+    public record OrderPreparationContext
     {
         public Guid OrderId { get; init; }
         

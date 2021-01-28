@@ -36,6 +36,8 @@ namespace OrderProcessingService.Core.Consumers
                     CustomerId = context.Message.CustomerId,
                     RestaurantId = context.Message.RestaurantId
                 });
+                
+                Log.Information($"Published - {nameof(OrderCanceled)}");
             }
         }
     }

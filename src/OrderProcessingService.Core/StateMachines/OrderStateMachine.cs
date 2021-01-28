@@ -14,7 +14,7 @@ namespace OrderProcessingService.Core.StateMachines
             Event(() => OrderItemPreparedEvent, e => e.CorrelateById(context => context.Message.OrderId));
             Event(() => OrderItemExpiredEvent, e => e.CorrelateById(context => context.Message.OrderId));
             Event(() => OrderCancelRequestEvent, e => e.CorrelateById(context => context.Message.OrderId));
-            Event(() => OrderItemCanceledEvent, e => e.CorrelateById(context => context.Message.OrderId));
+            Event(() => OrderItemCanceledEvent, e => e.CorrelateById(context => context.Message.OrderItemId));
             Event(() => OrderCanceledEvent, e => e.CorrelateById(context => context.Message.OrderId));
             
             InstanceState(x => x.CurrentState, Pending, Prepared, NotPrepared, Canceled);
