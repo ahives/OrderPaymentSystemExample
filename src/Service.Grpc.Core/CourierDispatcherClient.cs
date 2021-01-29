@@ -1,12 +1,13 @@
 namespace Service.Grpc.Core
 {
-    using Microsoft.Extensions.Configuration;
+    using Configuration;
+    using Microsoft.Extensions.Options;
 
     public class CourierDispatcherClient :
         BaseGrpcClient<ICourierDispatcher>
     {
-        public CourierDispatcherClient(IConfiguration configuration)
-            : base(configuration)
+        public CourierDispatcherClient(IOptions<GrpcClientSettings> options)
+            : base(options)
         {
         }
     }

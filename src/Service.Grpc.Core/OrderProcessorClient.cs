@@ -1,12 +1,13 @@
 namespace Service.Grpc.Core
 {
-    using Microsoft.Extensions.Configuration;
+    using Configuration;
+    using Microsoft.Extensions.Options;
 
     public class OrderProcessorClient :
         BaseGrpcClient<IOrderProcessor>
     {
-        public OrderProcessorClient(IConfiguration configuration)
-            : base(configuration)
+        public OrderProcessorClient(IOptions<GrpcClientSettings> options)
+            : base(options)
         {
         }
     }

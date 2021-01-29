@@ -18,6 +18,8 @@
     using Serilog;
     using Serilog.Events;
     using Service.Grpc.Core;
+    using Service.Grpc.Core.Configuration;
+    using Services.Core.Configuration;
 
     class Program
     {
@@ -46,6 +48,8 @@
                     services.AddSingleton<IGrpcClient<ICourierDispatcher>, CourierDispatcherClient>();
 
                     services.Configure<CourierServiceSettings>(options => host.Configuration.GetSection("Application").Bind(options));
+                    services.Configure<RabbitMqTransportSettings>(options => host.Configuration.GetSection("RabbitMqTransportSettings").Bind(options));
+                    services.Configure<GrpcClientSettings>(options => host.Configuration.GetSection("GrpcClientSettings").Bind(options));
                     
                     services.AddMassTransit(x =>
                     {
@@ -67,13 +71,13 @@
                         
                         x.UsingRabbitMq((context, cfg) =>
                         {
-                            var options = context.GetService<IOptions<CourierServiceSettings>>();
+                            var options = context.GetService<IOptions<RabbitMqTransportSettings>>();
                             var settings = options.Value;
                             
-                            cfg.Host("localhost", settings.VirtualHost, h =>
+                            cfg.Host(settings.Host, settings.VirtualHost, h =>
                             {
-                                h.Username("guest");
-                                h.Password("guest");
+                                h.Username(settings.Username);
+                                h.Password(settings.Password);
                             });
                             
                             cfg.UseMessageScheduler(schedulerEndpoint);

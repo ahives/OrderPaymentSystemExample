@@ -1,28 +1,28 @@
 namespace Service.Grpc.Core
 {
+    using Configuration;
     using global::Grpc.Net.Client;
-    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.Options;
     using ProtoBuf.Grpc.Client;
 
     public class BaseGrpcClient<TClient> :
         IGrpcClient<TClient>
         where TClient : class
     {
-        protected readonly string _uri;
+        protected readonly GrpcClientSettings _settings;
         protected GrpcChannel _channel;
 
-        public BaseGrpcClient(IConfiguration configuration)
+        public BaseGrpcClient(IOptions<GrpcClientSettings> options)
         {
-            _uri = configuration?.GetSection("Application")
-                .GetValue<string>("GrpcClientUri") ?? "http://localhost:5000";
-            _channel = GrpcChannel.ForAddress(_uri);
+            _settings = options.Value;
+            _channel = GrpcChannel.ForAddress(_settings.ClientUrl);
         }
 
         public virtual TClient Client
         {
             get
             {
-                _channel ??= GrpcChannel.ForAddress(_uri);
+                _channel ??= GrpcChannel.ForAddress(_settings.ClientUrl);
 
                 return _channel.CreateGrpcService<TClient>();
             }

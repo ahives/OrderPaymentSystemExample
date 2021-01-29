@@ -18,6 +18,8 @@
     using Serilog;
     using Serilog.Events;
     using Service.Grpc.Core;
+    using Service.Grpc.Core.Configuration;
+    using Services.Core.Configuration;
 
     class Program
     {
@@ -47,6 +49,8 @@
                     services.AddSingleton<IGrpcClient<IOrderProcessor>, OrderProcessorClient>();
 
                     services.Configure<OrderProcessingServiceSettings>(options => host.Configuration.GetSection("Application").Bind(options));
+                    services.Configure<RabbitMqTransportSettings>(options => host.Configuration.GetSection("RabbitMqTransportSettings").Bind(options));
+                    services.Configure<GrpcClientSettings>(options => host.Configuration.GetSection("GrpcClientSettings").Bind(options));
 
                     services.AddDbContext<OrderProcessingServiceDbContext>(builder =>
                         builder.UseNpgsql(host.Configuration.GetConnectionString("OrdersConnection"), m =>
@@ -70,13 +74,13 @@
                         
                         x.UsingRabbitMq((context, cfg) =>
                         {
-                            var options = context.GetService<IOptions<OrderProcessingServiceSettings>>();
+                            var options = context.GetService<IOptions<RabbitMqTransportSettings>>();
                             var settings = options.Value;
                             
-                            cfg.Host("localhost", settings.VirtualHost, h =>
+                            cfg.Host(settings.Host, settings.VirtualHost, h =>
                             {
-                                h.Username("guest");
-                                h.Password("guest");
+                                h.Username(settings.Username);
+                                h.Password(settings.Password);
                             });
                             
                             cfg.ConfigureEndpoints(context);

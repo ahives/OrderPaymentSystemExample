@@ -36,7 +36,7 @@ namespace CourierService.Core.StateMachines
             
             Schedule(() => OrderCompletionTimeout, instance => instance.OrderCompletionTimeoutTokenId, s =>
             {
-                int seconds = settings.CourierWaitUponArrivalInSeconds;
+                int seconds = settings.CourierWaitUponArrivalTimeInSeconds;
                 
                 s.Delay = TimeSpan.FromSeconds(seconds > 0 ? seconds : 15);
                 s.Received = r => r.CorrelateById(context => context.Message.OrderId);

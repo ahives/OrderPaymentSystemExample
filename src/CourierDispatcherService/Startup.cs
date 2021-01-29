@@ -9,7 +9,6 @@
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using ProtoBuf.Grpc.Server;
-    using Service.Grpc.Core;
     using Services;
 
     public class Startup
