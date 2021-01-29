@@ -34,7 +34,7 @@ namespace CourierService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<CourierState, OrderCompletionTimeoutExpired> context,
             Behavior<CourierState, OrderCompletionTimeoutExpired> next)
         {
-            _logger.LogInformation($"Courier State Machine - {nameof(OrderCompletionTimeoutActivity)}");
+            _logger.LogInformation($"Courier State Machine - {nameof(OrderCompletionTimeoutActivity)} (state = {context.Instance.CurrentState})");
             
             context.Instance.Timestamp = DateTime.Now;
             context.Instance.IsOrderReady = false;

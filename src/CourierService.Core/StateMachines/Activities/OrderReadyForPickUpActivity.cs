@@ -34,7 +34,7 @@ namespace CourierService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<CourierState, OrderReadyForDelivery> context,
             Behavior<CourierState, OrderReadyForDelivery> next)
         {
-            _logger.LogInformation($"Courier State Machine - {nameof(OrderReadyForPickUpActivity)}");
+            _logger.LogInformation($"Courier State Machine - {nameof(OrderReadyForPickUpActivity)} (state = {context.Instance.CurrentState})");
             
             context.Instance.Timestamp = DateTime.Now;
 

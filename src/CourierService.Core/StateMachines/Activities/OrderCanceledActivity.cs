@@ -34,7 +34,7 @@ namespace CourierService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<CourierState, OrderCanceled> context,
             Behavior<CourierState, OrderCanceled> next)
         {
-            _logger.LogInformation($"Courier State Machine - {nameof(OrderCanceledActivity)}");
+            _logger.LogInformation($"Courier State Machine - {nameof(OrderCanceledActivity)} (state = {context.Instance.CurrentState})");
             
             context.Instance.Timestamp = DateTime.Now;
             context.Instance.CourierId = null;

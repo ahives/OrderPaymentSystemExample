@@ -6,6 +6,7 @@ namespace KitchenManagerService.Services
     using System.Threading.Tasks;
     using Data.Core;
     using Data.Core.Model;
+    using Microsoft.Extensions.Logging;
     using Serilog;
     using Service.Grpc.Core;
     using Service.Grpc.Core.Model;
@@ -14,10 +15,12 @@ namespace KitchenManagerService.Services
         IOrderProcessor
     {
         readonly OrdersDbContext _dbContext;
+        readonly ILogger<OrderProcessor> _logger;
 
-        public OrderProcessor(OrdersDbContext dbContext)
+        public OrderProcessor(OrdersDbContext dbContext, ILogger<OrderProcessor> logger)
         {
             _dbContext = dbContext;
+            _logger = logger;
         }
 
         public async Task<Result<Order>> AddNewOrder(OrderProcessContext context)
@@ -30,12 +33,12 @@ namespace KitchenManagerService.Services
 
             if (changes <= 0)
             {
-                Log.Information($"Order {context.OrderId} could not be saved.");
+                _logger.LogInformation($"Order {context.OrderId} could not be saved.");
                 
                 return new Result<Order> {Reason = ReasonType.DatabaseError, ChangeCount = changes, IsSuccessful = false};
             }
                 
-            Log.Information($"Order {context.OrderId} was saved.");
+            _logger.LogInformation($"Order {context.OrderId} was saved.");
                 
             return new Result<Order> {Value = MapOrderEntity(entity), ChangeCount = changes, IsSuccessful = true};
         }
@@ -46,7 +49,7 @@ namespace KitchenManagerService.Services
 
             if (target != null)
             {
-                Log.Information($"Order item {context.OrderId} already exists.");
+                _logger.LogInformation($"Order item {context.OrderId} already exists.");
                 
                 return new Result<OrderItem> {Value = null, IsSuccessful = false};
             }
@@ -59,12 +62,12 @@ namespace KitchenManagerService.Services
 
             if (changes <= 0)
             {
-                Log.Information($"Order item {context.OrderItemId} of Order {context.OrderId} could not be saved.");
+                _logger.LogInformation($"Order item {context.OrderItemId} of Order {context.OrderId} could not be saved.");
                 
                 return new Result<OrderItem> {Reason = ReasonType.DatabaseError, ChangeCount = changes, IsSuccessful = false};
             }
                 
-            Log.Information($"Order {context.OrderItemId} was saved.");
+            _logger.LogInformation($"Order {context.OrderItemId} was saved.");
                 
             return new Result<OrderItem> {Value = MapToOrderItem(entity), ChangeCount = changes, IsSuccessful = true};
         }
@@ -75,12 +78,12 @@ namespace KitchenManagerService.Services
                 .Where(x => x.OrderId == context.OrderId)
                 .ToList();
                 
-            Log.Information($"Returning the following order items associated with order {context.OrderId}.");
+            _logger.LogInformation($"Returning the following order items associated with order {context.OrderId}.");
 
             var expectedOrderItems = MapToExpectedOrderItems(items).ToList();
 
             foreach (var orderItem in expectedOrderItems)
-                Log.Information($"Order Item {orderItem.OrderItemId}");
+                _logger.LogInformation($"Order Item {orderItem.OrderItemId}");
 
             return new Result<IReadOnlyList<ExpectedOrderItem>> {Value = expectedOrderItems, IsSuccessful = true};
         }
@@ -91,7 +94,7 @@ namespace KitchenManagerService.Services
 
             if (item != null)
             {
-                Log.Information($"Order item {context.OrderItemId} already exists.");
+                _logger.LogInformation($"Order item {context.OrderItemId} already exists.");
 
                 return new Result<ExpectedOrderItem> {Value = null, IsSuccessful = false};
             }
@@ -104,12 +107,12 @@ namespace KitchenManagerService.Services
 
             if (changes <= 0)
             {
-                Log.Information($"Order item {context.OrderItemId} could not be saved.");
+                _logger.LogInformation($"Order item {context.OrderItemId} could not be saved.");
 
                 return new Result<ExpectedOrderItem> {Reason = ReasonType.DatabaseError, ChangeCount = changes, IsSuccessful = false};
             }
 
-            Log.Information($"Order item {context.OrderItemId} was saved.");
+            _logger.LogInformation($"Order item {context.OrderItemId} was saved.");
 
             return new Result<ExpectedOrderItem> {Value = MapToExpectedOrderItem(entity), ChangeCount = changes, IsSuccessful = true};
         }
@@ -120,7 +123,7 @@ namespace KitchenManagerService.Services
 
             if (item == null)
             {
-                Log.Information($"Could not find order item {context.OrderItemId}.");
+                _logger.LogInformation($"Could not find order item {context.OrderItemId}.");
 
                 return new Result<ExpectedOrderItem> {Value = null, IsSuccessful = false};
             }
@@ -133,12 +136,12 @@ namespace KitchenManagerService.Services
 
             if (changes <= 0)
             {
-                Log.Information($"Order item {context.OrderItemId} could not be saved.");
+                _logger.LogInformation($"Order item {context.OrderItemId} could not be saved.");
 
                 return new Result<ExpectedOrderItem> {Reason = ReasonType.DatabaseError, ChangeCount = changes, IsSuccessful = false};
             }
 
-            Log.Information($"Order item {context.OrderItemId} was saved.");
+            _logger.LogInformation($"Order item {context.OrderItemId} was saved.");
 
             return new Result<ExpectedOrderItem> {Value = MapToExpectedOrderItem(item), ChangeCount = changes, IsSuccessful = true};
         }
@@ -151,14 +154,14 @@ namespace KitchenManagerService.Services
 
             if (!items.Any())
             {
-                Log.Information($"Could not find any order items for order {context.OrderId}.");
+                _logger.LogInformation($"Could not find any order items for order {context.OrderId}.");
 
                 return new Result<int> {Reason = ReasonType.None, IsSuccessful = false};
             }
             
             int count = items.Count(x => x.Status == (int) context.Status);
 
-            Log.Information($"Found order items for order {context.OrderId}.");
+            _logger.LogInformation($"Found order items for order {context.OrderId}.");
 
             return new Result<int> {Value = count, IsSuccessful = true};
         }
@@ -171,14 +174,14 @@ namespace KitchenManagerService.Services
 
             if (!items.Any())
             {
-                Log.Information($"Could not find any order items for order {context.OrderId}.");
+                _logger.LogInformation($"Could not find any order items for order {context.OrderId}.");
 
                 return new Result<int> {Reason = ReasonType.None, IsSuccessful = false};
             }
             
             int count = items.Count(x => x.Status != (int) context.Status);
 
-            Log.Information($"Found order items for order {context.OrderId}.");
+            _logger.LogInformation($"Found order items for order {context.OrderId}.");
 
             return new Result<int> {Value = count, IsSuccessful = true};
         }
@@ -189,7 +192,7 @@ namespace KitchenManagerService.Services
             
             if (order == null)
             {
-                Log.Information($"Order {context.OrderId} could not be found.");
+                _logger.LogInformation($"Order {context.OrderId} could not be found.");
                 
                 return new Result<Order> {Reason = ReasonType.CourierNotFound, IsSuccessful = false};
             }
@@ -203,12 +206,12 @@ namespace KitchenManagerService.Services
             
             if (changes <= 0)
             {
-                Log.Information($"Order {context.OrderId} status was not updated.");
+                _logger.LogInformation($"Order {context.OrderId} status was not updated.");
                 
                 return new Result<Order> {Reason = ReasonType.DatabaseError, ChangeCount = changes, IsSuccessful = false};
             }
 
-            Log.Information($"Order {context.OrderId} status was updated.");
+            _logger.LogInformation($"Order {context.OrderId} status was updated.");
                 
             return new Result<Order> {ChangeCount = changes, Value = MapToOrder(order), IsSuccessful = true};
         }
@@ -219,7 +222,7 @@ namespace KitchenManagerService.Services
             
             if (orderItem == null)
             {
-                Log.Information($"Order item {context.OrderItemId} could not be found.");
+                _logger.LogInformation($"Order item {context.OrderItemId} could not be found.");
                 
                 return new Result<OrderItem> {Reason = ReasonType.CourierNotFound, IsSuccessful = false};
             }
@@ -233,12 +236,12 @@ namespace KitchenManagerService.Services
             
             if (changes <= 0)
             {
-                Log.Information($"Order item {context.OrderItemId} status was not updated.");
+                _logger.LogInformation($"Order item {context.OrderItemId} status was not updated.");
                 
                 return new Result<OrderItem> {Reason = ReasonType.DatabaseError, ChangeCount = changes, IsSuccessful = false};
             }
 
-            Log.Information($"Order item {context.OrderItemId} status was updated.");
+            _logger.LogInformation($"Order item {context.OrderItemId} status was updated.");
                 
             return new Result<OrderItem> {ChangeCount = changes, Value = MapToOrderItem(orderItem), IsSuccessful = true};
         }
@@ -249,7 +252,7 @@ namespace KitchenManagerService.Services
             
             if (orderItem == null)
             {
-                Log.Information($"Order item {context.OrderItemId} could not be found.");
+                _logger.LogInformation($"Order item {context.OrderItemId} could not be found.");
                 
                 return new Result<ExpectedOrderItem> {Reason = ReasonType.CourierNotFound, IsSuccessful = false};
             }
@@ -262,12 +265,12 @@ namespace KitchenManagerService.Services
             
             if (changes <= 0)
             {
-                Log.Information($"Order item {context.OrderItemId} status was not updated.");
+                _logger.LogInformation($"Order item {context.OrderItemId} status was not updated.");
                 
                 return new Result<ExpectedOrderItem> {Reason = ReasonType.DatabaseError, ChangeCount = changes, IsSuccessful = false};
             }
 
-            Log.Information($"Order item {context.OrderItemId} status was updated.");
+            _logger.LogInformation($"Order item {context.OrderItemId} status was updated.");
                 
             return new Result<ExpectedOrderItem> {ChangeCount = changes, Value = MapToExpectedOrderItem(orderItem), IsSuccessful = true};
         }

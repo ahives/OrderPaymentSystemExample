@@ -9,13 +9,13 @@ namespace CourierService.Core.StateMachines.Activities
     using Sagas;
     using Services.Core.Events;
 
-    public class DeliveringOrderActivity :
-        Activity<CourierState, DeliveringOrder>
+    public class IdentifyCourierForDispatchActivity :
+        Activity<CourierState, IdentifyCourierForDispatch>
     {
         readonly ConsumeContext _context;
-        readonly ILogger<DeliveringOrderActivity> _logger;
+        readonly ILogger<IdentifyCourierForDispatchActivity> _logger;
 
-        public DeliveringOrderActivity(ConsumeContext context, ILogger<DeliveringOrderActivity> logger)
+        public IdentifyCourierForDispatchActivity(ConsumeContext context, ILogger<IdentifyCourierForDispatchActivity> logger)
         {
             _context = context;
             _logger = logger;
@@ -31,31 +31,29 @@ namespace CourierService.Core.StateMachines.Activities
             visitor.Visit(this);
         }
 
-        public async Task Execute(BehaviorContext<CourierState, DeliveringOrder> context,
-            Behavior<CourierState, DeliveringOrder> next)
+        public async Task Execute(BehaviorContext<CourierState, IdentifyCourierForDispatch> context,
+            Behavior<CourierState, IdentifyCourierForDispatch> next)
         {
-            _logger.LogInformation($"Courier State Machine - {nameof(DeliveringOrderActivity)} (state = {context.Instance.CurrentState})");
+            _logger.LogInformation($"Courier State Machine - {nameof(IdentifyCourierForDispatchActivity)} (state = {context.Instance.CurrentState})");
             
             context.Instance.Timestamp = DateTime.Now;
 
-            await _context.Publish<DeliverOrder>(
+            await _context.Publish<IdentifyCourierForDispatch>(
                 new
                 {
-                    context.Data.CourierId,
                     context.Data.OrderId,
                     context.Data.CustomerId,
                     context.Data.RestaurantId
                 });
-            
-            _logger.LogInformation($"Published - {nameof(DeliverOrder)}");
-            
+
+            _logger.LogInformation($"Published - {nameof(IdentifyCourierForDispatch)}");
+
             await next.Execute(context).ConfigureAwait(false);
         }
 
         public async Task Faulted<TException>(
-            BehaviorExceptionContext<CourierState, DeliveringOrder, TException> context,
-            Behavior<CourierState, DeliveringOrder> next)
-            where TException : Exception
+            BehaviorExceptionContext<CourierState, IdentifyCourierForDispatch, TException> context,
+            Behavior<CourierState, IdentifyCourierForDispatch> next) where TException : Exception
         {
             await next.Faulted(context);
         }

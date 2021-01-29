@@ -31,7 +31,7 @@ namespace CourierService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<CourierState, CourierDispatched> context,
             Behavior<CourierState, CourierDispatched> next)
         {
-            _logger.LogInformation($"Courier State Machine - {nameof(DispatchedActivity)}");
+            _logger.LogInformation($"Courier State Machine - {nameof(DispatchedActivity)} (state = {context.Instance.CurrentState})");
             
             context.Instance.Timestamp = DateTime.Now;
             context.Instance.RestaurantId = context.Data.RestaurantId;

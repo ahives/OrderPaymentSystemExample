@@ -5,8 +5,8 @@ namespace CourierService.Core.StateMachines.Activities
     using Automatonymous;
     using GreenPipes;
     using MassTransit;
-    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
     using Sagas;
     using Services.Core.Events;
 
@@ -14,14 +14,14 @@ namespace CourierService.Core.StateMachines.Activities
         Activity<CourierState, RequestCourierDispatch>
     {
         readonly ConsumeContext _context;
-        readonly IConfiguration _configuration;
         readonly ILogger<RequestDispatchActivity> _logger;
+        readonly CourierServiceSettings _settings;
 
-        public RequestDispatchActivity(ConsumeContext context, IConfiguration configuration, ILogger<RequestDispatchActivity> logger)
+        public RequestDispatchActivity(ConsumeContext context, IOptions<CourierServiceSettings> options, ILogger<RequestDispatchActivity> logger)
         {
             _context = context;
-            _configuration = configuration;
             _logger = logger;
+            _settings = options.Value;
         }
 
         public void Probe(ProbeContext context)
@@ -37,7 +37,7 @@ namespace CourierService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<CourierState, RequestCourierDispatch> context,
             Behavior<CourierState, RequestCourierDispatch> next)
         {
-            _logger.LogInformation($"Courier State Machine - {nameof(RequestDispatchActivity)}");
+            _logger.LogInformation($"Courier State Machine - {nameof(RequestDispatchActivity)} (state = {context.Instance.CurrentState})");
             
             context.Instance.Timestamp = DateTime.Now;
             context.Instance.RestaurantId = context.Data.RestaurantId;
@@ -47,12 +47,7 @@ namespace CourierService.Core.StateMachines.Activities
             context.Instance.IsOrderReady = false;
             context.Instance.HasCourierArrived = false;
             context.Instance.DispatchAttempts = 1;
-
-            int maxDispatchAttempts = _configuration
-                ?.GetSection("Application")
-                ?.GetValue<int>("MaxDispatchAttempts") ?? 3;
-            
-            context.Instance.MaxDispatchAttempts = maxDispatchAttempts;
+            context.Instance.MaxDispatchAttempts = _settings.MaxDispatchAttempts;
 
             await _context.Publish<IdentifyCourierForDispatch>(
                 new

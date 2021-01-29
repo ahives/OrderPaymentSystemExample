@@ -31,7 +31,7 @@ namespace CourierService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<CourierState, OrderExpired> context,
             Behavior<CourierState, OrderExpired> next)
         {
-            _logger.LogInformation($"Courier State Machine - {nameof(OrderExpiredActivity)}");
+            _logger.LogInformation($"Courier State Machine - {nameof(OrderExpiredActivity)} (state = {context.Instance.CurrentState})");
             
             context.Instance.Timestamp = DateTime.Now;
             context.Instance.CourierId = null;

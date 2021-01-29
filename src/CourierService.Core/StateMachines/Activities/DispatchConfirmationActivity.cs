@@ -31,7 +31,7 @@ namespace CourierService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<CourierState, CourierDispatchConfirmed> context,
             Behavior<CourierState, CourierDispatchConfirmed> next)
         {
-            _logger.LogInformation($"Courier State Machine - {nameof(DispatchConfirmationActivity)}");
+            _logger.LogInformation($"Courier State Machine - {nameof(DispatchConfirmationActivity)} (state = {context.Instance.CurrentState})");
             
             context.Instance.Timestamp = DateTime.Now;
 

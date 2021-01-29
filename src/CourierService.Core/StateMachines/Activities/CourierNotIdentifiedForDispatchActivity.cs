@@ -31,7 +31,7 @@ namespace CourierService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<CourierState, CourierNotIdentifiedForDispatch> context,
             Behavior<CourierState, CourierNotIdentifiedForDispatch> next)
         {
-            _logger.LogInformation($"Courier State Machine - {nameof(CourierNotIdentifiedForDispatchActivity)}");
+            _logger.LogInformation($"Courier State Machine - {nameof(CourierNotIdentifiedForDispatchActivity)} (state = {context.Instance.CurrentState})");
             
             context.Instance.Timestamp = DateTime.Now;
 

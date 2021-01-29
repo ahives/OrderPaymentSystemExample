@@ -5,6 +5,7 @@ namespace CourierDispatcherService.Services
     using System.Threading.Tasks;
     using Data.Core;
     using Data.Core.Model;
+    using Microsoft.Extensions.Logging;
     using Serilog;
     using Service.Grpc.Core;
     using Service.Grpc.Core.Model;
@@ -13,10 +14,12 @@ namespace CourierDispatcherService.Services
         ICourierDispatcher
     {
         readonly OrdersDbContext _db;
+        readonly ILogger<CourierDispatcher> _logger;
 
-        public CourierDispatcher(OrdersDbContext db)
+        public CourierDispatcher(OrdersDbContext db, ILogger<CourierDispatcher> logger)
         {
             _db = db;
+            _logger = logger;
         }
 
         public async Task<Result<Courier>> Identify(CourierIdentificationContext context)
@@ -25,7 +28,7 @@ namespace CourierDispatcherService.Services
             
             if (customer == null)
             {
-                Log.Information("Customer not found.");
+                _logger.LogInformation("Customer not found.");
 
                 return new Result<Courier> {Reason = ReasonType.CustomerNotFound, IsSuccessful = false};
             }
@@ -41,16 +44,16 @@ namespace CourierDispatcherService.Services
 
                 if (!courier.IsActive || courier.Status != (int)CourierStatus.Idle)
                 {
-                    Log.Information($"Courier {courier.CourierId} could be chosen because he/she status is not available.");
+                    Log.Information($"Courier {courier.CourierId} could not be chosen because he/she status is not available.");
                     continue;
                 }
             
-                Log.Information($"Courier {courier.CourierId} was identified for dispatch.");
+                _logger.LogInformation($"Courier {courier.CourierId} was identified for dispatch.");
                 
                 return new Result<Courier> {Value = MapEntity(courier, address), IsSuccessful = true};
             }
             
-            Log.Information("No couriers currently available in the area.");
+            _logger.LogInformation("No couriers currently available in the area.");
             
             return new Result<Courier> {Reason = ReasonType.CourierNotAvailable, IsSuccessful = false};
         }
@@ -61,7 +64,7 @@ namespace CourierDispatcherService.Services
             
             if (courier == null)
             {
-                Log.Information($"Courier {context.CourierId} could not be found.");
+                _logger.LogInformation($"Courier {context.CourierId} could not be found.");
                 
                 return new Result<Courier> {Reason = ReasonType.CourierNotFound, IsSuccessful = false};
             }
@@ -75,7 +78,7 @@ namespace CourierDispatcherService.Services
             
             if (order == null)
             {
-                Log.Information($"Order {context.OrderId} could not be found.");
+                _logger.LogInformation($"Order {context.OrderId} could not be found.");
                 
                 return new Result<Courier> {Reason = ReasonType.OrderNotFound, IsSuccessful = false};
             }
@@ -89,14 +92,14 @@ namespace CourierDispatcherService.Services
             
             if (changes <= 0)
             {
-                Log.Information($"Courier {context.CourierId} was not updated.");
+                _logger.LogInformation($"Courier {context.CourierId} was not updated.");
                 
                 return new Result<Courier> {Reason = ReasonType.DatabaseError, ChangeCount = changes, IsSuccessful = false};
             }
             
             var address = await _db.Addresses.FindAsync(courier.AddressId);
 
-            Log.Information($"Order {context.OrderId} and courier {context.CourierId} information was updated.");
+            _logger.LogInformation($"Order {context.OrderId} and courier {context.CourierId} information was updated.");
                 
             return new Result<Courier> {ChangeCount = changes, Value = MapEntity(courier, address), IsSuccessful = true};
         }
@@ -107,14 +110,14 @@ namespace CourierDispatcherService.Services
             
             if (restaurant == null || !restaurant.IsActive)
             {
-                Log.Information($"Restaurant {context.RestaurantId} could not be found.");
+                _logger.LogInformation($"Restaurant {context.RestaurantId} could not be found.");
                 
                 return new Result<Order> {Reason = ReasonType.RestaurantNotFound, IsSuccessful = false};
             }
             
             if (!restaurant.IsOpen)
             {
-                Log.Information($"Restaurant {context.RestaurantId} is not open.");
+                _logger.LogInformation($"Restaurant {context.RestaurantId} is not open.");
                 
                 return new Result<Order> {Reason = ReasonType.RestaurantNotOpen, IsSuccessful = false};
             }
@@ -123,7 +126,7 @@ namespace CourierDispatcherService.Services
             
             if (courier == null)
             {
-                Log.Information($"Courier {context.CourierId} could not be found.");
+                _logger.LogInformation($"Courier {context.CourierId} could not be found.");
                 
                 return new Result<Order> {Reason = ReasonType.CourierNotFound, IsSuccessful = false};
             }
@@ -137,7 +140,7 @@ namespace CourierDispatcherService.Services
             
             if (order == null)
             {
-                Log.Information($"Order {context.OrderId} could not be found.");
+                _logger.LogInformation($"Order {context.OrderId} could not be found.");
                 
                 return new Result<Order> {Reason = ReasonType.OrderNotFound, IsSuccessful = false};
             }
@@ -152,12 +155,12 @@ namespace CourierDispatcherService.Services
             
             if (changes <= 0)
             {
-                Log.Information($"Order {context.OrderId} was not updated.");
+                _logger.LogInformation($"Order {context.OrderId} was not updated.");
                 
                 return new Result<Order> {Reason = ReasonType.DatabaseError, ChangeCount = changes, IsSuccessful = false};
             }
             
-            Log.Information($"Order {context.OrderId} and courier {context.CourierId} information was updated.");
+            _logger.LogInformation($"Order {context.OrderId} and courier {context.CourierId} information was updated.");
                 
             return new Result<Order> {ChangeCount = changes, Value = MapEntity(courier, order), IsSuccessful = true};
         }
@@ -168,7 +171,7 @@ namespace CourierDispatcherService.Services
             
             if (courier == null)
             {
-                Log.Information($"Courier {context.CourierId} could not be found.");
+                _logger.LogInformation($"Courier {context.CourierId} could not be found.");
                 
                 return new Result<Order> {Reason = ReasonType.CourierNotFound, IsSuccessful = false};
             }
@@ -182,7 +185,7 @@ namespace CourierDispatcherService.Services
             
             if (order == null)
             {
-                Log.Information($"Order {context.OrderId} could not be found.");
+                _logger.LogInformation($"Order {context.OrderId} could not be found.");
                 
                 return new Result<Order> {Reason = ReasonType.OrderNotFound, IsSuccessful = false};
             }
@@ -197,12 +200,12 @@ namespace CourierDispatcherService.Services
             
             if (changes <= 0)
             {
-                Log.Information($"Order {context.OrderId} was not updated.");
+                _logger.LogInformation($"Order {context.OrderId} was not updated.");
                 
                 return new Result<Order> {Reason = ReasonType.DatabaseError, ChangeCount = changes, IsSuccessful = false};
             }
             
-            Log.Information($"Order {context.OrderId} and courier {context.CourierId} information was updated.");
+            _logger.LogInformation($"Order {context.OrderId} and courier {context.CourierId} information was updated.");
                 
             return new Result<Order> {ChangeCount = changes, Value = MapEntity(courier, order), IsSuccessful = true};
         }
@@ -213,7 +216,7 @@ namespace CourierDispatcherService.Services
             
             if (courier == null)
             {
-                Log.Information($"Courier {context.CourierId} could not be found.");
+                _logger.LogInformation($"Courier {context.CourierId} could not be found.");
                 
                 return new Result<Courier> {Reason = ReasonType.CourierNotFound, IsSuccessful = false};
             }
@@ -227,14 +230,14 @@ namespace CourierDispatcherService.Services
             
             if (changes <= 0)
             {
-                Log.Information($"Courier {context.CourierId} status was not updated.");
+                _logger.LogInformation($"Courier {context.CourierId} status was not updated.");
                 
                 return new Result<Courier> {Reason = ReasonType.DatabaseError, ChangeCount = changes, IsSuccessful = false};
             }
             
             var address = await _db.Addresses.FindAsync(courier.AddressId);
 
-            Log.Information($"Courier {context.CourierId} status was updated.");
+            _logger.LogInformation($"Courier {context.CourierId} status was updated.");
                 
             return new Result<Courier> {ChangeCount = changes, Value = MapEntity(courier, address), IsSuccessful = true};
         }

@@ -22,7 +22,11 @@ namespace CourierService.Core.Consumers
         {
             _logger.LogInformation($"Consumer - {nameof(DispatchIdentificationConsumer)} => consumed {nameof(IdentifyCourierForDispatch)} event");
 
-            var result = await _client.Identify(new () {CustomerId = context.Message.CustomerId});
+            var result = await _client.Identify(
+                new ()
+                {
+                    CustomerId = context.Message.CustomerId
+                });
 
             if (result.IsSuccessful)
             {

@@ -31,7 +31,7 @@ namespace CourierService.Core.StateMachines.Activities
         public async Task Execute(BehaviorContext<CourierState, CourierEnRouteToCustomer> context,
             Behavior<CourierState, CourierEnRouteToCustomer> next)
         {
-            _logger.LogInformation($"Courier State Machine - {nameof(EnRouteToCustomerActivity)}");
+            _logger.LogInformation($"Courier State Machine - {nameof(EnRouteToCustomerActivity)} (state = {context.Instance.CurrentState})");
             
             context.Instance.Timestamp = DateTime.Now;
 

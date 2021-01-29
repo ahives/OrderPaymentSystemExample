@@ -42,6 +42,7 @@ namespace OrderProcessingService.Core.StateMachines.Activities
             Behavior<OrderState, RequestOrderPreparation> next)
         {
             _logger.LogInformation($"Order State Machine - {nameof(PrepareOrderRequestedActivity)} (state = {context.Instance.CurrentState})");
+            _logger.LogInformation($"OrderId - {context.Data.OrderId}");
             
             context.Instance.Timestamp = DateTime.Now;
             context.Instance.CustomerId = context.Data.CustomerId;

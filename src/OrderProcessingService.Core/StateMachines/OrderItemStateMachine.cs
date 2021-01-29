@@ -22,9 +22,10 @@ namespace OrderProcessingService.Core.StateMachines
 
             InstanceState(x => x.CurrentState, Preparing, Prepared, Discarded, Canceled, Expired, NotPrepared, Voided);
 
-            Initially(When(RequestOrderItemPreparationEvent)
-                .Activity(x => x.OfType<RequestOrderItemPreparationActivity>())
-                .TransitionTo(Preparing));
+            Initially(
+                When(RequestOrderItemPreparationEvent)
+                    .Activity(x => x.OfType<RequestOrderItemPreparationActivity>())
+                    .TransitionTo(Preparing));
 
             During(Preparing,
                 When(OrderItemPreparedEvent)

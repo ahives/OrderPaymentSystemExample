@@ -45,7 +45,7 @@ namespace OrderProcessingService.Core.Consumers
                             context.Message.Items[i].SpecialInstructions
                         });
 
-                    _logger.LogInformation($"Published - {nameof(RequestOrderItemPreparation)} (OrderItemId={context.Message.Items[i].OrderItemId})");
+                    _logger.LogInformation($"Published - {nameof(RequestOrderItemPreparation)} (OrderItemId => {context.Message.Items[i].OrderItemId})");
                 }
             }
         }

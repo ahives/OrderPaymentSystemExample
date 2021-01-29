@@ -20,7 +20,8 @@ namespace OrderProcessingService.Core.StateMachines
             
             InstanceState(x => x.CurrentState, Pending, Prepared, NotPrepared, Canceled);
 
-            Initially(When(PrepareOrderRequestEvent)
+            Initially(
+                When(PrepareOrderRequestEvent)
                     .Activity(x => x.OfType<PrepareOrderRequestedActivity>())
                     .TransitionTo(Pending));
 
@@ -65,10 +66,11 @@ namespace OrderProcessingService.Core.StateMachines
                 When(OrderCanceledEvent)
                     .Activity(x => x.OfType<OrderCanceledActivity>())
                     .TransitionTo(Canceled));
-            
+
             DuringAny(
                 When(OrderItemVoidedEvent)
-                .Activity(x => x.OfType<OrderItemsVoidedActivity>()));
+                    .Activity(x => x.OfType<OrderItemsVoidedActivity>()),
+                Ignore(PrepareOrderRequestEvent));
         }
 
         public State Pending { get; }
