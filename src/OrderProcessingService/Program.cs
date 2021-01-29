@@ -35,6 +35,7 @@
                     string appBin = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
                     log.MinimumLevel.Information();
+                    log.MinimumLevel.Override("Microsoft", LogEventLevel.Warning);
                     log.WriteTo.File($"{appBin}/log/log-{DateTime.Now:yyMMdd_HHmmss}.txt");
                     log.WriteTo.Console(LogEventLevel.Information);
                 })
