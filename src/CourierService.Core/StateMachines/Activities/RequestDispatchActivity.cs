@@ -3,6 +3,7 @@ namespace CourierService.Core.StateMachines.Activities
     using System;
     using System.Threading.Tasks;
     using Automatonymous;
+    using Configuration;
     using GreenPipes;
     using MassTransit;
     using Microsoft.Extensions.Logging;

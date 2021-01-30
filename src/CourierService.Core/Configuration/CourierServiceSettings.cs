@@ -1,4 +1,4 @@
-namespace CourierService.Core
+namespace CourierService.Core.Configuration
 {
     public class CourierServiceSettings
     {

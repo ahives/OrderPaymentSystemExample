@@ -9,5 +9,7 @@ namespace Services.Core.Configuration
         public string Password { get; set; }
         
         public string VirtualHost { get; set; }
+        
+        public int MessageRetryImmediateCount { get; set; }
     }
 }

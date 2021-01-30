@@ -4,7 +4,7 @@
     using System.IO;
     using System.Reflection;
     using System.Threading.Tasks;
-    using Core;
+    using Core.Configuration;
     using Core.Consumers;
     using Core.StateMachines;
     using Core.StateMachines.Sagas;
@@ -49,11 +49,13 @@
                     services.AddSingleton<IGrpcClient<ICourierDispatcher>, CourierDispatcherClient>();
 
                     services.Configure<CourierServiceSettings>(options => host.Configuration.GetSection("Application").Bind(options));
-                    services.Configure<RabbitMqTransportSettings>(options => host.Configuration.GetSection("RabbitMqTransportSettings").Bind(options));
-                    services.Configure<GrpcClientSettings>(options => host.Configuration.GetSection("GrpcClientSettings").Bind(options));
+                    services.Configure<RabbitMqTransportSettings>(options => host.Configuration.GetSection("RabbitMqTransport").Bind(options));
+                    services.Configure<GrpcClientSettings>(options => host.Configuration.GetSection("Grpc").Bind(options));
                     
                     services.AddMassTransit(x =>
                     {
+                        x.SetKebabCaseEndpointNameFormatter();
+
                         x.AddConsumer<DispatchConsumer>();
                         x.AddConsumer<DispatchConfirmationConsumer>();
                         x.AddConsumer<OrderDeliveryConsumer>();
@@ -63,9 +65,9 @@
                         x.AddConsumer<EnRouteToCustomerConsumer>();
                         x.AddConsumer<DispatchIdentificationConsumer>();
                         x.AddConsumer<DispatchCancellationConsumer>();
-                        
-                        x.SetKebabCaseEndpointNameFormatter();
 
+                        x.AddSagaStateMachine(typeof(CourierStateMachine), typeof(CourierStateDefinition));
+                        
                         Uri schedulerEndpoint = new Uri("queue:quartz");
                         
                         x.AddMessageScheduler(schedulerEndpoint);

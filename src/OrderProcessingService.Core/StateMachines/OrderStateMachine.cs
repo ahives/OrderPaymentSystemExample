@@ -8,16 +8,23 @@ namespace OrderProcessingService.Core.StateMachines
     public class OrderStateMachine :
         MassTransitStateMachine<OrderState>
     {
+        public State Pending { get; }
+        public State Prepared { get; }
+        public State Canceled { get; }
+        public State NotPrepared { get; }
+
+        public Event<RequestOrderPreparation> PrepareOrderRequestEvent { get; private set; }
+        public Event<OrderItemPrepared> OrderItemPreparedEvent { get; private set; }
+        public Event<OrderCanceled> OrderCanceledEvent { get; private set; }
+        public Event<OrderCancelRequest> OrderCancelRequestEvent { get; private set; }
+        public Event<OrderItemExpired> OrderItemExpiredEvent { get; private set; }
+        public Event<OrderItemCanceled> OrderItemCanceledEvent { get; private set; }
+        public Event<OrderItemVoided> OrderItemVoidedEvent { get; private set; }
+
         public OrderStateMachine()
         {
-            Event(() => PrepareOrderRequestEvent, e => e.CorrelateById(context => context.Message.OrderId));
-            Event(() => OrderItemPreparedEvent, e => e.CorrelateById(context => context.Message.OrderId));
-            Event(() => OrderItemExpiredEvent, e => e.CorrelateById(context => context.Message.OrderId));
-            Event(() => OrderCancelRequestEvent, e => e.CorrelateById(context => context.Message.OrderId));
-            Event(() => OrderItemCanceledEvent, e => e.CorrelateById(context => context.Message.OrderId));
-            Event(() => OrderCanceledEvent, e => e.CorrelateById(context => context.Message.OrderId));
-            Event(() => OrderItemVoidedEvent, e => e.CorrelateById(context => context.Message.OrderId));
-            
+            ConfigureEvents();
+
             InstanceState(x => x.CurrentState, Pending, Prepared, NotPrepared, Canceled);
 
             Initially(
@@ -73,17 +80,15 @@ namespace OrderProcessingService.Core.StateMachines
                 Ignore(PrepareOrderRequestEvent));
         }
 
-        public State Pending { get; }
-        public State Prepared { get; }
-        public State Canceled { get; }
-        public State NotPrepared { get; }
-
-        public Event<RequestOrderPreparation> PrepareOrderRequestEvent { get; private set; }
-        public Event<OrderItemPrepared> OrderItemPreparedEvent { get; private set; }
-        public Event<OrderCanceled> OrderCanceledEvent { get; private set; }
-        public Event<OrderCancelRequest> OrderCancelRequestEvent { get; private set; }
-        public Event<OrderItemExpired> OrderItemExpiredEvent { get; private set; }
-        public Event<OrderItemCanceled> OrderItemCanceledEvent { get; private set; }
-        public Event<OrderItemVoided> OrderItemVoidedEvent { get; private set; }
+        void ConfigureEvents()
+        {
+            Event(() => PrepareOrderRequestEvent, e => e.CorrelateById(context => context.Message.OrderId));
+            Event(() => OrderItemPreparedEvent, e => e.CorrelateById(context => context.Message.OrderId));
+            Event(() => OrderItemExpiredEvent, e => e.CorrelateById(context => context.Message.OrderId));
+            Event(() => OrderCancelRequestEvent, e => e.CorrelateById(context => context.Message.OrderId));
+            Event(() => OrderItemCanceledEvent, e => e.CorrelateById(context => context.Message.OrderId));
+            Event(() => OrderCanceledEvent, e => e.CorrelateById(context => context.Message.OrderId));
+            Event(() => OrderItemVoidedEvent, e => e.CorrelateById(context => context.Message.OrderId));
+        }
     }
 }

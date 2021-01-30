@@ -50,8 +50,8 @@
                     services.AddSingleton<IGrpcClient<IOrderProcessor>, OrderProcessorClient>();
 
                     services.Configure<OrderProcessingServiceSettings>(options => host.Configuration.GetSection("Application").Bind(options));
-                    services.Configure<RabbitMqTransportSettings>(options => host.Configuration.GetSection("RabbitMqTransportSettings").Bind(options));
-                    services.Configure<GrpcClientSettings>(options => host.Configuration.GetSection("GrpcClientSettings").Bind(options));
+                    services.Configure<RabbitMqTransportSettings>(options => host.Configuration.GetSection("RabbitMqTransport").Bind(options));
+                    services.Configure<GrpcClientSettings>(options => host.Configuration.GetSection("Grpc").Bind(options));
 
                     services.AddDbContext<OrderProcessingServiceDbContext>(builder =>
                         builder.UseNpgsql(host.Configuration.GetConnectionString("OrdersConnection"), m =>
