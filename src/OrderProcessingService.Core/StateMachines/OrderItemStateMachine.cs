@@ -118,10 +118,26 @@ namespace OrderProcessingService.Core.StateMachines
             Event(() => OrderItemNotPreparedEvent, e => e.CorrelateById(context => context.Message.OrderItemId));
             Event(() => OrderItemDiscardedEvent, e => e.CorrelateById(context => context.Message.OrderItemId));
             // Event(() => OrderCanceledEvent, e => e.CorrelateById(context => context.Message.OrderId));
-            Event(() => OrderItemCancelRequestEvent, e => e.CorrelateById(context => context.Message.OrderItemId));
             Event(() => OrderItemCanceledEvent, e => e.CorrelateById(context => context.Message.OrderItemId));
             Event(() => VoidOrderItemRequestEvent, e => e.CorrelateById(context => context.Message.OrderItemId));
             Event(() => OrderItemVoidedEvent, e => e.CorrelateById(context => context.Message.OrderItemId));
+
+            Event(() => OrderItemCancelRequestEvent, e =>
+            {
+                e.CorrelateById(context => context.Message.OrderItemId);
+
+                e.OnMissingInstance(m =>
+                {
+                    return m.ExecuteAsync(x => x.RespondAsync<OrderItemNotFound>(
+                        new()
+                        {
+                            OrderId = x.Message.OrderId,
+                            OrderItemId = x.Message.OrderItemId,
+                            CustomerId = x.Message.CustomerId,
+                            RestaurantId = x.Message.RestaurantId
+                        }));
+                });
+            });
         }
     }
 }
