@@ -9,6 +9,8 @@
     using Core.StateMachines;
     using Core.StateMachines.Sagas;
     using MassTransit;
+    using MassTransit.ConsumeConfigurators;
+    using MassTransit.Definition;
     using MassTransit.EntityFrameworkCoreIntegration;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
@@ -64,12 +66,18 @@
                     {
                         x.SetKebabCaseEndpointNameFormatter();
                         
-                        x.AddConsumer<PrepareOrderItemConsumer>();
-                        x.AddConsumer<PrepareOrderConsumer>();
-                        x.AddConsumer<CancelOrderItemConsumer>();
-                        x.AddConsumer<CancelOrderConsumer>();
-                        x.AddConsumer<VoidOrderItemConsumer>();
+                        // x.AddConsumer<PrepareOrderItemConsumer>();
+                        // x.AddConsumer<PrepareOrderConsumer>();
+                        // x.AddConsumer<CancelOrderItemConsumer>();
+                        // x.AddConsumer<CancelOrderConsumer>();
+                        // x.AddConsumer<VoidOrderItemConsumer>();
                         
+                        x.AddConsumer(typeof(PrepareOrderItemConsumer), typeof(PrepareOrderItemConsumerDefinition));
+                        x.AddConsumer(typeof(PrepareOrderConsumer), typeof(PrepareOrderConsumerDefinition));
+                        x.AddConsumer(typeof(CancelOrderItemConsumer), typeof(CancelOrderItemConsumerDefinition));
+                        x.AddConsumer(typeof(CancelOrderConsumer), typeof(CancelOrderConsumerDefinition));
+                        x.AddConsumer(typeof(VoidOrderItemConsumer), typeof(VoidOrderItemConsumerDefinition));
+
                         x.AddSagaStateMachine(typeof(OrderStateMachine), typeof(OrderStateDefinition));
                         x.AddSagaStateMachine(typeof(OrderItemStateMachine), typeof(OrderItemStateDefinition));
                         
@@ -107,5 +115,135 @@
 
                     services.AddMassTransitHostedService();
                 });
+    }
+
+    public class PrepareOrderItemConsumerDefinition :
+        ConsumerDefinition<PrepareOrderItemConsumer>
+    {
+        readonly RabbitMqTransportSettings _settings;
+
+        public PrepareOrderItemConsumerDefinition(IOptions<RabbitMqTransportSettings> options)
+        {
+            _settings = options.Value;
+        }
+
+        protected override void ConfigureConsumer(IReceiveEndpointConfigurator endpointConfigurator, IConsumerConfigurator<PrepareOrderItemConsumer> consumerConfigurator)
+        {
+            consumerConfigurator.UseMessageRetry(r =>
+            {
+                r.SetRetryPolicy(x => x.Immediate(_settings.MessageRetryImmediatePolicy));
+            });
+            
+            consumerConfigurator.UseScheduledRedelivery(r =>
+            {
+                r.SetRetryPolicy(x => x.Immediate(_settings.MessageRedeliveryImmediatePolicy));
+            });
+            
+            consumerConfigurator.UseInMemoryOutbox();
+        }
+    }
+
+    public class PrepareOrderConsumerDefinition :
+        ConsumerDefinition<PrepareOrderConsumer>
+    {
+        readonly RabbitMqTransportSettings _settings;
+
+        public PrepareOrderConsumerDefinition(IOptions<RabbitMqTransportSettings> options)
+        {
+            _settings = options.Value;
+        }
+
+        protected override void ConfigureConsumer(IReceiveEndpointConfigurator endpointConfigurator, IConsumerConfigurator<PrepareOrderConsumer> consumerConfigurator)
+        {
+            consumerConfigurator.UseMessageRetry(r =>
+            {
+                r.SetRetryPolicy(x => x.Immediate(_settings.MessageRetryImmediatePolicy));
+            });
+            
+            consumerConfigurator.UseScheduledRedelivery(r =>
+            {
+                r.SetRetryPolicy(x => x.Immediate(_settings.MessageRedeliveryImmediatePolicy));
+            });
+            
+            consumerConfigurator.UseInMemoryOutbox();
+        }
+    }
+
+    public class CancelOrderItemConsumerDefinition :
+        ConsumerDefinition<CancelOrderItemConsumer>
+    {
+        readonly RabbitMqTransportSettings _settings;
+
+        public CancelOrderItemConsumerDefinition(IOptions<RabbitMqTransportSettings> options)
+        {
+            _settings = options.Value;
+        }
+
+        protected override void ConfigureConsumer(IReceiveEndpointConfigurator endpointConfigurator, IConsumerConfigurator<CancelOrderItemConsumer> consumerConfigurator)
+        {
+            consumerConfigurator.UseMessageRetry(r =>
+            {
+                r.SetRetryPolicy(x => x.Immediate(_settings.MessageRetryImmediatePolicy));
+            });
+            
+            consumerConfigurator.UseScheduledRedelivery(r =>
+            {
+                r.SetRetryPolicy(x => x.Immediate(_settings.MessageRedeliveryImmediatePolicy));
+            });
+            
+            consumerConfigurator.UseInMemoryOutbox();
+        }
+    }
+
+    public class CancelOrderConsumerDefinition :
+        ConsumerDefinition<CancelOrderConsumer>
+    {
+        readonly RabbitMqTransportSettings _settings;
+
+        public CancelOrderConsumerDefinition(IOptions<RabbitMqTransportSettings> options)
+        {
+            _settings = options.Value;
+        }
+
+        protected override void ConfigureConsumer(IReceiveEndpointConfigurator endpointConfigurator, IConsumerConfigurator<CancelOrderConsumer> consumerConfigurator)
+        {
+            consumerConfigurator.UseMessageRetry(r =>
+            {
+                r.SetRetryPolicy(x => x.Immediate(_settings.MessageRetryImmediatePolicy));
+            });
+            
+            consumerConfigurator.UseScheduledRedelivery(r =>
+            {
+                r.SetRetryPolicy(x => x.Immediate(_settings.MessageRedeliveryImmediatePolicy));
+            });
+            
+            consumerConfigurator.UseInMemoryOutbox();
+        }
+    }
+
+    public class VoidOrderItemConsumerDefinition :
+        ConsumerDefinition<VoidOrderItemConsumer>
+    {
+        readonly RabbitMqTransportSettings _settings;
+
+        public VoidOrderItemConsumerDefinition(IOptions<RabbitMqTransportSettings> options)
+        {
+            _settings = options.Value;
+        }
+
+        protected override void ConfigureConsumer(IReceiveEndpointConfigurator endpointConfigurator, IConsumerConfigurator<VoidOrderItemConsumer> consumerConfigurator)
+        {
+            consumerConfigurator.UseMessageRetry(r =>
+            {
+                r.SetRetryPolicy(x => x.Immediate(_settings.MessageRetryImmediatePolicy));
+            });
+            
+            consumerConfigurator.UseScheduledRedelivery(r =>
+            {
+                r.SetRetryPolicy(x => x.Immediate(_settings.MessageRedeliveryImmediatePolicy));
+            });
+            
+            consumerConfigurator.UseInMemoryOutbox();
+        }
     }
 }

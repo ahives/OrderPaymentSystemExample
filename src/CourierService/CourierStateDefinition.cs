@@ -19,7 +19,7 @@ namespace CourierService
 
         protected override void ConfigureSaga(IReceiveEndpointConfigurator endpointConfigurator, ISagaConfigurator<CourierState> sagaConfigurator)
         {
-            sagaConfigurator.UseMessageRetry(r => r.Immediate(_settings.MessageRetryImmediateCount));
+            sagaConfigurator.UseMessageRetry(r => r.Immediate(_settings.MessageRetryImmediatePolicy));
             sagaConfigurator.UseInMemoryOutbox();
         }
     }

@@ -15,6 +15,7 @@ namespace OrderProcessingWebService
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
     using Microsoft.OpenApi.Models;
+    using Services.Core.Configuration;
 
     public class Startup
     {
@@ -35,7 +36,7 @@ namespace OrderProcessingWebService
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "OrderProcessingWebService", Version = "v1"});
             });
 
-            services.Configure<ApplicationSettings>(options => Configuration.GetSection("Application").Bind(options));
+            services.Configure<RabbitMqTransportSettings>(options => Configuration.GetSection("Application").Bind(options));
 
             services.AddMassTransit(x =>
             {
@@ -43,13 +44,13 @@ namespace OrderProcessingWebService
                 
                 x.UsingRabbitMq((context, cfg) =>
                 {
-                    var options = context.GetService<IOptions<ApplicationSettings>>();
+                    var options = context.GetService<IOptions<RabbitMqTransportSettings>>();
                     var settings = options.Value;
                             
-                    cfg.Host("localhost", settings.VirtualHost, h =>
+                    cfg.Host(settings.Host, settings.VirtualHost, h =>
                     {
-                        h.Username("guest");
-                        h.Password("guest");
+                        h.Username(settings.Username);
+                        h.Password(settings.Password);
                     });
                             
                     cfg.ConfigureEndpoints(context);

@@ -10,6 +10,8 @@ namespace Services.Core.Configuration
         
         public string VirtualHost { get; set; }
         
-        public int MessageRetryImmediateCount { get; set; }
+        public int MessageRetryImmediatePolicy { get; set; }
+        
+        public int MessageRedeliveryImmediatePolicy { get; set; }
     }
 }

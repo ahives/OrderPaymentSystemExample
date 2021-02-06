@@ -2,13 +2,17 @@ namespace OrderProcessingWebService
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
+    using System.Reflection;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Server.Kestrel.Core;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
+    using Serilog;
+    using Serilog.Events;
 
     public class Program
     {
@@ -19,6 +23,15 @@ namespace OrderProcessingWebService
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .UseSerilog((host, log) =>
+                {
+                    string appBin = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+                    log.MinimumLevel.Information();
+                    log.MinimumLevel.Override("Microsoft", LogEventLevel.Warning);
+                    log.WriteTo.File($"{appBin}/log/log-{DateTime.Now:yyMMdd_HHmmss}.txt");
+                    log.WriteTo.Console(LogEventLevel.Information);
+                })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseKestrel(options =>

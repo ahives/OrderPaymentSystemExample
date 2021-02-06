@@ -8,7 +8,9 @@ namespace CourierWebService
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
+    using Microsoft.Extensions.Options;
     using Microsoft.OpenApi.Models;
+    using Services.Core.Configuration;
 
     public class Startup
     {
@@ -29,6 +31,8 @@ namespace CourierWebService
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "CourierWebService", Version = "v1"});
             });
             
+            services.Configure<RabbitMqTransportSettings>(options => Configuration.GetSection("RabbitMqTransport").Bind(options));
+
             services.AddDbContext<OrdersDbContext>(x =>
                 x.UseNpgsql(Configuration.GetConnectionString("OrdersConnection")));
 
@@ -38,14 +42,13 @@ namespace CourierWebService
                 
                 x.UsingRabbitMq((context, cfg) =>
                 {
-                    string vhost = Configuration
-                        .GetSection("Application")
-                        .GetValue<string>("VirtualHost");
+                    var options = context.GetService<IOptions<RabbitMqTransportSettings>>();
+                    var settings = options.Value;
                             
-                    cfg.Host("localhost", vhost, h =>
+                    cfg.Host(settings.Host, settings.VirtualHost, h =>
                     {
-                        h.Username("guest");
-                        h.Password("guest");
+                        h.Username(settings.Username);
+                        h.Password(settings.Password);
                     });
                             
                     cfg.ConfigureEndpoints(context);

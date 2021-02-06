@@ -19,7 +19,7 @@ namespace OrderProcessingService
 
         protected override void ConfigureSaga(IReceiveEndpointConfigurator endpointConfigurator, ISagaConfigurator<OrderState> sagaConfigurator)
         {
-            sagaConfigurator.UseMessageRetry(r => r.Immediate(_settings.MessageRetryImmediateCount));
+            sagaConfigurator.UseMessageRetry(r => r.Immediate(_settings.MessageRetryImmediatePolicy));
             sagaConfigurator.UseInMemoryOutbox();
         }
     }
