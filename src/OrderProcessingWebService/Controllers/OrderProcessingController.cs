@@ -4,6 +4,7 @@ namespace OrderProcessingWebService.Controllers
     using System.Threading.Tasks;
     using MassTransit;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Logging;
     using Services.Core.Events;
 
     [ApiController]
@@ -12,10 +13,12 @@ namespace OrderProcessingWebService.Controllers
         ControllerBase
     {
         readonly IPublishEndpoint _endpoint;
+        readonly ILogger<OrderProcessingController> _logger;
 
-        public OrderProcessingController(IPublishEndpoint endpoint)
+        public OrderProcessingController(IPublishEndpoint endpoint, ILogger<OrderProcessingController> logger)
         {
             _endpoint = endpoint;
+            _logger = logger;
         }
 
         [HttpPost("PrepareOrder")]
@@ -33,6 +36,8 @@ namespace OrderProcessingWebService.Controllers
                     Items = context.Items
                 });
 
+            _logger.LogInformation($"Published - {nameof(RequestOrderPreparation)}");
+
             return Ok(orderId);
         }
 
@@ -47,6 +52,8 @@ namespace OrderProcessingWebService.Controllers
                     RestaurantId = context.RestaurantId
                 });
 
+            _logger.LogInformation($"Published - {nameof(OrderReadyForDelivery)}");
+
             return Ok();
         }
 
@@ -60,6 +67,8 @@ namespace OrderProcessingWebService.Controllers
                     CustomerId = context.CustomerId,
                     RestaurantId = context.RestaurantId
                 });
+
+            _logger.LogInformation($"Published - {nameof(OrderExpired)}");
 
             return Ok();
         }
@@ -76,6 +85,8 @@ namespace OrderProcessingWebService.Controllers
                     RestaurantId = context.RestaurantId
                 });
 
+            _logger.LogInformation($"Published - {nameof(OrderCancelRequest)}");
+
             return Ok();
         }
 
@@ -91,6 +102,8 @@ namespace OrderProcessingWebService.Controllers
                     RestaurantId = context.RestaurantId
                 });
 
+            _logger.LogInformation($"Published - {nameof(VoidOrderItemRequest)}");
+
             return Ok();
         }
 
@@ -103,6 +116,8 @@ namespace OrderProcessingWebService.Controllers
                     OrderId = context.OrderId,
                     OrderItemId = context.OrderItemId
                 });
+
+            _logger.LogInformation($"Published - {nameof(OrderItemCancelRequest)}");
 
             return Ok();
         }
@@ -130,6 +145,8 @@ namespace OrderProcessingWebService.Controllers
                     OrderId = context.OrderId,
                     OrderItemId = context.OrderItemId
                 });
+
+            _logger.LogInformation($"Published - {nameof(OrderItemDiscarded)}");
 
             return Ok();
         }

@@ -92,6 +92,7 @@
                         x.AddConsumer(typeof(CancelOrderItemConsumer), typeof(CancelOrderItemConsumerDefinition));
                         x.AddConsumer(typeof(CancelOrderConsumer), typeof(CancelOrderConsumerDefinition));
                         x.AddConsumer(typeof(VoidOrderItemConsumer), typeof(VoidOrderItemConsumerDefinition));
+                        x.AddConsumer(typeof(OrderNotFoundConsumer), typeof(OrderNotFoundConsumerDefinition));
 
                         x.AddSagaStateMachine(typeof(OrderStateMachine), typeof(OrderStateDefinition));
                         x.AddSagaStateMachine(typeof(OrderItemStateMachine), typeof(OrderItemStateDefinition));

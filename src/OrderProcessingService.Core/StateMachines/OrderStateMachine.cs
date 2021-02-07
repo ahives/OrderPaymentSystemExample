@@ -2,12 +2,14 @@ namespace OrderProcessingService.Core.StateMachines
 {
     using Activities;
     using Automatonymous;
+    using Microsoft.Extensions.Logging;
     using Sagas;
     using Services.Core.Events;
 
     public class OrderStateMachine :
         MassTransitStateMachine<OrderState>
     {
+        readonly ILogger<OrderStateMachine> _logger;
         public State Pending { get; }
         public State Prepared { get; }
         public State Canceled { get; }
@@ -21,8 +23,10 @@ namespace OrderProcessingService.Core.StateMachines
         public Event<OrderItemCanceled> OrderItemCanceledEvent { get; private set; }
         public Event<OrderItemVoided> OrderItemVoidedEvent { get; private set; }
 
-        public OrderStateMachine()
+        public OrderStateMachine(ILogger<OrderStateMachine> logger)
         {
+            _logger = logger;
+            
             ConfigureEvents();
 
             InstanceState(x => x.CurrentState, Pending, Prepared, NotPrepared, Canceled);
@@ -95,6 +99,8 @@ namespace OrderProcessingService.Core.StateMachines
 
                 e.OnMissingInstance(m =>
                 {
+                    _logger.LogInformation($"Published - {nameof(OrderNotFound)}");
+
                     return m.ExecuteAsync(x => x.RespondAsync<OrderNotFound>(
                         new()
                         {
