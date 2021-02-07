@@ -1,23 +1,22 @@
-namespace CourierService
+namespace OrderProcessingService.Definitions
 {
     using Core.StateMachines.Sagas;
     using GreenPipes;
     using MassTransit;
     using MassTransit.Definition;
-    using Microsoft.Extensions.Options;
     using Services.Core.Configuration;
 
-    public class CourierStateDefinition :
-        SagaDefinition<CourierState>
+    public class OrderStateDefinition :
+        SagaDefinition<OrderState>
     {
         readonly RabbitMqTransportSettings _settings;
 
-        public CourierStateDefinition(IOptions<RabbitMqTransportSettings> options)
+        public OrderStateDefinition(RabbitMqTransportSettings settings)
         {
-            _settings = options.Value;
+            _settings = settings;
         }
 
-        protected override void ConfigureSaga(IReceiveEndpointConfigurator endpointConfigurator, ISagaConfigurator<CourierState> sagaConfigurator)
+        protected override void ConfigureSaga(IReceiveEndpointConfigurator endpointConfigurator, ISagaConfigurator<OrderState> sagaConfigurator)
         {
             sagaConfigurator.UseMessageRetry(r => r.Immediate(_settings.MessageRetryImmediatePolicy));
             sagaConfigurator.UseInMemoryOutbox();

@@ -6,8 +6,8 @@ namespace Service.Grpc.Core
     public class CourierDispatcherClient :
         BaseGrpcClient<ICourierDispatcher>
     {
-        public CourierDispatcherClient(IOptions<GrpcClientSettings> options)
-            : base(options)
+        public CourierDispatcherClient(GrpcClientSettings settings)
+            : base(settings)
         {
         }
     }

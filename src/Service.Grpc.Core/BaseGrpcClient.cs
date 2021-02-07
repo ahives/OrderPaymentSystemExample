@@ -12,9 +12,9 @@ namespace Service.Grpc.Core
         protected readonly GrpcClientSettings _settings;
         protected GrpcChannel _channel;
 
-        public BaseGrpcClient(IOptions<GrpcClientSettings> options)
+        public BaseGrpcClient(GrpcClientSettings settings)
         {
-            _settings = options.Value;
+            _settings = settings;
             _channel = GrpcChannel.ForAddress(_settings.ClientUrl);
         }
 

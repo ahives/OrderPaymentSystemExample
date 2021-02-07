@@ -1,10 +1,9 @@
-namespace OrderProcessingService
+namespace OrderProcessingService.Definitions
 {
     using Core.StateMachines.Sagas;
     using GreenPipes;
     using MassTransit;
     using MassTransit.Definition;
-    using Microsoft.Extensions.Options;
     using Services.Core.Configuration;
 
     public class OrderItemStateDefinition :
@@ -12,9 +11,9 @@ namespace OrderProcessingService
     {
         readonly RabbitMqTransportSettings _settings;
 
-        public OrderItemStateDefinition(IOptions<RabbitMqTransportSettings> options)
+        public OrderItemStateDefinition(RabbitMqTransportSettings settings)
         {
-            _settings = options.Value;
+            _settings = settings;
         }
 
         protected override void ConfigureSaga(IReceiveEndpointConfigurator endpointConfigurator, ISagaConfigurator<OrderItemState> sagaConfigurator)

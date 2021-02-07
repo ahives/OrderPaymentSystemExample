@@ -6,8 +6,8 @@ namespace Service.Grpc.Core
     public class OrderProcessorClient :
         BaseGrpcClient<IOrderProcessor>
     {
-        public OrderProcessorClient(IOptions<GrpcClientSettings> options)
-            : base(options)
+        public OrderProcessorClient(GrpcClientSettings settings)
+            : base(settings)
         {
         }
     }

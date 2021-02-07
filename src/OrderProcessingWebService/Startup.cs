@@ -36,7 +36,14 @@ namespace OrderProcessingWebService
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "OrderProcessingWebService", Version = "v1"});
             });
 
-            services.Configure<RabbitMqTransportSettings>(options => Configuration.GetSection("Application").Bind(options));
+            services.AddSingleton(x =>
+            {
+                var config = new RabbitMqTransportSettings();
+
+                Configuration.Bind("RabbitMqTransport", config);
+
+                return config;
+            });
 
             services.AddMassTransit(x =>
             {
@@ -44,8 +51,7 @@ namespace OrderProcessingWebService
                 
                 x.UsingRabbitMq((context, cfg) =>
                 {
-                    var options = context.GetService<IOptions<RabbitMqTransportSettings>>();
-                    var settings = options.Value;
+                    var settings = context.GetService<RabbitMqTransportSettings>();
                             
                     cfg.Host(settings.Host, settings.VirtualHost, h =>
                     {

@@ -30,8 +30,15 @@ namespace CourierWebService
             {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "CourierWebService", Version = "v1"});
             });
-            
-            services.Configure<RabbitMqTransportSettings>(options => Configuration.GetSection("RabbitMqTransport").Bind(options));
+
+            services.AddSingleton(x =>
+            {
+                var config = new RabbitMqTransportSettings();
+
+                Configuration.Bind("RabbitMqTransport", config);
+
+                return config;
+            });
 
             services.AddDbContext<OrdersDbContext>(x =>
                 x.UseNpgsql(Configuration.GetConnectionString("OrdersConnection")));
@@ -42,8 +49,7 @@ namespace CourierWebService
                 
                 x.UsingRabbitMq((context, cfg) =>
                 {
-                    var options = context.GetService<IOptions<RabbitMqTransportSettings>>();
-                    var settings = options.Value;
+                    var settings = context.GetService<RabbitMqTransportSettings>();
                             
                     cfg.Host(settings.Host, settings.VirtualHost, h =>
                     {
