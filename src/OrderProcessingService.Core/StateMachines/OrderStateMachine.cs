@@ -2,14 +2,12 @@ namespace OrderProcessingService.Core.StateMachines
 {
     using Activities;
     using Automatonymous;
-    using Microsoft.Extensions.Logging;
     using Sagas;
     using Services.Core.Events;
 
     public class OrderStateMachine :
         MassTransitStateMachine<OrderState>
     {
-        readonly ILogger<OrderStateMachine> _logger;
         public State Pending { get; }
         public State Prepared { get; }
         public State Canceled { get; }
@@ -23,10 +21,8 @@ namespace OrderProcessingService.Core.StateMachines
         public Event<OrderItemCanceled> OrderItemCanceledEvent { get; private set; }
         public Event<OrderItemVoided> OrderItemVoidedEvent { get; private set; }
 
-        public OrderStateMachine(ILogger<OrderStateMachine> logger)
+        public OrderStateMachine()
         {
-            _logger = logger;
-            
             ConfigureEvents();
 
             InstanceState(x => x.CurrentState, Pending, Prepared, NotPrepared, Canceled);
@@ -34,7 +30,10 @@ namespace OrderProcessingService.Core.StateMachines
             Initially(
                 When(PrepareOrderRequestEvent)
                     .Activity(x => x.OfType<PrepareOrderRequestedActivity>())
-                    .TransitionTo(Pending));
+                    .TransitionTo(Pending),
+                When(OrderCancelRequestEvent)
+                    .Activity(x => x.OfType<InitiallyOrderCancelRequestActivity>())
+                    .TransitionTo(Canceled));
 
             During(Pending,
                 When(OrderItemPreparedEvent)
@@ -76,7 +75,9 @@ namespace OrderProcessingService.Core.StateMachines
             During(Canceled,
                 When(OrderCanceledEvent)
                     .Activity(x => x.OfType<OrderCanceledActivity>())
-                    .TransitionTo(Canceled));
+                    .TransitionTo(Canceled),
+                Ignore(PrepareOrderRequestEvent),
+                Ignore(OrderCancelRequestEvent));
 
             DuringAny(
                 When(OrderItemVoidedEvent)
@@ -92,25 +93,7 @@ namespace OrderProcessingService.Core.StateMachines
             Event(() => OrderItemCanceledEvent, e => e.CorrelateById(context => context.Message.OrderId));
             Event(() => OrderCanceledEvent, e => e.CorrelateById(context => context.Message.OrderId));
             Event(() => OrderItemVoidedEvent, e => e.CorrelateById(context => context.Message.OrderId));
-
-            Event(() => OrderCancelRequestEvent, e =>
-            {
-                e.CorrelateById(context => context.Message.OrderId);
-
-                e.OnMissingInstance(m =>
-                {
-                    _logger.LogInformation($"Published - {nameof(OrderNotFound)}");
-
-                    return m.ExecuteAsync(x => x.RespondAsync<OrderNotFound>(
-                        new()
-                        {
-                            OrderId = x.Message.OrderId,
-                            CustomerId = x.Message.CustomerId,
-                            RestaurantId = x.Message.RestaurantId,
-                            CourierId = x.Message.CourierId
-                        }));
-                });
-            });
+            Event(() => OrderCancelRequestEvent, e => e.CorrelateById(context => context.Message.OrderId));
         }
     }
 }

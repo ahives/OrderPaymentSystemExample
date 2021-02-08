@@ -24,7 +24,7 @@ namespace OrderProcessingWebService.Controllers
         [HttpPost("PrepareOrder")]
         public async Task<IActionResult> PrepareOrder(OrderPreparationContext context)
         {
-            Guid orderId = NewId.NextGuid();
+            Guid orderId = context.OrderId == Guid.Empty ? NewId.NextGuid() : context.OrderId;
 
             await _endpoint.Publish<RequestOrderPreparation>(
                 new()
